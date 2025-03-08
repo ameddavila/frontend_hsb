@@ -1,11 +1,11 @@
-"use client"; // Agrega esta línea si usas Next.js 13+ con App Router
+"use client";
 
 import { useAuth } from "@/hooks/useAuth";
-import { useRouter } from "next/navigation"; // 🔹 Cambiar 'next/router' por 'next/navigation'
+import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
-export const withAuth = (WrappedComponent: React.FC, requiredRole: string) => {
-  const AuthComponent = (props: any) => {
+const withAuth = (WrappedComponent: React.FC, requiredRole: string) => {
+  const AuthComponent = (props: Record<string, unknown>) => {
     const { user, loading } = useAuth();
     const router = useRouter();
 
@@ -28,4 +28,5 @@ export const withAuth = (WrappedComponent: React.FC, requiredRole: string) => {
 
   return AuthComponent;
 };
-export default withAuth; // 🔹 Agregar la exportación por defecto
+
+export default withAuth;
