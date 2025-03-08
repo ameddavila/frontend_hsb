@@ -1,23 +1,40 @@
-import { useState } from "react";
-import { api } from "../services/api";
+import { useState, useEffect } from "react";
+import { login, logout, refreshAccessToken } from "@/services/api";
 
 export const useAuth = () => {
-  const [csrfToken, setCsrfToken] = useState<string | null>(null);
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  const login = async (usernameOrEmail: string, password: string) => {
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const token = await refreshAccessToken();
+        if (token) {
+          setUser(token.user);
+        }
+      } catch (error) {
+        setUser(null);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUser();
+  }, []);
+
+  const handleLogin = async (usernameOrEmail: string, password: string) => {
     try {
-      const response = await api.post("/auth/login", {
-        usernameOrEmail,
-        password,
-      });
-
-      setCsrfToken(response.data.csrfToken);
-      return true;
+      const userData = await login(usernameOrEmail, password);
+      setUser(userData);
     } catch (error) {
       console.error("Error en login:", error);
-      return false;
     }
   };
 
-  return { login, csrfToken };
+  const handleLogout = async () => {
+    await logout();
+    setUser(null);
+  };
+
+  return { user, loading, handleLogin, handleLogout };
 };
