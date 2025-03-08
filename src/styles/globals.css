@@ -1,18 +1,69 @@
-@import "primeflex/primeflex.css";
-
 :root {
-  --primary-color: #152a45;
-  --secondary-color: #27c9a9;
-  --text-light: #ffffff;
-  --text-dark: #a6b1c0;
-  --input-border: #a6b1c0;
-  --button-hover: #1aa88a;
+  /* 🔹 Tamaños base */
+  --font-size-base: 16px;
+  --font-size-sm: 14px;
+  --font-size-md: 16px;
+  --font-size-lg: 18px;
+  --font-size-xl: 22px;
+  --font-size-xxl: 28px;
+
+  /* 🔹 Tipografía */
+  --font-primary: "Inter", sans-serif;
+  --font-secondary: "Roboto", sans-serif;
 }
 
 body {
-  font-family: "Roboto", sans-serif;
-  background-color: var(--primary-color);
+  font-family: var(--font-primary);
+  font-size: var(--font-size-base);
   color: var(--text-light);
-  margin: 0;
-  padding: 0;
+  background-color: var(--primary-dark);
+}
+
+/* 🔹 Encabezados */
+h1 {
+  font-size: var(--font-size-xxl);
+  font-weight: bold;
+}
+
+h2 {
+  font-size: var(--font-size-xl);
+  font-weight: bold;
+}
+
+h3 {
+  font-size: var(--font-size-lg);
+  font-weight: bold;
+}
+
+/* 🔹 Textos generales */
+p,
+span,
+label {
+  font-size: var(--font-size-md);
+}
+
+/* 🔹 Inputs */
+input,
+textarea {
+  font-size: var(--font-size-md);
+  padding: 10px;
+}
+
+/* 🔹 Botones */
+button {
+  font-size: var(--font-size-md);
+  font-weight: bold;
+  padding: 12px 16px;
+}
+
+/* 🔹 Tamaño en móviles (responsive) */
+@media (max-width: 768px) {
+  :root {
+    --font-size-base: 14px;
+    --font-size-sm: 12px;
+    --font-size-md: 14px;
+    --font-size-lg: 16px;
+    --font-size-xl: 20px;
+    --font-size-xxl: 24px;
+  }
 }

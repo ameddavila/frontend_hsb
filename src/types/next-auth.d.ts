@@ -1,28 +1,19 @@
-import NextAuth from "next-auth";
+import NextAuth, { DefaultSession } from "next-auth";
 
-// 🔹 Agrega este comentario para evitar el warning
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const _unusedNextAuth = NextAuth;
-// ✅ Extender correctamente los tipos de NextAuth
 declare module "next-auth" {
+  interface User {
+    id: string;
+    role: string;
+    roleName?: string; // ✅ Agregar roleName
+    csrfToken?: string;
+  }
+
   interface Session {
     user: {
       id: string;
       role: string;
-      roleId?: number;
-      roleName?: string;
-      accessToken?: string;
-      refreshToken?: string;
-    };
-    error?: string;
-  }
-
-  interface User {
-    id: string;
-    role: string;
-    roleId?: number;
-    roleName?: string;
-    accessToken?: string;
-    refreshToken?: string;
+      roleName?: string; // ✅ Agregar roleName aquí también
+      csrfToken?: string;
+    } & DefaultSession["user"];
   }
 }

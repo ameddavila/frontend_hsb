@@ -1,146 +1,190 @@
 "use client";
 
-import { useState, ChangeEvent } from "react";
+import { useForm, Controller, SubmitHandler } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
 import { useRouter } from "next/navigation";
 import { InputText } from "primereact/inputtext";
 import { Password } from "primereact/password";
 import { Button } from "primereact/button";
-import { registerUser } from "@/services/auth";
-import Link from "next/link";
+import axios from "axios";
 
-import "@/styles/globals.css";
 import "@/styles/auth.css";
 
-export default function RegisterPage() {
-  const [formData, setFormData] = useState({
-    username: "",
-    email: "",
-    password: "",
-    firstName: "",
-    lastName: "",
-    phone: "",
+// 📌 Esquema de validación con Zod
+const registerSchema = z
+  .object({
+    username: z.string().min(3, "Mínimo 3 caracteres"),
+    email: z.string().email("Correo inválido"),
+    password: z.string().min(6, "Mínimo 6 caracteres"),
+    confirmPassword: z.string().min(6, "Mínimo 6 caracteres"),
+    firstName: z.string().min(2, "Mínimo 2 caracteres"),
+    lastName: z.string().min(2, "Mínimo 2 caracteres"),
+    phone: z.string().min(6, "Número inválido").optional(),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Las contraseñas no coinciden",
+    path: ["confirmPassword"],
   });
 
-  const [loading, setLoading] = useState(false);
+// 📌 Definir la interfaz para el formulario
+interface RegisterFormInputs {
+  username: string;
+  email: string;
+  password: string;
+  confirmPassword: string;
+  firstName: string;
+  lastName: string;
+  phone?: string;
+}
+
+export default function RegisterPage() {
   const router = useRouter();
+  const {
+    control,
+    handleSubmit,
+    setError, // 📌 `setError` se mantiene para manejar errores de backend
+    formState: { isSubmitting },
+  } = useForm<RegisterFormInputs>({
+    resolver: zodResolver(registerSchema),
+    defaultValues: {
+      username: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+      firstName: "",
+      lastName: "",
+      phone: "",
+    },
+  });
 
-  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
-  const handleSubmit = async () => {
+  // 📌 Especificamos el tipo correcto en `onSubmit`
+  const onSubmit: SubmitHandler<RegisterFormInputs> = async (data) => {
     try {
-      setLoading(true);
-      await registerUser(formData);
+      const response = await axios.post(
+        `${process.env.NEXT_PUBLIC_API_URL}/users/register`,
+        {
+          username: data.username,
+          email: data.email,
+          password: data.password,
+          firstName: data.firstName,
+          lastName: data.lastName,
+          phone: data.phone,
+        }
+      );
+
+      console.log("✅ Registro exitoso:", response.data);
       alert("Registro exitoso");
       router.push("/login");
     } catch (error) {
-      alert(error);
-    } finally {
-      setLoading(false);
+      // 📌 Tipado correcto para errores del backend
+      if (axios.isAxiosError(error) && error.response) {
+        if (error.response.status === 409) {
+          setError("username", {
+            type: "manual",
+            message: "Usuario ya en uso",
+          });
+          setError("email", { type: "manual", message: "Correo ya en uso" });
+        } else if (error.response.status === 400) {
+          setError("email", {
+            type: "manual",
+            message: error.response.data.message,
+          });
+        } else {
+          alert(
+            `Error desconocido: ${
+              error.response.data.message || "Intenta de nuevo."
+            }`
+          );
+        }
+      } else {
+        alert("Error en el registro. Intenta de nuevo.");
+      }
     }
   };
 
   return (
     <div className="auth-container">
-      {/* Sección Izquierda (Logo) */}
-      <div className="auth-left">
-        <h1 className="logo-text">Chappie</h1>
-        <div className="logo-brain"></div>
-      </div>
+      <div className="auth-card">
+        <h2 className="auth-title">Registro</h2>
 
-      {/* Sección Derecha (Formulario) */}
-      <div className="auth-right">
-        <h2 className="register-title">Registro de Usuario</h2>
+        <form onSubmit={handleSubmit(onSubmit)} className="p-fluid">
+          <div className="form-grid">
+            <div className="p-field">
+              <label>Nombre de Usuario</label>
+              <Controller
+                name="username"
+                control={control}
+                render={({ field }) => <InputText {...field} />}
+              />
+            </div>
 
-        <div className="p-field">
-          <span className="p-float-label">
-            <InputText
-              name="username"
-              value={formData.username}
-              onChange={handleChange}
-              className="p-inputtext w-full"
-            />
-            <label htmlFor="username">Nombre de Usuario</label>
-          </span>
-        </div>
+            <div className="p-field">
+              <label>Correo Electrónico</label>
+              <Controller
+                name="email"
+                control={control}
+                render={({ field }) => <InputText {...field} />}
+              />
+            </div>
 
-        <div className="p-field">
-          <span className="p-float-label">
-            <InputText
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              className="p-inputtext w-full"
-            />
-            <label htmlFor="email">Correo Electrónico</label>
-          </span>
-        </div>
+            <div className="p-field">
+              <label>Nombre</label>
+              <Controller
+                name="firstName"
+                control={control}
+                render={({ field }) => <InputText {...field} />}
+              />
+            </div>
 
-        <div className="p-field">
-          <span className="p-float-label">
-            <Password
-              name="password"
-              value={formData.password}
-              onChange={handleChange}
-              toggleMask
-              feedback={false}
-              className="p-inputtext w-full"
-            />
-            <label htmlFor="password">Contraseña</label>
-          </span>
-        </div>
+            <div className="p-field">
+              <label>Apellido</label>
+              <Controller
+                name="lastName"
+                control={control}
+                render={({ field }) => <InputText {...field} />}
+              />
+            </div>
 
-        <div className="p-field">
-          <span className="p-float-label">
-            <InputText
-              name="firstName"
-              value={formData.firstName}
-              onChange={handleChange}
-              className="p-inputtext w-full"
-            />
-            <label htmlFor="firstName">Nombre</label>
-          </span>
-        </div>
+            <div className="p-field">
+              <label>Contraseña</label>
+              <Controller
+                name="password"
+                control={control}
+                render={({ field }) => (
+                  <Password {...field} toggleMask feedback={false} />
+                )}
+              />
+            </div>
 
-        <div className="p-field">
-          <span className="p-float-label">
-            <InputText
-              name="lastName"
-              value={formData.lastName}
-              onChange={handleChange}
-              className="p-inputtext w-full"
-            />
-            <label htmlFor="lastName">Apellido</label>
-          </span>
-        </div>
+            <div className="p-field">
+              <label>Confirmar Contraseña</label>
+              <Controller
+                name="confirmPassword"
+                control={control}
+                render={({ field }) => (
+                  <Password {...field} toggleMask feedback={false} />
+                )}
+              />
+            </div>
 
-        <div className="p-field">
-          <span className="p-float-label">
-            <InputText
-              name="phone"
-              value={formData.phone}
-              onChange={handleChange}
-              className="p-inputtext w-full"
-            />
-            <label htmlFor="phone">Teléfono</label>
-          </span>
-        </div>
+            <div className="p-field">
+              <label>Teléfono</label>
+              <Controller
+                name="phone"
+                control={control}
+                render={({ field }) => <InputText {...field} />}
+              />
+            </div>
+          </div>
 
-        {/* Botón de Registro */}
-        <Button
-          label="Registrarse"
-          onClick={handleSubmit}
-          className="register-button"
-          loading={loading}
-        />
-
-        {/* Enlace a Iniciar Sesión */}
-        <div className="links">
-          <Link href="/login">
-            ¿Ya tienes cuenta? <strong>Inicia Sesión</strong>
-          </Link>
-        </div>
+          <Button
+            label="Registrarse"
+            type="submit"
+            className="auth-button p-button-success mt-3"
+            loading={isSubmitting}
+          />
+        </form>
       </div>
     </div>
   );

@@ -1,33 +1,53 @@
 "use client";
 
-import { useState } from "react";
+import { useForm, Controller } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { InputText } from "primereact/inputtext";
 import { Password } from "primereact/password";
 import { Button } from "primereact/button";
-import { Checkbox } from "primereact/checkbox";
-import Link from "next/link";
+import { useState } from "react";
 
-import "primereact/resources/themes/lara-light-blue/theme.css";
-import "primereact/resources/primereact.min.css";
-import "@/styles/auth.css"; // Estilos personalizados
+import "@/styles/auth.css";
+
+// 📌 Definir el esquema de validación con Zod
+const loginSchema = z.object({
+  usernameOrEmail: z.string().min(3, "Campo obligatorio"),
+  password: z.string().min(3, "Mínimo 6 caracteres"),
+});
+
+// 📌 Definir la interfaz para evitar `any`
+interface LoginFormInputs {
+  usernameOrEmail: string;
+  password: string;
+}
 
 export default function LoginPage() {
-  const [usernameOrEmail, setUsernameOrEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [rememberMe, setRememberMe] = useState(false);
   const router = useRouter();
+  const [loginError, setLoginError] = useState("");
 
-  const handleLogin = async () => {
+  const {
+    control,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<LoginFormInputs>({
+    resolver: zodResolver(loginSchema),
+    defaultValues: { usernameOrEmail: "", password: "" },
+  });
+
+  const onSubmit = async (data: LoginFormInputs) => {
+    setLoginError("");
+
     const result = await signIn("credentials", {
-      usernameOrEmail,
-      password,
+      usernameOrEmail: data.usernameOrEmail,
+      password: data.password,
       redirect: false,
     });
 
     if (result?.error) {
-      alert("Error de autenticación: Verifica tus credenciales");
+      setLoginError("Credenciales incorrectas. Intenta de nuevo.");
     } else {
       router.push("/dashboard");
     }
@@ -35,70 +55,47 @@ export default function LoginPage() {
 
   return (
     <div className="auth-container">
-      <div className="auth-card grid">
-        {/* Sección Izquierda con Logo */}
-        <div className="col-5 auth-left">
-          <h1 className="logo-text">Chappie</h1>
-          <div className="brain-icon">
-            <i className="pi pi-cog"></i>
-          </div>
-        </div>
+      <div className="auth-card">
+        <h2 className="auth-title">Iniciar Sesión</h2>
 
-        {/* Sección Derecha con Formulario */}
-        <div className="col-7 auth-right">
-          <h2 className="auth-title">Iniciar Sesión</h2>
+        {loginError && <div className="auth-error">{loginError}</div>}
 
+        <form onSubmit={handleSubmit(onSubmit)} className="p-fluid">
           <div className="p-field">
-            <span className="p-float-label">
-              <InputText
-                id="usernameOrEmail"
-                value={usernameOrEmail}
-                onChange={(e) => setUsernameOrEmail(e.target.value)}
-                className="p-inputtext w-full"
-              />
-              <label htmlFor="usernameOrEmail">Correo Electrónico</label>
-            </span>
-          </div>
-
-          <div className="p-field">
-            <span className="p-float-label">
-              <Password
-                id="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                toggleMask
-                feedback={false}
-                className="p-inputtext w-full"
-              />
-              <label htmlFor="password">Contraseña</label>
-            </span>
-          </div>
-
-          {/* Recuérdame */}
-          <div className="remember-me flex align-items-center">
-            <Checkbox
-              inputId="rememberMe"
-              checked={rememberMe}
-              onChange={(e) => setRememberMe(e.checked!)}
+            <label>Correo Electrónico</label>
+            <Controller
+              name="usernameOrEmail"
+              control={control}
+              render={({ field }) => <InputText {...field} />}
             />
-            <label htmlFor="rememberMe" className="ml-2">
-              Recuérdame
-            </label>
+            {errors.usernameOrEmail && (
+              <small className="p-error">
+                {errors.usernameOrEmail.message}
+              </small>
+            )}
           </div>
 
-          {/* Botón de Login */}
+          <div className="p-field">
+            <label>Contraseña</label>
+            <Controller
+              name="password"
+              control={control}
+              render={({ field }) => (
+                <Password {...field} toggleMask feedback={false} />
+              )}
+            />
+            {errors.password && (
+              <small className="p-error">{errors.password.message}</small>
+            )}
+          </div>
+
           <Button
-            label="Iniciar Sesión"
-            onClick={handleLogin}
-            className="login-button"
+            label="Ingresar"
+            type="submit"
+            className="auth-button p-button-primary mt-3"
+            loading={isSubmitting}
           />
-
-          {/* Enlaces de Registro y Recuperación */}
-          <div className="links">
-            <Link href="/register">Regístrate aquí</Link>
-            <Link href="/forgot-password">Recuperar Contraseña</Link>
-          </div>
-        </div>
+        </form>
       </div>
     </div>
   );
