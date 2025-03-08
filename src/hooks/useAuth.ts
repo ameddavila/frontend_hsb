@@ -1,9 +1,11 @@
 import { useState, useEffect } from "react";
 import { login, logout, refreshAccessToken } from "@/services/api";
+import { useRouter } from "next/navigation";
 
 export const useAuth = () => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const router = useRouter();
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -12,7 +14,8 @@ export const useAuth = () => {
         if (token) {
           setUser(token.user);
         }
-      } catch (error) {
+      } catch {
+        // No se define ninguna variable, evitando el warning de ESLint
         setUser(null);
       } finally {
         setLoading(false);
@@ -24,10 +27,16 @@ export const useAuth = () => {
 
   const handleLogin = async (usernameOrEmail: string, password: string) => {
     try {
-      const userData = await login(usernameOrEmail, password);
-      setUser(userData);
+      const response = await login(usernameOrEmail, password);
+      if (!response.success) {
+        if (response.status === 403) {
+          router.push("/activar-cuenta");
+        }
+        throw new Error(response.message);
+      }
+      setUser(response);
     } catch (error) {
-      console.error("Error en login:", error);
+      console.error("Error en login:", error); // ✅ Se usa la variable para evitar warning
     }
   };
 

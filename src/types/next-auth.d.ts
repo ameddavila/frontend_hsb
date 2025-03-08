@@ -1,19 +1,17 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import NextAuth, { DefaultSession } from "next-auth";
 
 declare module "next-auth" {
   interface User {
     id: string;
     role: string;
-    roleName?: string; // ✅ Agregar roleName
+    roleName?: string;
     csrfToken?: string;
   }
 
   interface Session {
-    user: {
-      id: string;
-      role: string;
-      roleName?: string; // ✅ Agregar roleName aquí también
-      csrfToken?: string;
-    } & DefaultSession["user"];
+    user: User & DefaultSession["user"];
   }
 }
+
+export {};
