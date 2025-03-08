@@ -1,0 +1,90 @@
+/* Contenedor Principal */
+.auth-container {
+  display: flex;
+  height: 100vh;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Sección Izquierda (Logo) */
+.auth-left {
+  width: 40%;
+  background: linear-gradient(135deg, #1f3b57 0%, #27c9a9 100%);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+}
+
+.logo-text {
+  font-size: 3rem;
+  font-weight: bold;
+  color: white;
+}
+
+.logo-brain {
+  width: 100px;
+  height: 100px;
+  background-image: url("/images/brain-logo.png");
+  background-size: cover;
+  margin-top: 1rem;
+}
+
+/* Sección Derecha (Formulario) */
+.auth-right {
+  width: 60%;
+  background-color: var(--primary-color);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.register-title {
+  font-size: 2rem;
+  color: var(--text-light);
+  margin-bottom: 2rem;
+}
+
+/* Inputs */
+.p-inputtext {
+  width: 100%;
+  border-radius: 6px;
+  border: 1px solid var(--input-border);
+}
+
+/* Botón de Registro */
+.register-button {
+  width: 100%;
+  background-color: var(--secondary-color);
+  color: var(--primary-color);
+  font-weight: bold;
+  padding: 0.75rem;
+  border-radius: 6px;
+  text-align: center;
+  cursor: pointer;
+  transition: background 0.3s ease-in-out;
+}
+
+.register-button:hover {
+  background-color: var(--button-hover);
+}
+
+/* Enlaces */
+.links {
+  margin-top: 1rem;
+  text-align: center;
+}
+
+.links a {
+  color: var(--secondary-color);
+  text-decoration: none;
+  display: block;
+  margin-top: 0.5rem;
+}
+
+.links a:hover {
+  text-decoration: underline;
+}

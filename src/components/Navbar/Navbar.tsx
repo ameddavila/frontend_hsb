@@ -5,24 +5,19 @@ import { Button } from "primereact/button";
 export default function Navbar() {
   const { data: session } = useSession();
 
-  // 🔹 Corregir el error `session.error`
-  if (session?.user && "error" in session) {
-    signOut(); // 🔹 Cierra sesión si el Refresh Token falló
-  }
-
   return (
-    <nav className="p-4 bg-blue-600 text-white flex justify-between">
-      <h1 className="text-lg font-bold">SISHSB</h1>
-      {session?.user ? (
-        <div>
+    <nav className="navbar">
+      <h1 className="text-xl font-bold">SISHSB</h1>
+      {session?.user && (
+        <div className="flex align-items-center gap-3">
           <span>{session.user.roleName}</span>
           <Button
             label="Salir"
             onClick={() => signOut()}
-            className="ml-4 p-button-danger"
+            className="button-primary"
           />
         </div>
-      ) : null}
+      )}
     </nav>
   );
 }

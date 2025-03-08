@@ -1,0 +1,18 @@
+@import "primeflex/primeflex.css";
+
+:root {
+  --primary-color: #152a45;
+  --secondary-color: #27c9a9;
+  --text-light: #ffffff;
+  --text-dark: #a6b1c0;
+  --input-border: #a6b1c0;
+  --button-hover: #1aa88a;
+}
+
+body {
+  font-family: "Roboto", sans-serif;
+  background-color: var(--primary-color);
+  color: var(--text-light);
+  margin: 0;
+  padding: 0;
+}
