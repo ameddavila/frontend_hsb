@@ -1,30 +1,41 @@
-import { Controller, FieldErrors } from "react-hook-form";
+import { Controller, Control, FieldErrors, FieldValues, Path } from "react-hook-form";
 import { InputText } from "primereact/inputtext";
 import { Password } from "primereact/password";
 
-interface FormInputProps {
-  name: string;
+interface FormInputProps<T extends FieldValues> {
+  name: Path<T>;
   label: string;
-  control: any;
+  control: Control<T>;
   type?: "text" | "email" | "password";
-  errors: FieldErrors;
+  errors: FieldErrors<T>;
   required?: boolean;
 }
 
-const FormInput: React.FC<FormInputProps> = ({ name, label, control, type = "text", errors, required = false }) => {
+const FormInput = <T extends FieldValues>({
+  name,
+  label,
+  control,
+  type = "text",
+  errors,
+  required = false,
+}: FormInputProps<T>) => {
   return (
     <div className="p-field">
-      <label htmlFor={name}>
+      <label htmlFor={String(name)}>
         {label} {required && <span style={{ color: "red" }}>*</span>}
       </label>
       <Controller
         name={name}
         control={control}
         render={({ field }) =>
-          type === "password" ? <Password {...field} toggleMask feedback={false} /> : <InputText {...field} type={type} />
+          type === "password" ? (
+            <Password {...field} toggleMask feedback={false} />
+          ) : (
+            <InputText {...field} type={type} />
+          )
         }
       />
-      {errors[name] && <small className="p-error">{errors[name]?.message as string}</small>}
+      {errors[name] && <small className="p-error">{errors[name]?.message?.toString()}</small>}
     </div>
   );
 };

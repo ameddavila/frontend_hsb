@@ -11,6 +11,7 @@ import axios from "axios";
 import FormInput from "./FormInput";
 import PasswordStrength from "./PasswordStrength";
 import "@/styles/auth.css";
+import { RegisterFormInputs } from "@/types/auth.types";
 
 // 📌 Esquema de validación con Zod
 const registerSchema = z
@@ -27,16 +28,6 @@ const registerSchema = z
     message: "Las contraseñas no coinciden",
     path: ["confirmPassword"],
   });
-
-interface RegisterFormInputs {
-  username: string;
-  email: string;
-  password: string;
-  confirmPassword: string;
-  firstName: string;
-  lastName: string;
-  phone?: string;
-}
 
 const RegisterForm: React.FC = () => {
   const router = useRouter();
@@ -64,6 +55,7 @@ const RegisterForm: React.FC = () => {
 
   const onSubmit = async (data: RegisterFormInputs) => {
     try {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { confirmPassword, ...userData } = data;
 
       await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/users/register`, userData);
@@ -113,23 +105,37 @@ const RegisterForm: React.FC = () => {
   return (
     <div className="auth-container">
       <Toast ref={toast} />
-
       <div className="auth-card">
         <h2 className="auth-title">Registro</h2>
-
         <form onSubmit={handleSubmit(onSubmit)} className="p-fluid">
           <div className="form-grid">
+            {/* Fila 1: Nombre de Usuario | Correo Electrónico */}
             <FormInput name="username" label="Nombre de Usuario" control={control} errors={errors} required />
             <FormInput name="email" label="Correo Electrónico" type="email" control={control} errors={errors} required />
+
+            {/* Fila 2: Nombre | Apellido */}
             <FormInput name="firstName" label="Nombre" control={control} errors={errors} required />
             <FormInput name="lastName" label="Apellido" control={control} errors={errors} required />
+
+            {/* Fila 3: Teléfono (centrado) */}
+            <div className="centered-half-width">
+              <FormInput name="phone" label="Teléfono" control={control} errors={errors} />
+            </div>
+
+            {/* Fila 4: Contraseña | Confirmar Contraseña */}
             <FormInput name="password" label="Contraseña" type="password" control={control} errors={errors} required />
             <FormInput name="confirmPassword" label="Confirmar Contraseña" type="password" control={control} errors={errors} required />
-            <PasswordStrength password={password} />
-            <FormInput name="phone" label="Teléfono" control={control} errors={errors} />
-          </div>
 
-          <Button label="Registrarse" type="submit" className="auth-button p-button-success mt-3" loading={isSubmitting} />
+            {/* Fila 5: Indicador de fortaleza de la contraseña */}
+            <div className="full-width">
+              <PasswordStrength password={password} />
+            </div>
+
+            {/* Fila 6: Botón de registro (centrado) */}
+            <div className="centered-half-width">
+              <Button label="Registrarse" type="submit" className="auth-button p-button-success mt-3" loading={isSubmitting} />
+            </div>
+          </div>
         </form>
       </div>
     </div>

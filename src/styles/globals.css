@@ -23,7 +23,7 @@
   --color-bg-red: #ff4500;
   --color-bg-gray-dark: #808080;
   --color-bg-gray-medium: #7f7f7f;
-  --color-bg-gray-light: #343434;
+  --color-bg-gray-light: #fae6dc;
   --color-bg-navy: #002b76;
 
   /* 🔹 Colores de Texto */
@@ -56,6 +56,10 @@
 
 /* === 🌍 Configuración Global === */
 body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
   font-family: var(--font-primary);
   font-size: var(--font-size-base);
   color: var(--color-text-gray-light);
