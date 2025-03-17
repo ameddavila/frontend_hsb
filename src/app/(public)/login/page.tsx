@@ -8,20 +8,22 @@ import { useRouter } from "next/navigation";
 import { InputText } from "primereact/inputtext";
 import { Password } from "primereact/password";
 import { Button } from "primereact/button";
+import Link from "next/link";  // <--- Importar Link de Next
 import { useState } from "react";
 
 import "@/styles/auth.css";
 
-// 📌 Definir el esquema de validación con Zod
+// Esquema de validación
 const loginSchema = z.object({
   usernameOrEmail: z.string().min(3, "Campo obligatorio"),
-  password: z.string().min(3, "Mínimo 6 caracteres"),
+  password: z.string().min(6, "Mínimo 6 caracteres"),
+  // (Opcional) deviceId: z.string().default("MiLaptop-Windows") // Ejemplo
 });
 
-// 📌 Definir la interfaz para evitar `any`
 interface LoginFormInputs {
   usernameOrEmail: string;
   password: string;
+  // deviceId?: string; // si quieres un campo en el formulario
 }
 
 export default function LoginPage() {
@@ -40,9 +42,15 @@ export default function LoginPage() {
   const onSubmit = async (data: LoginFormInputs) => {
     setLoginError("");
 
+    // Ejemplo: añadir deviceId "dinámico" 
+    // (en la práctica, podría venir de un hook que obtiene info del SO, etc.)
+    const deviceId = "MiLaptop-Windows";
+
+    // signIn con Provider "credentials"
     const result = await signIn("credentials", {
       usernameOrEmail: data.usernameOrEmail,
       password: data.password,
+      // deviceId,  // si tu backend lo procesa en /auth/login
       redirect: false,
     });
 
@@ -89,12 +97,29 @@ export default function LoginPage() {
             )}
           </div>
 
+          {/* Botón para Enviar */}
           <Button
             label="Ingresar"
             type="submit"
             className="auth-button p-button-primary mt-3"
             loading={isSubmitting}
           />
+
+          {/* Sección de enlaces (Registro y Recuperar contraseña) */}
+          <div className="auth-links" style={{ marginTop: "1rem", textAlign: "center" }}>
+            <p>
+              ¿No tienes cuenta?{" "}
+              <Link href="/register" style={{ color: "#007bff" }}>
+                Regístrate
+              </Link>
+            </p>
+            <p>
+              ¿Olvidaste tu contraseña?{" "}
+              <Link href="/recuperar" style={{ color: "#007bff" }}>
+                Recuperar
+              </Link>
+            </p>
+          </div>
         </form>
       </div>
     </div>
