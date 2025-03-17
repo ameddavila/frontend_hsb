@@ -44,7 +44,7 @@ export default function LoginPage() {
 
     // Ejemplo: añadir deviceId "dinámico" 
     // (en la práctica, podría venir de un hook que obtiene info del SO, etc.)
-    const deviceId = "MiLaptop-Windows";
+    //const deviceId = "MiLaptop-Windows";
 
     // signIn con Provider "credentials"
     const result = await signIn("credentials", {

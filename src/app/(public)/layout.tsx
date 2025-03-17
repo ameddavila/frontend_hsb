@@ -1,18 +1,13 @@
 // app/(public)/layout.tsx
 "use client";
-import Footer from "@/components/Footer/Footer";
-import "@/styles/auth.css"; // si quisieras estilos específicos
+import React from "react";
+import "@/styles/globals.css"; // Asegura que los estilos globales se apliquen
+import "@/styles/auth.css"; // Asegura los estilos de autenticación
 
-export default function PublicLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function PublicLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="public-layout">
-      {/* Si quieres, pones un header minimal o nada */}
-      <main>{children}</main>
-      <Footer />
-    </div>
+    <html lang="es">
+      <body>{children}</body>
+    </html>
   );
 }
