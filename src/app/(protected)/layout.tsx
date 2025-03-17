@@ -4,7 +4,7 @@
 import Navbar from "@/components/Navbar/Navbar";
 import Sidebar from "@/components/Sidebar/Sidebar";
 import Footer from "@/components/Footer/Footer";
-import "@/styles/globals.css";
+import "@/styles/layout.css"; // Usaremos este archivo para estructurar
 
 export default function ProtectedLayout({
   children,
@@ -12,20 +12,26 @@ export default function ProtectedLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="protected-layout" style={{ display: "flex", minHeight: "100vh" }}>
-      {/* Sidebar a la izquierda */}
-      <Sidebar />
+    <div className="layout-container">
+      {/* Navbar (Superior) */}
+      <Navbar />
 
-      <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
-        {/* Navbar arriba */}
-        <Navbar />
+      <div className="layout-content">
+        {/* Sidebar (Izquierda) */}
+        <Sidebar />
 
-        {/* Contenido principal */}
-        <main style={{ flex: 1 }}>{children}</main>
+        {/* Contenido Principal */}
+        <main className="layout-main">{children}</main>
 
-        {/* Footer */}
-        <Footer />
+        {/* Panel Lateral (Derecha) */}
+        <aside className="layout-aside">
+          <h3>Últimas Transacciones</h3>
+          {/* Aquí puedes incluir contenido dinámico como widgets, notificaciones, etc. */}
+        </aside>
       </div>
+
+      {/* Footer (Opcional) */}
+      <Footer />
     </div>
   );
 }

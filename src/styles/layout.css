@@ -1,0 +1,64 @@
+/* === 📌 Contenedor principal del Layout === */
+.layout-container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh; /* Ocupar toda la pantalla */
+  }
+  
+  /* === 📌 Navbar fijo en la parte superior === */
+  .layout-container > nav {
+    height: 60px; /* Altura del navbar */
+    background-color: var(--color-bg-orange);
+    color: var(--color-text-white);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 1rem;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+  }
+  
+  /* === 📌 Estructura del contenido === */
+  .layout-content {
+    display: grid;
+    grid-template-columns: 250px 1fr 300px; /* Sidebar | Contenido | Panel Lateral */
+    flex: 1;
+    height: calc(100vh - 60px); /* Resta la altura del navbar */
+  }
+  
+  /* === 📌 Sidebar Izquierdo (Menú) === */
+  .layout-content > .sidebar {
+    background-color: var(--color-bg-navy);
+    color: var(--color-text-white);
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  /* === 📌 Contenido Principal (Centro) === */
+  .layout-main {
+    background-color: var(--color-bg-light);
+    padding: 2rem;
+    overflow-y: auto;
+  }
+  
+  /* === 📌 Panel Lateral Derecho (Opcional) === */
+  .layout-aside {
+    background-color: var(--color-bg-white);
+    padding: 1rem;
+    box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
+    overflow-y: auto;
+  }
+  
+  /* === 📌 Footer === */
+  footer {
+    height: 50px;
+    background-color: var(--color-bg-gray-dark);
+    color: var(--color-text-white);
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
