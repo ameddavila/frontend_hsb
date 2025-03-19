@@ -7,26 +7,41 @@
   flex-direction: column;
   position: fixed;
   height: 100%;
-  left: -250px;
-  transition: left 0.3s ease-in-out;
-}
-
-.sidebar.open {
   left: 0;
+  transition: width 0.3s ease-in-out;
 }
 
+/* Sidebar colapsado */
+.sidebar.collapsed {
+  width: 70px;
+}
+
+/* === 📌 Estilos del menú === */
 .sidebar nav {
   display: flex;
   flex-direction: column;
   gap: 1rem;
 }
 
+/* === 📌 Links del menú === */
 .sidebar nav a {
   color: var(--color-text-white);
   text-decoration: none;
   padding: 0.8rem;
   font-size: 1rem;
   transition: all 0.3s ease-in-out;
+  display: flex;
+  align-items: center;
+}
+
+/* Íconos en sidebar */
+.sidebar nav a i {
+  margin-right: 10px;
+}
+
+/* Cuando está colapsado, oculta el texto */
+.sidebar.collapsed nav a span {
+  display: none;
 }
 
 .sidebar nav a:hover {

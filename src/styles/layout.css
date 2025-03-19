@@ -1,22 +1,8 @@
-/* === 📌 Contenedor principal === */
+/* === 📌 Contenedor Principal === */
 .layout-container {
   display: flex;
   flex-direction: column;
   height: 100vh;
-}
-
-/* === 📌 Navbar superior === */
-.layout-container > nav {
-  height: 60px;
-  background-color: var(--color-bg-navbar);
-  color: var(--color-text-white);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 1.5rem;
-  position: sticky;
-  top: 0;
-  z-index: 1000;
 }
 
 /* === 📌 Estructura del contenido === */
@@ -25,11 +11,10 @@
   grid-template-columns: 250px auto 350px; /* Sidebar | Contenido Flexible | Panel Derecho */
   flex: 1;
   height: calc(100vh - 60px);
-  max-width: 1600px; /* Mantiene un ancho máximo */
-  margin: 0 auto; /* Centrado en pantallas grandes */
+  transition: grid-template-columns 0.3s ease-in-out;
 }
 
-/* === 📌 Sidebar (Menú lateral izquierdo) === */
+/* === 📌 Sidebar === */
 .sidebar {
   background-color: var(--color-bg-sidebar);
   color: var(--color-text-white);
@@ -37,6 +22,8 @@
   padding: 1rem;
   display: flex;
   flex-direction: column;
+  position: relative; /* Cambiar de 'fixed' a 'relative' */
+  height: 100vh;
   transition: width 0.3s ease-in-out;
 }
 
@@ -45,37 +32,35 @@
   width: 70px;
 }
 
-/* === 📌 Contenido principal === */
+/* === 📌 Contenido Principal === */
 .layout-main {
   background-color: var(--color-bg-light);
   padding: 2rem;
   overflow-y: auto;
-  flex-grow: 1; /* Ajusta el tamaño dinámicamente */
-  min-width: 500px; /* Evita que se colapse demasiado */
+  flex-grow: 1;
+  min-width: 500px;
+  transition: margin-left 0.3s ease-in-out;
 }
 
-/* === 📌 Panel derecho === */
+/* Ajuste del contenido cuando el sidebar se colapsa */
+.sidebar.collapsed + .layout-main {
+  margin-left: 70px;
+}
+
+/* === 📌 Panel Derecho === */
 .layout-aside {
   background-color: var(--color-bg-white);
   padding: 1.5rem;
   box-shadow: var(--box-shadow);
   overflow-y: auto;
   min-width: 300px;
-  max-width: 350px; /* Mantiene el tamaño */
+  max-width: 350px;
+  transition: max-width 0.3s ease-in-out;
 }
 
-/* === 📌 Footer === */
-footer {
-  height: 50px;
-  background-color: var(--color-bg-footer);
-  color: var(--color-text-white);
-  text-align: center;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
+/* === 📌 RESPONSIVE === */
 
-/* === 🛠 Responsivo === */
+/* Quitar panel derecho en pantallas pequeñas */
 @media (max-width: 1200px) {
   .layout-content {
     grid-template-columns: 200px auto; /* Oculta el panel derecho */
@@ -85,9 +70,10 @@ footer {
   }
 }
 
+/* En móviles, sidebar oculto y panel derecho abajo */
 @media (max-width: 768px) {
   .layout-content {
-    grid-template-columns: 1fr; /* Oculta sidebar en móviles */
+    grid-template-columns: 1fr;
   }
 
   .sidebar {
@@ -100,5 +86,13 @@ footer {
 
   .sidebar.open {
     left: 0;
+  }
+
+  .layout-aside {
+    display: block;
+    width: 100%;
+    max-width: none;
+    padding: 1rem;
+    order: 3;
   }
 }
