@@ -8,7 +8,7 @@
 /* === 📌 Navbar superior === */
 .layout-container > nav {
   height: 60px;
-  background-color: var(--color-bg-sidebar);
+  background-color: var(--color-bg-navbar);
   color: var(--color-text-white);
   display: flex;
   align-items: center;
@@ -22,18 +22,27 @@
 /* === 📌 Estructura del contenido === */
 .layout-content {
   display: grid;
-  grid-template-columns: 250px 1fr 350px;
+  grid-template-columns: 250px auto 350px; /* Sidebar | Contenido Flexible | Panel Derecho */
   flex: 1;
   height: calc(100vh - 60px);
+  max-width: 1600px; /* Mantiene un ancho máximo */
+  margin: 0 auto; /* Centrado en pantallas grandes */
 }
 
 /* === 📌 Sidebar (Menú lateral izquierdo) === */
-.layout-content > .sidebar {
-  background-color: var(--color-bg-white);
+.sidebar {
+  background-color: var(--color-bg-sidebar);
   color: var(--color-text-white);
+  width: 250px;
   padding: 1rem;
   display: flex;
   flex-direction: column;
+  transition: width 0.3s ease-in-out;
+}
+
+/* Sidebar colapsado */
+.sidebar.collapsed {
+  width: 70px;
 }
 
 /* === 📌 Contenido principal === */
@@ -41,6 +50,8 @@
   background-color: var(--color-bg-light);
   padding: 2rem;
   overflow-y: auto;
+  flex-grow: 1; /* Ajusta el tamaño dinámicamente */
+  min-width: 500px; /* Evita que se colapse demasiado */
 }
 
 /* === 📌 Panel derecho === */
@@ -49,6 +60,8 @@
   padding: 1.5rem;
   box-shadow: var(--box-shadow);
   overflow-y: auto;
+  min-width: 300px;
+  max-width: 350px; /* Mantiene el tamaño */
 }
 
 /* === 📌 Footer === */
@@ -60,4 +73,32 @@ footer {
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+/* === 🛠 Responsivo === */
+@media (max-width: 1200px) {
+  .layout-content {
+    grid-template-columns: 200px auto; /* Oculta el panel derecho */
+  }
+  .layout-aside {
+    display: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .layout-content {
+    grid-template-columns: 1fr; /* Oculta sidebar en móviles */
+  }
+
+  .sidebar {
+    position: absolute;
+    left: -250px;
+    height: 100%;
+    z-index: 1000;
+    transition: left 0.3s ease-in-out;
+  }
+
+  .sidebar.open {
+    left: 0;
+  }
 }

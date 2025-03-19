@@ -40,7 +40,6 @@
   --color-btn-secondary-hover: #004b99;
 }
 
-/* === 🌍 Configuración Global === */
 body {
   margin: 0;
   padding: 0;
@@ -68,23 +67,7 @@ h3 {
   color: var(--color-text-gray);
 }
 
-p, label {
-  font-size: var(--font-size-md);
-  color: var(--color-text-gray);
-}
-
-/* === 🔳 Input y Textarea === */
-input,
-textarea {
-  font-size: var(--font-size-md);
-  padding: 10px;
-  border: 1px solid var(--color-text-light-gray);
-  background-color: var(--color-bg-white);
-  color: var(--color-text-dark);
-  border-radius: var(--border-radius);
-}
-
-/* === 🔘 Botones Globales === */
+/* === 🔘 Botones === */
 button {
   font-size: var(--font-size-md);
   font-weight: bold;
@@ -112,16 +95,4 @@ button {
 
 .button-secondary:hover {
   background-color: var(--color-btn-secondary-hover);
-}
-
-/* === 🌍 Diseño Responsive === */
-@media (max-width: 768px) {
-  :root {
-    --font-size-base: 14px;
-    --font-size-sm: 12px;
-    --font-size-md: 14px;
-    --font-size-lg: 16px;
-    --font-size-xl: 20px;
-    --font-size-xxl: 24px;
-  }
 }
