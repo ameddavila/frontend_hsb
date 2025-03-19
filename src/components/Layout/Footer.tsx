@@ -1,3 +1,4 @@
+// components/Layout/Footer.tsx
 export default function Footer() {
   return (
     <footer className="text-center p-3 bg-primary text-white">

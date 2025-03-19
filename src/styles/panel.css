@@ -1,0 +1,38 @@
+/* === 📌 Panel Lateral Derecho === */
+.panel-derecho {
+    background-color: var(--color-bg-white);
+    padding: 1.5rem;
+    box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
+    height: 100%;
+    overflow-y: auto;
+  }
+  
+  /* === 📌 Títulos === */
+  .panel-derecho h3 {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: var(--color-text-gray-dark);
+    margin-bottom: 1rem;
+  }
+  
+  /* === 📌 Lista de transacciones === */
+  .panel-derecho ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .panel-derecho ul li {
+    padding: 0.8rem;
+    background-color: var(--color-bg-light);
+    border-radius: 8px;
+    margin-bottom: 0.5rem;
+    font-size: 0.95rem;
+    display: flex;
+    justify-content: space-between;
+  }
+  
+  .panel-derecho ul li:hover {
+    background-color: var(--color-bg-info);
+  }
+  

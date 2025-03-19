@@ -1,36 +1,30 @@
 // app/(protected)/layout.tsx
 "use client";
 
-import Navbar from "@/components/Navbar/Navbar";
-import Sidebar from "@/components/Sidebar/Sidebar";
-import Footer from "@/components/Footer/Footer";
-import "@/styles/layout.css"; // Usaremos este archivo para estructurar
+import Navbar from "@/components/Layout/Navbar";
+import Sidebar from "@/components/Layout/Sidebar";
+import Footer from "@/components/Layout/Footer";
+import PanelDerecho from "@/components/Layout/PanelDerecho";
+import "@/styles/layout.css"; // Importamos estilos globales
 
-export default function ProtectedLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function ProtectedLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="layout-container">
-      {/* Navbar (Superior) */}
+      {/* Navbar superior */}
       <Navbar />
 
       <div className="layout-content">
-        {/* Sidebar (Izquierda) */}
+        {/* Sidebar (Menú lateral contraíble) */}
         <Sidebar />
 
         {/* Contenido Principal */}
         <main className="layout-main">{children}</main>
 
-        {/* Panel Lateral (Derecha) */}
-        <aside className="layout-aside">
-          <h3>Últimas Transacciones</h3>
-          {/* Aquí puedes incluir contenido dinámico como widgets, notificaciones, etc. */}
-        </aside>
+        {/* Panel lateral derecho con widgets */}
+        <PanelDerecho />
       </div>
 
-      {/* Footer (Opcional) */}
+      {/* Footer */}
       <Footer />
     </div>
   );

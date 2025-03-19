@@ -15,80 +15,60 @@
 
   /* 🔹 Colores de Fondo */
   --color-bg-white: #ffffff;
-  --color-bg-light: #f1f1f1;
-  --color-bg-blue-light: #e5f1ff;
-  --color-bg-peach: #fbd4bf;
-  --color-bg-info: #b2d6ff;
-  --color-bg-orange: #f26e29;
-  --color-bg-red: #ff4500;
-  --color-bg-gray-dark: #808080;
-  --color-bg-gray-medium: #7f7f7f;
-  --color-bg-gray-light: #fae6dc;
-  --color-bg-navy: #002b76;
+  --color-bg-light: #f4f6f8;
+  --color-bg-dark: #1e1e2f;
+  --color-bg-accent: #f26e29;
+  --color-bg-sidebar: #001f5a;
+  --color-bg-navbar: #f26e29;
+  --color-bg-footer: #222233;
 
   /* 🔹 Colores de Texto */
   --color-text-white: #ffffff;
-  --color-text-orange: #f26e29;
-  --color-text-orange-dark: #ff4f10;
-  --color-text-blue-dark: #337ab7;
-  --color-text-blue: #0066cc;
-  --color-text-gray-dark: #53607e;
+  --color-text-dark: #0a0a0a;
   --color-text-gray: #555555;
-  --color-text-gray-light: #343434;
-  --color-text-navy: #001f5a;
-  --color-text-black: #000000;
+  --color-text-light-gray: #888888;
+  --color-text-accent: #f26e29;
 
-  /* 🔹 Colores de Acento */
-  --color-accent-primary: #f26e29;
-  --color-accent-secondary: #b2d6ff;
-  --color-accent-danger: #ff4500;
-  --color-accent-info: #0066cc;
+  /* 🔹 Bordes y sombras */
+  --border-radius: 8px;
+  --box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
 
-  /* 🔹 Colores de Fondo para Componentes */
-  --color-card-bg: var(--color-bg-white);
-  --color-card-border: var(--color-bg-gray-light);
-  --color-navbar-bg: var(--color-accent-primary);
-  --color-sidebar-bg: var(--color-text-navy);
-  --color-button-primary-bg: var(--color-accent-primary);
-  --color-button-primary-hover: var(--color-text-orange-dark);
-  --color-button-secondary-bg: var(--color-accent-secondary);
+  /* 🔹 Botones */
+  --color-btn-primary: #f26e29;
+  --color-btn-hover: #d9531e;
+  --color-btn-secondary: #0066cc;
+  --color-btn-secondary-hover: #004b99;
 }
 
 /* === 🌍 Configuración Global === */
 body {
   margin: 0;
   padding: 0;
-  width: 100%;
-  height: 100%;
   font-family: var(--font-primary);
   font-size: var(--font-size-base);
-  color: var(--color-text-gray-light);
-  background-color: var(--color-bg-white);
+  color: var(--color-text-dark);
+  background-color: var(--color-bg-light);
 }
 
-/* === 🏷️ Encabezados === */
 h1 {
   font-size: var(--font-size-xxl);
   font-weight: bold;
-  color: var(--color-text-black);
+  color: var(--color-text-dark);
 }
 
 h2 {
   font-size: var(--font-size-xl);
   font-weight: bold;
-  color: var(--color-text-black);
+  color: var(--color-text-dark);
 }
 
 h3 {
   font-size: var(--font-size-lg);
   font-weight: bold;
-  color: var(--color-text-gray-dark);
+  color: var(--color-text-gray);
 }
 
-/* === 📄 Textos Generales === */
-p,
-span,
-label {
+p, label {
   font-size: var(--font-size-md);
   color: var(--color-text-gray);
 }
@@ -98,84 +78,43 @@ input,
 textarea {
   font-size: var(--font-size-md);
   padding: 10px;
-  border: 1px solid var(--color-bg-gray-light);
-  background-color: var(--color-bg-light);
-  color: var(--color-text-black);
+  border: 1px solid var(--color-text-light-gray);
+  background-color: var(--color-bg-white);
+  color: var(--color-text-dark);
+  border-radius: var(--border-radius);
 }
 
-/* === 🔘 Botones === */
+/* === 🔘 Botones Globales === */
 button {
   font-size: var(--font-size-md);
   font-weight: bold;
   padding: 12px 16px;
-  border-radius: 5px;
+  border-radius: var(--border-radius);
   cursor: pointer;
+  transition: all 0.3s ease-in-out;
 }
 
-/* === ✅ Botón Primario === */
 .button-primary {
-  background-color: var(--color-button-primary-bg);
+  background-color: var(--color-btn-primary);
   color: var(--color-text-white);
   border: none;
 }
 
 .button-primary:hover {
-  background-color: var(--color-button-primary-hover);
+  background-color: var(--color-btn-hover);
 }
 
-/* === 🔷 Botón Secundario === */
 .button-secondary {
-  background-color: var(--color-button-secondary-bg);
-  color: var(--color-text-black);
+  background-color: var(--color-btn-secondary);
+  color: var(--color-text-white);
   border: none;
 }
 
 .button-secondary:hover {
-  background-color: var(--color-text-blue);
-  color: var(--color-text-white);
+  background-color: var(--color-btn-secondary-hover);
 }
 
-/* === 🖥️ Navbar === */
-.navbar {
-  background-color: var(--color-navbar-bg);
-  color: var(--color-text-white);
-  padding: 1rem;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-/* === 📂 Sidebar === */
-.sidebar {
-  background-color: var(--color-sidebar-bg);
-  color: var(--color-text-white);
-  width: 250px;
-  height: 100vh;
-  padding: 1rem;
-}
-
-/* === 🎨 Personalización PrimeReact === */
-.p-button-primary {
-  background-color: var(--color-button-primary-bg) !important;
-  border-color: var(--color-button-primary-bg) !important;
-  color: var(--color-text-white) !important;
-}
-
-.p-button-primary:hover {
-  background-color: var(--color-button-primary-hover) !important;
-}
-
-.p-button-secondary {
-  background-color: var(--color-button-secondary-bg) !important;
-  border-color: var(--color-button-secondary-bg) !important;
-  color: var(--color-text-black) !important;
-}
-
-.p-button-secondary:hover {
-  background-color: var(--color-text-blue) !important;
-  color: var(--color-text-white) !important;
-}
-
+/* === 🌍 Diseño Responsive === */
 @media (max-width: 768px) {
   :root {
     --font-size-base: 14px;
@@ -185,18 +124,4 @@ button {
     --font-size-xl: 20px;
     --font-size-xxl: 24px;
   }
-
-  .sidebar {
-    width: 200px;
-  }
-
-  .navbar {
-    padding: 0.5rem;
-  }
-
-  .button-primary {
-    font-size: 14px;
-    padding: 10px;
-  }
 }
-

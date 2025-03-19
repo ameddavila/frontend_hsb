@@ -1,21 +1,28 @@
 .navbar {
-    background-color: var(--color-bg-orange);
-    color: var(--color-text-white);
-    height: 60px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 1rem;
-  }
-  
-  .brand {
-    font-size: 1.5rem;
-    font-weight: bold;
-  }
-  
-  .navbar-links a {
-    margin-left: 1rem;
-    color: var(--color-text-white);
-    text-decoration: none;
-  }
-  
+  color: var(--color-text-white);
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 1.5rem;
+}
+
+.brand {
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.navbar-menu {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.navbar-menu .p-menuitem-link {
+  color: var(--color-text-white) !important;
+  font-size: 1rem;
+}
+
+.navbar-menu .p-menuitem-link:hover {
+  background: var(--color-btn-primary);
+}
