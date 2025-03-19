@@ -1,17 +1,20 @@
-// components/Layout/PanelDerecho.tsx
 "use client";
 
-import "@/styles/panel.css";
+import React from "react";
+import { Card } from "primereact/card";
 
 export default function PanelDerecho() {
   return (
-    <aside className="panel-derecho">
-      <h3>Últimas Transacciones</h3>
-      <ul>
-        <li>Pago a Proveedor 1 - Bs. 200</li>
-        <li>Pago a Proveedor 2 - Bs. 350</li>
-        <li>Transferencia a Cliente - Bs. 100</li>
-      </ul>
+    <aside
+      className="bg-white border-left-1 surface-border p-3"
+      style={{ width: "20rem", minWidth: "20rem" }}
+    >
+      <h3 className="text-xl mb-3">Últimas Transacciones</h3>
+      <div className="flex flex-column gap-2">
+        <Card title="Pago a Proveedor 1" subTitle="Bs. 200" />
+        <Card title="Pago a Proveedor 2" subTitle="Bs. 350" />
+        <Card title="Transferencia a Cliente" subTitle="Bs. 100" />
+      </div>
     </aside>
   );
 }

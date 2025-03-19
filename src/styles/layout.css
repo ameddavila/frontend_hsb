@@ -20,9 +20,6 @@
   color: var(--color-text-white);
   width: 250px;
   padding: 1rem;
-  display: flex;
-  flex-direction: column;
-  position: relative; /* Cambiar de 'fixed' a 'relative' */
   height: 100vh;
   transition: width 0.3s ease-in-out;
 }
@@ -39,7 +36,6 @@
   overflow-y: auto;
   flex-grow: 1;
   min-width: 500px;
-  transition: margin-left 0.3s ease-in-out;
 }
 
 /* Ajuste del contenido cuando el sidebar se colapsa */
@@ -48,7 +44,7 @@
 }
 
 /* === 📌 Panel Derecho === */
-.layout-aside {
+.panel-derecho {
   background-color: var(--color-bg-white);
   padding: 1.5rem;
   box-shadow: var(--box-shadow);
@@ -59,18 +55,15 @@
 }
 
 /* === 📌 RESPONSIVE === */
-
-/* Quitar panel derecho en pantallas pequeñas */
 @media (max-width: 1200px) {
   .layout-content {
-    grid-template-columns: 200px auto; /* Oculta el panel derecho */
+    grid-template-columns: 200px auto;
   }
   .layout-aside {
     display: none;
   }
 }
 
-/* En móviles, sidebar oculto y panel derecho abajo */
 @media (max-width: 768px) {
   .layout-content {
     grid-template-columns: 1fr;

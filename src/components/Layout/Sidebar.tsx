@@ -1,24 +1,60 @@
-// components/Layout/Sidebar.tsx
 "use client";
 
-import Link from "next/link";
-import { useState } from "react";
-import "@/styles/sidebar.css"; // Estilos dedicados
+import React from "react";
+import { Menu } from "primereact/menu";
+import { classNames } from "primereact/utils";
+import { useRouter } from "next/navigation";
 
-export default function Sidebar() {
-  const [open, setOpen] = useState(true);
+interface SidebarProps {
+  open: boolean;
+}
+
+export default function Sidebar({ open }: SidebarProps) {
+  const router = useRouter();
+
+  const items = [
+    {
+      label: "Inicio",
+      icon: "pi pi-home",
+      command: () => {
+        void router.push("/dashboard");
+      },
+    },
+    {
+      label: "Mi Perfil",
+      icon: "pi pi-user",
+      command: () => {
+        void router.push("/profile");
+      },
+    },
+    {
+      label: "Transferencias",
+      icon: "pi pi-money-bill",
+      command: () => {
+        void router.push("/transfers");
+      },
+    },
+    {
+      label: "Servicios",
+      icon: "pi pi-briefcase",
+      command: () => {
+        void router.push("/services");
+      },
+    },
+  ];
 
   return (
-    <aside className={`sidebar ${open ? "open" : "collapsed"}`}>
-      <button className="toggle-btn" onClick={() => setOpen(!open)}>
-        {open ? "<<" : ">>"}
-      </button>
-      <nav>
-        <Link href="/dashboard">🏠 Inicio</Link>
-        <Link href="/profile">👤 Mi perfil</Link>
-        <Link href="/transfers">💸 Transferencias</Link>
-        <Link href="/services">⚙️ Servicios</Link>
-      </nav>
+    <aside
+      className={classNames(
+        "bg-primary text-white p-2 transition-all overflow-hidden",
+        {
+          "w-16rem": open,
+          "w-3rem": !open,
+        }
+      )}
+      style={{ minWidth: open ? "16rem" : "3rem" }}
+    >
+      <Menu model={items} className="border-none" />
     </aside>
   );
 }

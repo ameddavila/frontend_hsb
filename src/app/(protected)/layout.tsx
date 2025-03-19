@@ -1,30 +1,45 @@
-// app/(protected)/layout.tsx
 "use client";
 
+import React, { useState } from "react";
 import Navbar from "@/components/Layout/Navbar";
 import Sidebar from "@/components/Layout/Sidebar";
-import Footer from "@/components/Layout/Footer";
 import PanelDerecho from "@/components/Layout/PanelDerecho";
-import "@/styles/layout.css"; // Importamos estilos globales
+import Footer from "@/components/Layout/Footer";
 
-export default function ProtectedLayout({ children }: { children: React.ReactNode }) {
+interface ProtectedLayoutProps {
+  children: React.ReactNode;
+}
+
+export default function ProtectedLayout({ children }: ProtectedLayoutProps) {
+  // Controlar visibilidad de la sidebar y el panel derecho
+  const [sidebarOpen, setSidebarOpen] = useState<boolean>(true);
+  const [panelOpen, setPanelOpen] = useState<boolean>(true);
+
+  const handleToggleSidebar = () => {
+    setSidebarOpen((prev) => !prev);
+  };
+
+  const handleTogglePanel = () => {
+    setPanelOpen((prev) => !prev);
+  };
+
   return (
-    <div className="layout-container">
-      {/* Navbar superior */}
-      <Navbar />
+    <div className="flex flex-column h-screen">
+      {/* Navbar Superior */}
+      <Navbar onToggleSidebar={handleToggleSidebar} onTogglePanel={handleTogglePanel} />
 
-      <div className="layout-content">
-        {/* Sidebar (Menú lateral contraíble) */}
-        <Sidebar />
+      <div className="flex flex-grow-1" style={{ flex: 1 }}>
+        {/* Sidebar (menú lateral) */}
+        <Sidebar open={sidebarOpen} />
 
-        {/* Contenido Principal */}
-        <main className="layout-main">{children}</main>
+        {/* Contenido principal */}
+        <main className="flex-auto p-3 overflow-auto">{children}</main>
 
-        {/* Panel lateral derecho con widgets */}
-        <PanelDerecho />
+        {/* Panel derecho, si está abierto */}
+        {panelOpen && <PanelDerecho />}
       </div>
 
-      {/* Footer */}
+      {/* Footer al final */}
       <Footer />
     </div>
   );

@@ -1,3 +1,10 @@
+/* globals.css */
+
+@import "primeicons/primeicons.css";
+@import "primereact/resources/themes/lara-light-indigo/theme.css"; /* Puedes cambiar a otro tema */
+@import "primereact/resources/primereact.min.css";
+@import "primeflex/primeflex.css";
+
 :root {
   /* 🔹 Tamaños base */
   --font-size-base: 16px;
