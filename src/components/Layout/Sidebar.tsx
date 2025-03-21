@@ -54,7 +54,7 @@ export default function Sidebar({ open }: SidebarProps) {
         )}
         style={{
           minWidth: open ? "16rem" : "3rem",
-          backgroundColor: "var(--color-bg-sidebar)",
+          backgroundColor: "var(--color-bg-light)",
           color: "var(--color-text-white)"
         }}
       >
