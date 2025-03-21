@@ -2,7 +2,6 @@
 
 import React from "react";
 import { Menu } from "primereact/menu";
-import { classNames } from "primereact/utils";
 import { useRouter } from "next/navigation";
 
 interface SidebarProps {
@@ -45,20 +44,21 @@ export default function Sidebar({ open }: SidebarProps) {
 
   return (
     <aside
-        className={classNames(
-          "p-2 transition-all overflow-hidden",
-          {
-            "w-16rem": open,
-            "w-3rem": !open,
-          }
-        )}
-        style={{
-          minWidth: open ? "16rem" : "3rem",
-          backgroundColor: "var(--color-bg-light)",
-          color: "var(--color-text-white)"
-        }}
-      >
-      <Menu model={items} className="border-none" />
+      className={`sidebar ${open ? "expanded" : "collapsed"}`}
+    >
+      {/* Menú que se muestra solo si la Sidebar está expandida */}
+      {open && <Menu model={items} className="sidebar-menu border-none" />}
+      
+      {/* Íconos individuales que se muestran cuando la Sidebar está colapsada */}
+      {!open && (
+        <div className="collapsed-menu">
+          {items.map((item, index) => (
+            <div key={index} className="collapsed-icon" onClick={item.command}>
+              <i className={item.icon}></i>
+            </div>
+          ))}
+        </div>
+      )}
     </aside>
   );
 }

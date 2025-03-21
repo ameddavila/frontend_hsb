@@ -13,7 +13,7 @@ interface NavbarProps {
 export default function Navbar({ onToggleSidebar, onTogglePanel }: NavbarProps) {
   const router = useRouter();
 
-  // El menú principal se pasa en "model"
+  // Menú principal con solo el botón de inicio
   const menubarModel = [
     {
       label: "Hospital Santa Bárbara",
@@ -21,11 +21,11 @@ export default function Navbar({ onToggleSidebar, onTogglePanel }: NavbarProps) 
       command: () => {
         void router.push("/dashboard");
       },
+      className: "home-button", // Aplicamos una clase específica para estilos personalizados
     },
   ];
-  
 
-  // Creamos un componente para la sección "end"
+  // Sección de botones al final
   const endComponent = (
     <div className="flex align-items-center gap-2">
       <Button
@@ -45,7 +45,7 @@ export default function Navbar({ onToggleSidebar, onTogglePanel }: NavbarProps) 
     </div>
   );
 
-  // Elementos "start" para toggles (Sidebar y Panel Derecho)
+  // Botones de la izquierda (Sidebar y Panel Derecho)
   const start = (
     <div className="flex align-items-center">
       <Button
@@ -65,13 +65,11 @@ export default function Navbar({ onToggleSidebar, onTogglePanel }: NavbarProps) 
 
   return (
     <Menubar
-      model={menubarModel}
       start={start}
+      model={menubarModel} // Volvemos a incluir el botón dentro del menú
       end={endComponent}
       className="navbar border-none shadow-1"
-      style={{ backgroundColor: "var(--color-bg-sidebar)", 
-              color: "var(--color-text-white)" 
-            }}
+      style={{ backgroundColor: "var(--color-bg-sidebar)", color: "var(--color-text-white)" }}
     />
   );
 }

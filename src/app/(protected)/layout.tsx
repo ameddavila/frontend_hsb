@@ -24,16 +24,18 @@ export default function ProtectedLayout({ children }: ProtectedLayoutProps) {
   };
 
   return (
-    <div className="flex flex-column h-screen">
+    <div className="layout-container">
       {/* Navbar Superior */}
       <Navbar onToggleSidebar={handleToggleSidebar} onTogglePanel={handleTogglePanel} />
 
-      <div className="flex flex-grow-1" style={{ flex: 1 }}>
+      <div className="layout-content">
         {/* Sidebar (menú lateral) */}
         <Sidebar open={sidebarOpen} />
 
-        {/* Contenido principal */}
-        <main className="flex-auto p-3 overflow-auto">{children}</main>
+        {/* Contenido principal con margen dinámico */}
+        <main className={`layout-main ${sidebarOpen ? "expanded" : "collapsed"}`}>
+          {children}
+        </main>
 
         {/* Panel derecho, si está abierto */}
         {panelOpen && <PanelDerecho />}

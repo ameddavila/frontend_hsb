@@ -1,6 +1,6 @@
 /* === 📌 Importación de PrimeReact y PrimeFlex === */
 @import "primeicons/primeicons.css";
-@import "primereact/resources/themes/lara-light-indigo/theme.css"; /* Puedes cambiar el tema */
+@import "primereact/resources/themes/lara-light-indigo/theme.css";
 @import "primereact/resources/primereact.min.css";
 @import "primeflex/primeflex.css";
 
@@ -48,6 +48,11 @@
   --color-btn-secondary-hover: #004b99;
 }
 
+/* === 📌 TRANSICIONES SUAVES === */
+* {
+  transition: all 0.3s ease-in-out;
+}
+
 /* === 📌 Reset General === */
 html, body {
   margin: 0;
@@ -63,11 +68,12 @@ html, body {
 .navbar {
   background-color: var(--color-bg-navbar) !important;
   color: var(--color-text-white) !important;
-  height: 80px;
+  height: 60px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 0 1.5rem;
+  transition: background-color 0.3s ease-in-out;
 }
 
 .navbar .pi {
@@ -106,18 +112,64 @@ html, body {
   color: var(--color-text-accent) !important;
 }
 
-/* === 📌 SIDEBAR === */
+/* === 📌 Sidebar === */
 .sidebar {
   width: 250px;
-  background-color: var(--color-bg-sidebar) !important;
-  color: var(--color-text-white) !important;
-  padding: 1rem;
+  background-color: var(--color-bg-sidebar);
+  color: var(--color-text-white);
+  padding: 0.5rem;
+  height: 100vh;
+  transition: width 0.3s ease-in-out;
+}
+
+/* Sidebar colapsado */
+.sidebar.collapsed {
+  width: 60px;
+}
+
+/* === 📌 Contenido Principal === */
+.layout-main {
+  flex-grow: 1;
+  padding: 2rem;
+  overflow-y: auto;
+  background-color: var(--color-bg-light);
+  transition: margin-left 0.3s ease-in-out;
+}
+
+/* Ajuste del contenido cuando la Sidebar está expandida */
+.layout-main.expanded {
+  margin-left: 250px;
+}
+
+/* Ajuste del contenido cuando la Sidebar está colapsada */
+.layout-main.collapsed {
+  margin-left: 60px;
+}
+
+
+/* 🔹 Estilos del menú */
+.sidebar-menu {
+  width: 100%;
+}
+
+/* 🔹 Menú colapsado (solo muestra íconos) */
+.collapsed-menu {
   display: flex;
   flex-direction: column;
-  position: fixed;
-  height: 100%;
-  left: 0;
-  transition: width 0.3s ease-in-out;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.collapsed-icon {
+  font-size: 1.5rem;
+  margin: 1rem 0;
+  cursor: pointer;
+  color: var(--color-text-white);
+  transition: color 0.3s ease-in-out;
+}
+
+.collapsed-icon:hover {
+  color: var(--color-text-accent);
 }
 
 .sidebar nav a {
@@ -130,23 +182,32 @@ html, body {
   align-items: center;
 }
 
+/* 🔹 Hover en Sidebar */
 .sidebar nav a:hover {
   background-color: var(--color-btn-primary) !important;
+  color: var(--color-text-white) !important;
   border-radius: 5px;
+  transition: background-color 0.3s ease-in-out;
 }
 
-/* === 📌 PANEL DERECHO === */
+/* === 📌 EFECTOS EN EL PANEL DERECHO === */
 .panel-derecho {
   background-color: var(--color-bg-panel) !important;
   padding: 1.5rem;
   box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
-  height: 100%;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
   align-items: center;
   width: 100%;
   max-width: 350px;
+  transition: transform 0.3s ease-in-out;
+}
+
+/* 🔹 Cuando el panel se oculta */
+.panel-derecho.hidden {
+  transform: translateX(100%);
+  opacity: 0;
 }
 
 .panel-derecho h3 {
@@ -200,7 +261,26 @@ html, body {
   transition: color 0.3s ease-in-out;
 }
 
+/* 🔹 Efecto hover en Navbar */
 .navbar .p-menubar .p-menuitem-link:hover {
+  color: var(--color-text-accent) !important;
+  background-color: rgba(255, 255, 255, 0.1) !important;
+  border-radius: 5px;
+}
+
+.navbar {
+  border-radius: 0 !important; /* Elimina cualquier redondeo */
+}
+
+/* 🔹 Estilos para los botones */
+.navbar .p-button {
+  color: var(--color-text-white) !important;
+  background: transparent !important;
+  border: none !important;
+}
+
+.navbar .p-button:hover {
+  background-color: rgba(255, 255, 255, 0.1) !important;
   color: var(--color-text-accent) !important;
 }
 
@@ -213,4 +293,50 @@ html, body {
 .navbar .p-menubar .p-menuitem-link:hover .pi {
   color: var(--color-text-accent) !important;
 }
+
+/* === 📌 Contenedor Principal === */
+.layout-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+/* === 📌 Estructura del contenido === */
+.layout-content {
+  display: flex;
+  flex-grow: 1;
+  height: calc(100vh - 60px); /* Ajusta la altura descontando la Navbar */
+  transition: all 0.3s ease-in-out;
+}
+
+/* === 📌 Estilos para el Menú de la Sidebar === */
+.p-menu {
+  background-color: var(--color-bg-light) !important; /* Fondo del menú */
+  border: none !important;
+}
+
+.p-menuitem-link {
+  color: var(--color-text-white) !important; /* Color de los textos */
+  transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
+  padding: 0.8rem;
+  border-radius: 5px;
+}
+
+/* 🔹 Cuando pasas el mouse por encima */
+.p-menuitem-link:hover {
+  background-color: var(--color-btn-primary) !important; /* Color de fondo al pasar el mouse */
+  color: var(--color-text-white) !important; /* Color del texto al pasar el mouse */
+}
+
+/* 🔹 Cuando el ítem está activo o seleccionado */
+.p-menuitem-link.p-highlight {
+  background-color: var(--color-btn-hover) !important; /* Color diferente para el seleccionado */
+  color: var(--color-text-white) !important;
+}
+
+/* 🔹 Íconos del menú */
+.p-menuitem-icon {
+  color: var(--color-bg-sidebar) !important; /* Color de los íconos */
+}
+
 

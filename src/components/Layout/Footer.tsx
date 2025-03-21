@@ -11,7 +11,7 @@ export default function Footer() {
 >
 
       <p className="m-0">
-        © {new Date().getFullYear()} SISHSB - Todos los derechos reservados
+        © {new Date().getFullYear()} Hospital Santa Bárbara - Todos los derechos reservados
       </p>
     </footer>
   );
