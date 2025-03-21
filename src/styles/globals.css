@@ -1,10 +1,10 @@
-/* globals.css */
-
+/* === 📌 Importación de PrimeReact y PrimeFlex === */
 @import "primeicons/primeicons.css";
-@import "primereact/resources/themes/lara-light-indigo/theme.css"; /* Puedes cambiar a otro tema */
+@import "primereact/resources/themes/lara-light-indigo/theme.css"; /* Puedes cambiar el tema */
 @import "primereact/resources/primereact.min.css";
 @import "primeflex/primeflex.css";
 
+/* === 📌 Variables Globales === */
 :root {
   /* 🔹 Tamaños base */
   --font-size-base: 16px;
@@ -20,16 +20,17 @@
 
   /* 🎨 === PALETA DE COLORES === */
 
-  /* 🔹 Colores de Fondo */
+  /* 🔹 Fondos */
   --color-bg-white: #ffffff;
   --color-bg-light: #f4f6f8;
   --color-bg-dark: #1e1e2f;
   --color-bg-accent: #f26e29;
-  --color-bg-sidebar: #001f5a;
-  --color-bg-navbar: #f26e29;
+  --color-bg-sidebar: #001f5a; /* Azul oscuro */
+  --color-bg-navbar: #001f5a;  /* Azul oscuro */
   --color-bg-footer: #222233;
+  --color-bg-panel: #f5f5f5;
 
-  /* 🔹 Colores de Texto */
+  /* 🔹 Texto */
   --color-text-white: #ffffff;
   --color-text-dark: #0a0a0a;
   --color-text-gray: #555555;
@@ -47,59 +48,169 @@
   --color-btn-secondary-hover: #004b99;
 }
 
-body {
+/* === 📌 Reset General === */
+html, body {
   margin: 0;
   padding: 0;
   font-family: var(--font-primary);
   font-size: var(--font-size-base);
   color: var(--color-text-dark);
   background-color: var(--color-bg-light);
+  height: 100%;
 }
 
-h1 {
-  font-size: var(--font-size-xxl);
-  font-weight: bold;
-  color: var(--color-text-dark);
+/* === 📌 NAVBAR === */
+.navbar {
+  background-color: var(--color-bg-navbar) !important;
+  color: var(--color-text-white) !important;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 1.5rem;
 }
 
-h2 {
-  font-size: var(--font-size-xl);
-  font-weight: bold;
-  color: var(--color-text-dark);
+.navbar .pi {
+  color: var(--color-text-white) !important; /* Asegura que los íconos sean blancos */
 }
 
-h3 {
-  font-size: var(--font-size-lg);
-  font-weight: bold;
-  color: var(--color-text-gray);
-}
-
-/* === 🔘 Botones === */
-button {
-  font-size: var(--font-size-md);
-  font-weight: bold;
-  padding: 12px 16px;
-  border-radius: var(--border-radius);
+.navbar-menu button {
+  background: none;
+  border: none;
+  color: var(--color-text-white) !important;
   cursor: pointer;
-  transition: all 0.3s ease-in-out;
+  font-size: 1rem;
 }
 
+.navbar-menu button:hover {
+  color: var(--color-text-accent) !important;
+}
+
+/* 🔹 Estilos específicos para los botones de la Navbar */
+.navbar-btn {
+  color: var(--color-text-white) !important;
+  background: none !important;
+  border: none !important;
+}
+
+.navbar-btn .pi {
+  color: var(--color-text-white) !important;
+}
+
+.navbar-btn:hover {
+  color: var(--color-text-accent) !important;
+  background-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+.navbar-btn:hover .pi {
+  color: var(--color-text-accent) !important;
+}
+
+/* === 📌 SIDEBAR === */
+.sidebar {
+  width: 250px;
+  background-color: var(--color-bg-sidebar) !important;
+  color: var(--color-text-white) !important;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  height: 100%;
+  left: 0;
+  transition: width 0.3s ease-in-out;
+}
+
+.sidebar nav a {
+  color: var(--color-text-white) !important;
+  text-decoration: none;
+  padding: 0.8rem;
+  font-size: 1rem;
+  transition: all 0.3s ease-in-out;
+  display: flex;
+  align-items: center;
+}
+
+.sidebar nav a:hover {
+  background-color: var(--color-btn-primary) !important;
+  border-radius: 5px;
+}
+
+/* === 📌 PANEL DERECHO === */
+.panel-derecho {
+  background-color: var(--color-bg-panel) !important;
+  padding: 1.5rem;
+  box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
+  height: 100%;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 350px;
+}
+
+.panel-derecho h3 {
+  color: var(--color-text-dark) !important;
+}
+
+.panel-derecho ul li {
+  padding: 0.8rem;
+  background-color: var(--color-bg-white) !important;
+  border-radius: 8px;
+  margin-bottom: 0.5rem;
+  font-size: 0.95rem;
+  text-align: center;
+}
+
+/* === 📌 FOOTER === */
+.footer {
+  background-color: var(--color-bg-footer) !important;
+  color: var(--color-text-white) !important;
+  text-align: center;
+  padding: 1rem;
+  position: relative;
+  bottom: 0;
+  width: 100%;
+}
+
+/* === 📌 BOTONES === */
 .button-primary {
-  background-color: var(--color-btn-primary);
-  color: var(--color-text-white);
+  background-color: var(--color-btn-primary) !important;
+  color: var(--color-text-white) !important;
   border: none;
 }
 
 .button-primary:hover {
-  background-color: var(--color-btn-hover);
+  background-color: var(--color-btn-hover) !important;
 }
 
 .button-secondary {
-  background-color: var(--color-btn-secondary);
-  color: var(--color-text-white);
+  background-color: var(--color-btn-secondary) !important;
+  color: var(--color-text-white) !important;
   border: none;
 }
 
 .button-secondary:hover {
-  background-color: var(--color-btn-secondary-hover);
+  background-color: var(--color-btn-secondary-hover) !important;
 }
+
+/* 🔹 Estilos para el Menubar (Navbar) */
+.navbar .p-menubar .p-menuitem-link {
+  color: var(--color-text-white) !important;
+  transition: color 0.3s ease-in-out;
+}
+
+.navbar .p-menubar .p-menuitem-link:hover {
+  color: var(--color-text-accent) !important;
+}
+
+/* 🔹 Forzar color en los íconos */
+.navbar .p-menubar .p-menuitem-link .pi {
+  color: var(--color-text-white) !important;
+  transition: color 0.3s ease-in-out;
+}
+
+.navbar .p-menubar .p-menuitem-link:hover .pi {
+  color: var(--color-text-accent) !important;
+}
+

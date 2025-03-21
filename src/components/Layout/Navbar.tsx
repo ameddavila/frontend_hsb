@@ -16,13 +16,14 @@ export default function Navbar({ onToggleSidebar, onTogglePanel }: NavbarProps) 
   // El menú principal se pasa en "model"
   const menubarModel = [
     {
-      label: "SISHSB",
+      label: "Hospital Santa Bárbara",
       icon: "pi pi-home",
       command: () => {
         void router.push("/dashboard");
       },
     },
   ];
+  
 
   // Creamos un componente para la sección "end"
   const endComponent = (
@@ -30,13 +31,13 @@ export default function Navbar({ onToggleSidebar, onTogglePanel }: NavbarProps) 
       <Button
         label="Notificaciones"
         icon="pi pi-bell"
-        className="p-button-text"
+        className="p-button navbar-btn"
         onClick={() => alert("Notificaciones...")}
       />
       <Button
         label="Salir"
         icon="pi pi-sign-out"
-        className="p-button-text"
+        className="p-button navbar-btn"
         onClick={() => {
           void router.push("/logout");
         }}
@@ -55,7 +56,7 @@ export default function Navbar({ onToggleSidebar, onTogglePanel }: NavbarProps) 
       />
       <Button
         icon="pi pi-window-maximize"
-        className="p-button-text"
+        className="p-button-text mr-2"
         onClick={onTogglePanel}
         aria-label="Toggle Panel Derecho"
       />
@@ -67,7 +68,10 @@ export default function Navbar({ onToggleSidebar, onTogglePanel }: NavbarProps) 
       model={menubarModel}
       start={start}
       end={endComponent}
-      className="border-none shadow-1"
+      className="navbar border-none shadow-1"
+      style={{ backgroundColor: "var(--color-bg-sidebar)", 
+              color: "var(--color-text-white)" 
+            }}
     />
   );
 }

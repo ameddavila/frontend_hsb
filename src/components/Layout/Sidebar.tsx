@@ -45,15 +45,19 @@ export default function Sidebar({ open }: SidebarProps) {
 
   return (
     <aside
-      className={classNames(
-        "bg-primary text-white p-2 transition-all overflow-hidden",
-        {
-          "w-16rem": open,
-          "w-3rem": !open,
-        }
-      )}
-      style={{ minWidth: open ? "16rem" : "3rem" }}
-    >
+        className={classNames(
+          "p-2 transition-all overflow-hidden",
+          {
+            "w-16rem": open,
+            "w-3rem": !open,
+          }
+        )}
+        style={{
+          minWidth: open ? "16rem" : "3rem",
+          backgroundColor: "var(--color-bg-sidebar)",
+          color: "var(--color-text-white)"
+        }}
+      >
       <Menu model={items} className="border-none" />
     </aside>
   );

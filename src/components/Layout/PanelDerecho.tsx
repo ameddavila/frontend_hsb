@@ -6,9 +6,15 @@ import { Card } from "primereact/card";
 export default function PanelDerecho() {
   return (
     <aside
-      className="bg-white border-left-1 surface-border p-3"
-      style={{ width: "20rem", minWidth: "20rem" }}
-    >
+        className="border-left-1 surface-border p-3"
+        style={{
+          width: "20rem",
+          minWidth: "20rem",
+          backgroundColor: "var(--color-bg-white)",
+          color: "var(--color-text-dark)"
+        }}
+      >
+
       <h3 className="text-xl mb-3">Últimas Transacciones</h3>
       <div className="flex flex-column gap-2">
         <Card title="Pago a Proveedor 1" subTitle="Bs. 200" />
