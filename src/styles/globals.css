@@ -1,6 +1,6 @@
 /* === 📌 Importación de PrimeReact y PrimeFlex === */
 @import "primeicons/primeicons.css";
-@import "primereact/resources/themes/lara-light-indigo/theme.css";
+@import "primereact/resources/themes/lara-light-indigo/theme.css"; /* Puedes comentar esta línea si deseas total personalización */
 @import "primereact/resources/primereact.min.css";
 @import "primeflex/primeflex.css";
 
@@ -19,14 +19,12 @@
   --font-secondary: "Roboto", sans-serif;
 
   /* 🎨 === PALETA DE COLORES === */
-
-  /* 🔹 Fondos */
   --color-bg-white: #ffffff;
   --color-bg-light: #f4f6f8;
   --color-bg-dark: #1e1e2f;
   --color-bg-accent: #f26e29;
-  --color-bg-sidebar: #001f5a; /* Azul oscuro */
-  --color-bg-navbar: #001f5a;  /* Azul oscuro */
+  --color-bg-sidebar: #001f5a; 
+  --color-bg-navbar: #001f5a; 
   --color-bg-footer: #222233;
   --color-bg-panel: #f5f5f5;
 
@@ -46,14 +44,13 @@
   --color-btn-hover: #d9531e;
   --color-btn-secondary: #0066cc;
   --color-btn-secondary-hover: #004b99;
+
+  /* ❗ Añade si usas un color para --color-accent-danger o --color-card-border */
+  --color-accent-danger: #e53935;
+  --color-card-border: #ddd;
 }
 
-/* === 📌 TRANSICIONES SUAVES === */
-* {
-  transition: all 0.3s ease-in-out;
-}
-
-/* === 📌 Reset General === */
+/* === 📌 Reset & Base === */
 html, body {
   margin: 0;
   padding: 0;
@@ -64,20 +61,25 @@ html, body {
   height: 100%;
 }
 
+/* Opcional: en lugar de transition: all, especificamos propiedades importantes */
+* {
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
 /* === 📌 NAVBAR === */
 .navbar {
   background-color: var(--color-bg-navbar) !important;
   color: var(--color-text-white) !important;
-  height: 60px;
+  /*height: 60px;*/
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 1.5rem;
-  transition: background-color 0.3s ease-in-out;
+  padding: .5rem 1.5rem;
+  box-shadow: var(--box-shadow);
 }
 
 .navbar .pi {
-  color: var(--color-text-white) !important; /* Asegura que los íconos sean blancos */
+  color: var(--color-text-white) !important;
 }
 
 .navbar-menu button {
@@ -86,21 +88,19 @@ html, body {
   color: var(--color-text-white) !important;
   cursor: pointer;
   font-size: 1rem;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .navbar-menu button:hover {
   color: var(--color-text-accent) !important;
 }
 
-/* 🔹 Estilos específicos para los botones de la Navbar */
+/* Botón de Navbar (clase navbar-btn) */
 .navbar-btn {
   color: var(--color-text-white) !important;
   background: none !important;
   border: none !important;
-}
-
-.navbar-btn .pi {
-  color: var(--color-text-white) !important;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .navbar-btn:hover {
@@ -108,18 +108,14 @@ html, body {
   background-color: rgba(255, 255, 255, 0.1) !important;
 }
 
-.navbar-btn:hover .pi {
-  color: var(--color-text-accent) !important;
-}
-
 /* === 📌 Sidebar === */
 .sidebar {
-  width: 250px;
+  /*width: 250px;*/
   background-color: var(--color-bg-sidebar);
   color: var(--color-text-white);
-  padding: 0.5rem;
+  padding: 0 0.5rem;
   height: 100vh;
-  transition: width 0.3s ease-in-out;
+  transition: width 0.3s ease; /* Evitamos 'all' */
 }
 
 /* Sidebar colapsado */
@@ -127,32 +123,23 @@ html, body {
   width: 60px;
 }
 
-/* === 📌 Contenido Principal === */
+/* === 📌 Layout Principal === */
 .layout-main {
   flex-grow: 1;
   padding: 2rem;
   overflow-y: auto;
   background-color: var(--color-bg-light);
-  transition: margin-left 0.3s ease-in-out;
+  transition: margin-left 0.3s ease;
 }
 
-/* Ajuste del contenido cuando la Sidebar está expandida */
 .layout-main.expanded {
   margin-left: 250px;
 }
-
-/* Ajuste del contenido cuando la Sidebar está colapsada */
 .layout-main.collapsed {
   margin-left: 60px;
 }
 
-
-/* 🔹 Estilos del menú */
-.sidebar-menu {
-  width: 100%;
-}
-
-/* 🔹 Menú colapsado (solo muestra íconos) */
+/* === 📌 Menús colapsados === */
 .collapsed-menu {
   display: flex;
   flex-direction: column;
@@ -165,7 +152,7 @@ html, body {
   margin: 1rem 0;
   cursor: pointer;
   color: var(--color-text-white);
-  transition: color 0.3s ease-in-out;
+  transition: color 0.3s ease;
 }
 
 .collapsed-icon:hover {
@@ -177,20 +164,18 @@ html, body {
   text-decoration: none;
   padding: 0.8rem;
   font-size: 1rem;
-  transition: all 0.3s ease-in-out;
   display: flex;
   align-items: center;
+  border-radius: 5px;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-/* 🔹 Hover en Sidebar */
 .sidebar nav a:hover {
   background-color: var(--color-btn-primary) !important;
   color: var(--color-text-white) !important;
-  border-radius: 5px;
-  transition: background-color 0.3s ease-in-out;
 }
 
-/* === 📌 EFECTOS EN EL PANEL DERECHO === */
+/* === 📌 Panel Derecho === */
 .panel-derecho {
   background-color: var(--color-bg-panel) !important;
   padding: 1.5rem;
@@ -199,12 +184,11 @@ html, body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 100%;
   max-width: 350px;
-  transition: transform 0.3s ease-in-out;
+  width: 100%;
+  transition: transform 0.3s ease;
 }
 
-/* 🔹 Cuando el panel se oculta */
 .panel-derecho.hidden {
   transform: translateX(100%);
   opacity: 0;
@@ -214,33 +198,23 @@ html, body {
   color: var(--color-text-dark) !important;
 }
 
-.panel-derecho ul li {
-  padding: 0.8rem;
-  background-color: var(--color-bg-white) !important;
-  border-radius: 8px;
-  margin-bottom: 0.5rem;
-  font-size: 0.95rem;
-  text-align: center;
-}
-
-/* === 📌 FOOTER === */
+/* === 📌 Footer === */
 .footer {
   background-color: var(--color-bg-footer) !important;
   color: var(--color-text-white) !important;
   text-align: center;
   padding: 1rem;
-  position: relative;
-  bottom: 0;
   width: 100%;
+  position: relative;
 }
 
-/* === 📌 BOTONES === */
+/* === 📌 Botones Generales === */
 .button-primary {
   background-color: var(--color-btn-primary) !important;
   color: var(--color-text-white) !important;
   border: none;
+  transition: background-color 0.3s ease;
 }
-
 .button-primary:hover {
   background-color: var(--color-btn-hover) !important;
 }
@@ -249,94 +223,109 @@ html, body {
   background-color: var(--color-btn-secondary) !important;
   color: var(--color-text-white) !important;
   border: none;
+  transition: background-color 0.3s ease;
 }
-
 .button-secondary:hover {
   background-color: var(--color-btn-secondary-hover) !important;
 }
 
-/* 🔹 Estilos para el Menubar (Navbar) */
+/* === 📌 Menubar (Navbar) === */
 .navbar .p-menubar .p-menuitem-link {
   color: var(--color-text-white) !important;
-  transition: color 0.3s ease-in-out;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
-
-/* 🔹 Efecto hover en Navbar */
 .navbar .p-menubar .p-menuitem-link:hover {
   color: var(--color-text-accent) !important;
   background-color: rgba(255, 255, 255, 0.1) !important;
   border-radius: 5px;
 }
-
 .navbar {
-  border-radius: 0 !important; /* Elimina cualquier redondeo */
+  border-radius: 0 !important; 
 }
 
-/* 🔹 Estilos para los botones */
+/* Forzar color íconos en la Navbar */
 .navbar .p-button {
   color: var(--color-text-white) !important;
   background: transparent !important;
   border: none !important;
 }
-
 .navbar .p-button:hover {
   background-color: rgba(255, 255, 255, 0.1) !important;
   color: var(--color-text-accent) !important;
 }
 
-/* 🔹 Forzar color en los íconos */
-.navbar .p-menubar .p-menuitem-link .pi {
-  color: var(--color-text-white) !important;
-  transition: color 0.3s ease-in-out;
-}
-
-.navbar .p-menubar .p-menuitem-link:hover .pi {
-  color: var(--color-text-accent) !important;
-}
-
-/* === 📌 Contenedor Principal === */
+/* === 📌 Layout Container === */
 .layout-container {
   display: flex;
   flex-direction: column;
   height: 100vh;
 }
 
-/* === 📌 Estructura del contenido === */
+/* === 📌 Estructura de contenido (Opcional si usas flex o grid) === */
 .layout-content {
   display: flex;
   flex-grow: 1;
-  height: calc(100vh - 60px); /* Ajusta la altura descontando la Navbar */
-  transition: all 0.3s ease-in-out;
+  height: calc(100vh - 60px);
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-/* === 📌 Estilos para el Menú de la Sidebar === */
+/* === 📌 Personalizar el menú de PrimeReact (Sidebar) === */
 .p-menu {
-  background-color: var(--color-bg-light) !important; /* Fondo del menú */
+  background-color: var(--color-bg-light) !important; 
   border: none !important;
 }
-
 .p-menuitem-link {
-  color: var(--color-text-white) !important; /* Color de los textos */
-  transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
+  color: var(--color-text-white) !important;
+  transition: background-color 0.3s ease, color 0.3s ease;
   padding: 0.8rem;
   border-radius: 5px;
 }
-
-/* 🔹 Cuando pasas el mouse por encima */
 .p-menuitem-link:hover {
-  background-color: var(--color-btn-primary) !important; /* Color de fondo al pasar el mouse */
-  color: var(--color-text-white) !important; /* Color del texto al pasar el mouse */
-}
-
-/* 🔹 Cuando el ítem está activo o seleccionado */
-.p-menuitem-link.p-highlight {
-  background-color: var(--color-btn-hover) !important; /* Color diferente para el seleccionado */
+  background-color: var(--color-btn-primary) !important;
   color: var(--color-text-white) !important;
 }
-
-/* 🔹 Íconos del menú */
+.p-menuitem-link.p-highlight {
+  background-color: var(--color-btn-hover) !important;
+  color: var(--color-text-white) !important;
+}
 .p-menuitem-icon {
-  color: var(--color-bg-sidebar) !important; /* Color de los íconos */
+  color: var(--color-bg-sidebar) !important;
 }
 
+/* === Estado normal: texto/ícono en blanco === */
+.p-menubar-root-list .home-button .p-menuitem-link,
+.p-menubar-root-list .home-button .p-menuitem-text,
+.p-menubar-root-list .home-button .p-menuitem-icon {
+  color: var(--color-text-white) !important;
+  background: transparent !important;
+  display: flex !important;
+  align-items: center !important;
+  font-weight: bold !important;
+  border-radius: 8px;
+  transition: background-color 0.3s ease, color 0.3s ease, transform 0.2s ease;
+}
 
+/* === Hover, Focus y Active: fondo blanco, texto/ícono negros === */
+.p-menubar-root-list .home-button:hover .p-menuitem-link,
+.p-menubar-root-list .home-button:focus .p-menuitem-link,
+.p-menubar-root-list .home-button .p-menuitem-link:focus,
+.p-menubar-root-list .home-button .p-menuitem-link:active,
+.p-menubar-root-list .home-button .p-menuitem-link.p-highlight {
+  background-color: #ffffff !important;
+  color: #000000 !important;
+  transform: scale(1.05);
+}
+
+/* Ícono y texto también se vuelven negros en Hover/Focus/Active/Highlight */
+.p-menubar-root-list .home-button:hover .p-menuitem-icon,
+.p-menubar-root-list .home-button:focus .p-menuitem-icon,
+.p-menubar-root-list .home-button .p-menuitem-link:focus .p-menuitem-icon,
+.p-menubar-root-list .home-button .p-menuitem-link:active .p-menuitem-icon,
+.p-menubar-root-list .home-button .p-menuitem-link.p-highlight .p-menuitem-icon,
+.p-menubar-root-list .home-button:hover .p-menuitem-text,
+.p-menubar-root-list .home-button:focus .p-menuitem-text,
+.p-menubar-root-list .home-button .p-menuitem-link:focus .p-menuitem-text,
+.p-menubar-root-list .home-button .p-menuitem-link:active .p-menuitem-text,
+.p-menubar-root-list .home-button .p-menuitem-link.p-highlight .p-menuitem-text {
+  color: #000000 !important;
+}

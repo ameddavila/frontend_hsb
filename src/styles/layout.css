@@ -8,7 +8,7 @@
 /* === 📌 Estructura del contenido === */
 .layout-content {
   display: grid;
-  grid-template-columns: 250px auto 350px; /* Sidebar | Contenido Flexible | Panel Derecho */
+  grid-template-columns: 250px 1fr 350px; /* Sidebar | Contenido Flexible | Panel Derecho */
   flex: 1;
   height: calc(100vh - 60px);
   transition: grid-template-columns 0.2s ease-in-out;
@@ -40,7 +40,7 @@
 
 /* Ajuste del contenido cuando el sidebar se colapsa */
 .sidebar.collapsed + .layout-main {
-  margin-left: 70px;
+  margin-left: 70px; /* Podrías remover si usas Grid */
 }
 
 /* === 📌 Panel Derecho === */
@@ -57,7 +57,7 @@
 /* === 📌 RESPONSIVE === */
 @media (max-width: 1200px) {
   .layout-content {
-    grid-template-columns: 200px auto;
+    grid-template-columns: 200px 1fr; /* Sidebar | Contenido Flexible */
   }
   .layout-aside {
     display: none;

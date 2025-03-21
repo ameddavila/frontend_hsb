@@ -3,9 +3,10 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 100vh;
-  background-color: var(--color-bg-gray-light);
+  min-height: 100vh; /* Asegura cubrir toda la pantalla */
+  margin: 0;
   padding: 1rem;
+  background-color: var(--color-bg-gray-light);
 }
 
 /* === 🏷️ Card de Autenticación === */
@@ -15,8 +16,8 @@
   border-radius: 12px;
   box-shadow: 0px 10px 28px rgba(0, 0, 0, 0.15);
   width: 100%;
-  max-width: 500px; /* Hacemos el formulario más compacto */
-  border: 1px solid var(--color-card-border);
+  max-width: 500px; 
+  border: 1px solid var(--color-card-border); /* Asegúrate de definir --color-card-border */
 }
 
 /* === 📋 Formulario con Grid === */
@@ -26,12 +27,12 @@
   gap: 1rem;
 }
 
-/* Estilo para campos que ocupan una columna completa */
+/* Campos que ocupan toda la fila */
 .full-width {
   grid-column: 1 / -1;
 }
 
-/* Estilo para campos que comparten fila */
+/* Campos que ocupan media fila */
 .half-width {
   grid-column: span 1;
 }
@@ -51,7 +52,8 @@
   font-weight: bold;
   border: none;
   border-radius: 6px;
-  transition: all 0.3s ease-in-out;
+  /* En vez de transition: all, especifica las propiedades */
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 /* === 📱 Diseño Responsive === */
@@ -68,52 +70,29 @@
   .centered-half-width {
     width: 100%;
   }
-}
 
-/* === 🏷️ Ajustes para el Formulario de Recuperación === */
-.form-grid.recover {
-  display: grid;
-  grid-template-columns: 1fr; /* Una sola columna */
-  gap: 1rem;
-}
-
-/* === 🔘 Botón de recuperación === */
-.auth-button {
-  width: 100%;
-  padding: 12px;
-  font-size: var(--font-size-md);
-  font-weight: bold;
-  border: none;
-  border-radius: 6px;
-  transition: all 0.3s ease-in-out;
-}
-/* === Formulario de Login === */
-.form-grid.login {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 1rem;
-}
-
-/* Ajustes para evitar márgenes extra */
-.auth-container {
-  margin: 0;
-  padding: 0;
-  min-height: 100vh;
-}
-
-/* Mejor manejo de errores */
-.auth-error {
-  color: var(--color-accent-danger);
-  font-size: var(--font-size-md);
-  text-align: center;
-  margin-bottom: 1rem;
-}
-
-/* Mejora de botón en dispositivos pequeños */
-@media (max-width: 768px) {
   .auth-button {
     font-size: var(--font-size-sm);
     padding: 10px;
   }
 }
 
+/* === 🏷️ Ajustes para el Formulario de Recuperación === */
+.form-grid.recover {
+  grid-template-columns: 1fr; 
+  gap: 1rem;
+}
+
+/* === Formulario de Login === */
+.form-grid.login {
+  grid-template-columns: 1fr;
+  gap: 1rem;
+}
+
+/* === Manejo de errores === */
+.auth-error {
+  color: var(--color-accent-danger); /* Asegúrate de definir --color-accent-danger */
+  font-size: var(--font-size-md);
+  text-align: center;
+  margin-bottom: 1rem;
+}
