@@ -300,7 +300,7 @@ html, body {
   background: transparent !important;
   display: flex !important;
   align-items: center !important;
-  font-weight: bold !important;
+  font-weight: normal !important;
   border-radius: 8px;
   transition: background-color 0.3s ease, color 0.3s ease, transform 0.2s ease;
 }
@@ -311,8 +311,8 @@ html, body {
 .p-menubar-root-list .home-button .p-menuitem-link:focus,
 .p-menubar-root-list .home-button .p-menuitem-link:active,
 .p-menubar-root-list .home-button .p-menuitem-link.p-highlight {
-  background-color: #ffffff !important;
-  color: #000000 !important;
+  background-color: var(--color-text-white) !important;
+  color: var(--color-bg-sidebar) !important;
   transform: scale(1.05);
 }
 
@@ -327,5 +327,5 @@ html, body {
 .p-menubar-root-list .home-button .p-menuitem-link:focus .p-menuitem-text,
 .p-menubar-root-list .home-button .p-menuitem-link:active .p-menuitem-text,
 .p-menubar-root-list .home-button .p-menuitem-link.p-highlight .p-menuitem-text {
-  color: #000000 !important;
+  color: var(--color-bg-sidebar) !important;
 }
