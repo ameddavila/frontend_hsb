@@ -21,17 +21,28 @@ api.interceptors.request.use((config) => {
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
-    if (error.response?.status === 401) {
+    const originalRequest = error.config;
+
+    if (
+      error.response?.status === 401 &&
+      !originalRequest._retry &&
+      !originalRequest.url.includes("/auth/refresh")
+    ) {
+      originalRequest._retry = true;
       try {
         await api.post("/auth/refresh");
-        return api.request(error.config);
+        return api(originalRequest);
       } catch {
         window.location.href = "/login";
       }
     }
+
     return Promise.reject(error);
   }
 );
+
+
+
 
 export const login = async (usernameOrEmail: string, password: string) => {
   const res = await api.post("/auth/login", { usernameOrEmail, password });

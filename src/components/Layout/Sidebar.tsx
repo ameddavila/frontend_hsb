@@ -3,6 +3,8 @@
 import React from "react";
 import { Menu } from "primereact/menu";
 import { useRouter } from "next/navigation";
+import { useMenus, MenuNode } from "@/hooks/useMenus";
+import { MenuItem } from "primereact/menuitem";
 
 interface SidebarProps {
   open: boolean;
@@ -10,50 +12,37 @@ interface SidebarProps {
 
 export default function Sidebar({ open }: SidebarProps) {
   const router = useRouter();
+  const { menus, loading } = useMenus();
 
-  const items = [
-    {
-      label: "Inicio",
-      icon: "pi pi-home",
-      command: () => {
-        void router.push("/dashboard");
-      },
-    },
-    {
-      label: "Mi Perfil",
-      icon: "pi pi-user",
-      command: () => {
-        void router.push("/profile");
-      },
-    },
-    {
-      label: "Transferencias",
-      icon: "pi pi-money-bill",
-      command: () => {
-        void router.push("/transfers");
-      },
-    },
-    {
-      label: "Servicios",
-      icon: "pi pi-briefcase",
-      command: () => {
-        void router.push("/services");
-      },
-    },
-  ];
+  // Construir estructura compatible con Menu de PrimeReact
+  const buildMenuModel = (items: MenuNode[]): MenuItem[] => {
+    return items.map((menu) => ({
+      label: menu.name,
+      icon: menu.icon,
+      command: () => router.push(menu.path),
+      items:
+        menu.children && menu.children.length > 0
+          ? buildMenuModel(menu.children)
+          : undefined,
+    }));
+  };
+
+  const dynamicItems = buildMenuModel(menus);
+
+  if (loading) return <div className="p-4">Cargando menú...</div>;
 
   return (
-    <aside
-      className={`sidebar ${open ? "expanded" : "collapsed"}`}
-    >
-      {/* Menú que se muestra solo si la Sidebar está expandida */}
-      {open && <Menu model={items} className="sidebar-menu border-none" />}
-      
-      {/* Íconos individuales que se muestran cuando la Sidebar está colapsada */}
-      {!open && (
-        <div className="collapsed-menu">
-          {items.map((item, index) => (
-            <div key={index} className="collapsed-icon" onClick={item.command}>
+    <aside className={`sidebar ${open ? "expanded" : "collapsed"}`}>
+      {open ? (
+        <Menu model={dynamicItems} className="sidebar-menu border-none" />
+      ) : (
+        <div className="collapsed-menu p-2">
+          {dynamicItems.map((item, i) => (
+            <div
+              key={i}
+              className="collapsed-icon p-2 cursor-pointer"
+              onClick={() => item.command?.({} as any)} // 👈 fuerza el tipo
+            >
               <i className={item.icon}></i>
             </div>
           ))}
