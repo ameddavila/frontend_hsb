@@ -5,9 +5,5 @@ import "@/styles/globals.css"; // Asegura que los estilos globales se apliquen
 import "@/styles/auth.css"; // Asegura los estilos de autenticación
 
 export default function PublicLayout({ children }: { children: React.ReactNode }) {
-  return (
-    <html lang="es">
-      <body>{children}</body>
-    </html>
-  );
+  return <main>{children}</main>;
 }

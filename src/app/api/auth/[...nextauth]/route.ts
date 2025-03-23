@@ -8,6 +8,7 @@ type BackendUser = {
   role: string;
   username: string;
   email: string;
+  estado?: string; // activo | inactivo
 };
 
 const authOptions: NextAuthOptions = {
@@ -20,7 +21,10 @@ const authOptions: NextAuthOptions = {
       },
       async authorize(credentials) {
         try {
-          if (!credentials) throw new Error("Credenciales no proporcionadas");
+          console.log("📩 Credentials recibidas:", credentials);
+          if (!credentials?.usernameOrEmail || !credentials?.password) {
+            throw new Error("Credenciales incompletas");
+          }
 
           const response = await axios.post<BackendUser>(
             `${process.env.NEXT_PUBLIC_API_URL}/auth/login`,
@@ -32,18 +36,31 @@ const authOptions: NextAuthOptions = {
           );
 
           const user = response.data;
+          console.log("✅ Usuario recibido del backend:", user);
 
           if (!user || !user.id || !user.role) return null;
 
+          if (user.estado && user.estado !== "activo") {
+            console.log("⛔ Usuario inactivo detectado");
+            throw new Error("usuario_inactivo");
+          }
+
           return {
-            id: user.id,
+            id: String(user.id),
             role: user.role,
             name: user.username,
             email: user.email,
           };
-        } catch (error) {
-          console.error("❌ Error en autenticación:", error);
-          return null;
+        } catch (error: any) {
+          console.error("❌ Error en authorize:", error?.message);
+          const mensaje = error?.message || error?.response?.data?.message;
+          if (mensaje === "usuario_inactivo") {
+            // Transmitimos el error al frontend
+            throw new Error("usuario_inactivo");
+          }
+
+          console.error("❌ Error en authorize:", mensaje);
+          throw new Error("error_autenticacion");
         }
       },
     }),
@@ -51,7 +68,12 @@ const authOptions: NextAuthOptions = {
 
   session: {
     strategy: "jwt",
+    maxAge: 60 * 60 * 8, // 8 horas
   },
+  jwt: {
+    maxAge: 60 * 60 * 8, // 8 horas
+  },
+  
 
   callbacks: {
     async jwt({ token, user }) {
@@ -75,6 +97,7 @@ const authOptions: NextAuthOptions = {
 
   pages: {
     signIn: "/login",
+    error: "/login", // Usamos /login para manejar errores
   },
 
   secret: process.env.NEXTAUTH_SECRET,

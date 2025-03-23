@@ -5,24 +5,34 @@ import type { NextRequestWithAuth } from "next-auth/middleware";
 export default withAuth(
   async function middleware(req: NextRequestWithAuth) {
     const { pathname } = req.nextUrl;
+
     const isLoginPage =
       pathname === "/login" || pathname === "/(public)/login";
 
-    // ✅ Si está autenticado y está en /login, redirigir a /dashboard
-    if (req.nextauth?.token && isLoginPage) {
+    const isAuthenticated = !!req.nextauth.token;
+
+    // 🔁 Previene acceso al login si ya está autenticado
+    if (isAuthenticated && isLoginPage) {
       return NextResponse.redirect(new URL("/dashboard", req.url));
     }
 
+    // ✅ Continuar con la petición
     return NextResponse.next();
   },
   {
+    callbacks: {
+      authorized({ token }) {
+        // Solo permite acceso a rutas protegidas si hay sesión activa
+        return !!token;
+      },
+    },
     pages: {
-      signIn: "/login", // o "/(public)/login" según tu ruta real
+      signIn: "/login", // Ruta pública
     },
   }
 );
 
-// ✅ Define a qué rutas aplicar el middleware
+// ✅ Aplica solo a rutas privadas, no repliques en login
 export const config = {
-  matcher: ["/(protected)/:path*", "/login", "/(public)/login"],
+  matcher: ["/(protected)/:path*"], // 👈 evitamos que se aplique a login
 };

@@ -4,7 +4,7 @@ import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { signIn, useSession } from "next-auth/react";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { InputText } from "primereact/inputtext";
 import { Password } from "primereact/password";
@@ -24,10 +24,20 @@ interface LoginFormInputs {
 }
 
 export default function LoginPage() {
-  const { status } = useSession();
+  const { data: session, status } = useSession();
   const router = useRouter();
   const toast = useRef<Toast>(null);
   const [loginError, setLoginError] = useState("");
+
+  useEffect(() => {
+    console.log("🔍 useSession() status:", status);
+    console.log("🔍 useSession() session:", session);
+
+    if (status === "authenticated") {
+      console.log("✅ Usuario ya autenticado. Redirigiendo al dashboard...");
+      router.push("/dashboard");
+    }
+  }, [status, session, router]);
 
   const {
     control,
@@ -44,37 +54,45 @@ export default function LoginPage() {
   const onSubmit = async (data: LoginFormInputs) => {
     setLoginError("");
 
+    console.log("🚀 Enviando credenciales:", data);
+
     const result = await signIn("credentials", {
       ...data,
-      callbackUrl: "/dashboard", // redirige directamente
-      redirect: true,
+      redirect: false,
     });
 
+    console.log("🧠 Resultado del signIn:", result);
+
+    if (result?.error === "usuario_inactivo") {
+      console.log("⚠️ Usuario inactivo. Redirigiendo a /activar-cuenta");
+      router.push("/activar-cuenta");
+      return;
+    }
+
     if (result?.error) {
-      setLoginError("Credenciales incorrectas. Intenta de nuevo.");
+      setLoginError("Credenciales incorrectas o error en la autenticación.");
+      console.log("❌ Error en login:", result.error);
       toast.current?.show({
         severity: "error",
         summary: "Error",
         detail: loginError,
         life: 3000,
       });
+      return;
     }
+
+    console.log("✅ Login exitoso. Redirigiendo a dashboard...");
+    router.push("/dashboard");
   };
 
-  if (status === "loading") return null;
-  if (status === "authenticated") {
-    router.replace("/dashboard");
-    return null;
-  }
+  if (status === "loading") return <p>Cargando sesión...</p>;
 
   return (
     <div className="auth-container">
       <Toast ref={toast} />
       <div className="auth-card">
         <h2 className="auth-title">Iniciar Sesión</h2>
-
         {loginError && <div className="auth-error">{loginError}</div>}
-
         <form onSubmit={handleSubmit(onSubmit)} className="p-fluid">
           <div className="form-grid login">
             <div className="full-width">
@@ -89,9 +107,7 @@ export default function LoginPage() {
                 )}
               />
               {errors.usernameOrEmail && (
-                <small className="p-error">
-                  {errors.usernameOrEmail.message}
-                </small>
+                <small className="p-error">{errors.usernameOrEmail.message}</small>
               )}
             </div>
 
@@ -123,12 +139,8 @@ export default function LoginPage() {
         </form>
 
         <div className="auth-links">
-          <p>
-            ¿No tienes cuenta? <Link href="/register">Regístrate</Link>
-          </p>
-          <p>
-            ¿Olvidaste tu contraseña? <Link href="/recover">Recuperar</Link>
-          </p>
+          <p>¿No tienes cuenta? <Link href="/register">Regístrate</Link></p>
+          <p>¿Olvidaste tu contraseña? <Link href="/recover">Recuperar</Link></p>
         </div>
       </div>
     </div>
