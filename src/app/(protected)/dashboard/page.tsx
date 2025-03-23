@@ -9,13 +9,12 @@ export default function DashboardPage() {
 
   useEffect(() => {
     if (status === "unauthenticated") {
-      console.warn("⛔️ Usuario no autenticado. Redirigiendo a login...");
       router.push("/login");
     }
   }, [status]);
 
-  if (status === "loading") return <p>Cargando sesión...</p>;
-  if (status === "unauthenticated") return null;
+  if (status !== "authenticated") return <p>Cargando sesión...</p>;
+  /*if (status === "unauthenticated") return null;*/
 
   return (
     <div>

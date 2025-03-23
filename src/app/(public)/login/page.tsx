@@ -33,11 +33,13 @@ export default function LoginPage() {
     console.log("🔍 useSession() status:", status);
     console.log("🔍 useSession() session:", session);
 
-    if (status === "authenticated") {
-      console.log("✅ Usuario ya autenticado. Redirigiendo al dashboard...");
-      router.push("/dashboard");
+    if (status === "authenticated" && session) {
+      if (window.location.pathname !== "/dashboard") {
+        console.log("✅ Usuario ya autenticado. Redirigiendo al dashboard...");
+        router.push("/dashboard");
+      }
     }
-  }, [status, session, router]);
+  }, [status, session]);
 
   const {
     control,
