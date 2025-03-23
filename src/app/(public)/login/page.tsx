@@ -4,36 +4,30 @@ import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { signIn, useSession } from "next-auth/react";
+import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { useState, useRef, useEffect } from "react";
 import { InputText } from "primereact/inputtext";
 import { Password } from "primereact/password";
 import { Button } from "primereact/button";
 import { Toast } from "primereact/toast";
 import Link from "next/link";
-
 import "@/styles/auth.css";
 
-// Esquema de validación
 const loginSchema = z.object({
   usernameOrEmail: z.string().min(3, "Campo obligatorio"),
   password: z.string().min(6, "Mínimo 6 caracteres"),
 });
 
-type LoginFormInputs = z.infer<typeof loginSchema>;
+interface LoginFormInputs {
+  usernameOrEmail: string;
+  password: string;
+}
 
 export default function LoginPage() {
+  const { status } = useSession();
   const router = useRouter();
   const toast = useRef<Toast>(null);
   const [loginError, setLoginError] = useState("");
-  const { status } = useSession();
-
-  // ✅ Redirigir si ya está autenticado
-  useEffect(() => {
-    if (status === "authenticated") {
-      router.replace("/dashboard");
-    }
-  }, [status, router]);
 
   const {
     control,
@@ -51,9 +45,9 @@ export default function LoginPage() {
     setLoginError("");
 
     const result = await signIn("credentials", {
-      usernameOrEmail: data.usernameOrEmail,
-      password: data.password,
-      redirect: false,
+      ...data,
+      callbackUrl: "/dashboard", // redirige directamente
+      redirect: true,
     });
 
     if (result?.error) {
@@ -61,23 +55,17 @@ export default function LoginPage() {
       toast.current?.show({
         severity: "error",
         summary: "Error",
-        detail: "Credenciales incorrectas. Intenta de nuevo.",
-        life: 4000,
+        detail: loginError,
+        life: 3000,
       });
-    } else {
-      toast.current?.show({
-        severity: "success",
-        summary: "Inicio de sesión",
-        detail: "Redirigiendo...",
-        life: 2000,
-      });
-
-      // Pequeño delay para mostrar el toast
-      setTimeout(() => {
-        router.replace("/dashboard");
-      }, 1000);
     }
   };
+
+  if (status === "loading") return null;
+  if (status === "authenticated") {
+    router.replace("/dashboard");
+    return null;
+  }
 
   return (
     <div className="auth-container">
@@ -95,15 +83,8 @@ export default function LoginPage() {
                 control={control}
                 render={({ field }) => (
                   <div className="p-field">
-                    <label htmlFor="usernameOrEmail">
-                      Correo o Usuario
-                    </label>
-                    <InputText
-                      {...field}
-                      id="usernameOrEmail"
-                      aria-label="Correo o Usuario"
-                      className={errors.usernameOrEmail ? "p-invalid" : ""}
-                    />
+                    <label htmlFor="usernameOrEmail">Correo o Usuario</label>
+                    <InputText {...field} id="usernameOrEmail" />
                   </div>
                 )}
               />
@@ -121,20 +102,12 @@ export default function LoginPage() {
                 render={({ field }) => (
                   <div className="p-field">
                     <label htmlFor="password">Contraseña</label>
-                    <Password
-                      {...field}
-                      id="password"
-                      toggleMask
-                      feedback={false}
-                      className={errors.password ? "p-invalid" : ""}
-                    />
+                    <Password {...field} toggleMask feedback={false} />
                   </div>
                 )}
               />
               {errors.password && (
-                <small className="p-error">
-                  {errors.password.message}
-                </small>
+                <small className="p-error">{errors.password.message}</small>
               )}
             </div>
 

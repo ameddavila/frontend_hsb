@@ -28,6 +28,7 @@ export default function Sidebar({ open }: SidebarProps) {
     }));
   };
 
+  
   const dynamicItems = buildMenuModel(menus);
 
   if (loading) return <div className="p-4">Cargando menú...</div>;
