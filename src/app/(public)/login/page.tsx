@@ -3,32 +3,37 @@
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { signIn } from "next-auth/react";
+import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { InputText } from "primereact/inputtext";
 import { Password } from "primereact/password";
 import { Button } from "primereact/button";
 import { Toast } from "primereact/toast";
 import Link from "next/link";
 
-import "@/styles/auth.css"; // Importar estilos globales
+import "@/styles/auth.css";
 
-// Esquema de validación con Zod
+// Esquema de validación
 const loginSchema = z.object({
   usernameOrEmail: z.string().min(3, "Campo obligatorio"),
   password: z.string().min(6, "Mínimo 6 caracteres"),
 });
 
-interface LoginFormInputs {
-  usernameOrEmail: string;
-  password: string;
-}
+type LoginFormInputs = z.infer<typeof loginSchema>;
 
 export default function LoginPage() {
   const router = useRouter();
   const toast = useRef<Toast>(null);
   const [loginError, setLoginError] = useState("");
+  const { status } = useSession();
+
+  // ✅ Redirigir si ya está autenticado
+  useEffect(() => {
+    if (status === "authenticated") {
+      router.replace("/dashboard");
+    }
+  }, [status, router]);
 
   const {
     control,
@@ -36,7 +41,10 @@ export default function LoginPage() {
     formState: { errors, isSubmitting },
   } = useForm<LoginFormInputs>({
     resolver: zodResolver(loginSchema),
-    defaultValues: { usernameOrEmail: "", password: "" },
+    defaultValues: {
+      usernameOrEmail: "",
+      password: "",
+    },
   });
 
   const onSubmit = async (data: LoginFormInputs) => {
@@ -52,21 +60,22 @@ export default function LoginPage() {
       setLoginError("Credenciales incorrectas. Intenta de nuevo.");
       toast.current?.show({
         severity: "error",
-        summary: "Error de autenticación",
+        summary: "Error",
         detail: "Credenciales incorrectas. Intenta de nuevo.",
         life: 4000,
       });
     } else {
       toast.current?.show({
         severity: "success",
-        summary: "Inicio de sesión exitoso",
-        detail: "Bienvenido de nuevo.",
-        life: 3000,
+        summary: "Inicio de sesión",
+        detail: "Redirigiendo...",
+        life: 2000,
       });
 
+      // Pequeño delay para mostrar el toast
       setTimeout(() => {
-        router.push("/dashboard");
-      }, 2000);
+        router.replace("/dashboard");
+      }, 1000);
     }
   };
 
@@ -86,13 +95,22 @@ export default function LoginPage() {
                 control={control}
                 render={({ field }) => (
                   <div className="p-field">
-                    <label htmlFor="usernameOrEmail">Correo Electrónico o Usuario</label>
-                    <InputText {...field} id="usernameOrEmail" aria-label="Correo Electrónico o Usuario" />
+                    <label htmlFor="usernameOrEmail">
+                      Correo o Usuario
+                    </label>
+                    <InputText
+                      {...field}
+                      id="usernameOrEmail"
+                      aria-label="Correo o Usuario"
+                      className={errors.usernameOrEmail ? "p-invalid" : ""}
+                    />
                   </div>
                 )}
               />
               {errors.usernameOrEmail && (
-                <small className="p-error">{errors.usernameOrEmail.message}</small>
+                <small className="p-error">
+                  {errors.usernameOrEmail.message}
+                </small>
               )}
             </div>
 
@@ -103,26 +121,34 @@ export default function LoginPage() {
                 render={({ field }) => (
                   <div className="p-field">
                     <label htmlFor="password">Contraseña</label>
-                    <Password {...field} id="password" toggleMask feedback={false} aria-label="Contraseña" />
+                    <Password
+                      {...field}
+                      id="password"
+                      toggleMask
+                      feedback={false}
+                      className={errors.password ? "p-invalid" : ""}
+                    />
                   </div>
                 )}
               />
-              {errors.password && <small className="p-error">{errors.password.message}</small>}
+              {errors.password && (
+                <small className="p-error">
+                  {errors.password.message}
+                </small>
+              )}
             </div>
 
-            {/* Botón de envío */}
             <div className="full-width">
               <Button
                 label="Ingresar"
                 type="submit"
-                className="auth-button p-button-primary mt-3"
                 loading={isSubmitting}
+                className="auth-button p-button-primary mt-3"
               />
             </div>
           </div>
         </form>
 
-        {/* Sección de enlaces */}
         <div className="auth-links">
           <p>
             ¿No tienes cuenta? <Link href="/register">Regístrate</Link>

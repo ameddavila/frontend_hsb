@@ -1,17 +1,29 @@
 import { withAuth } from "next-auth/middleware";
+import { NextResponse } from "next/server";
+/*import type { NextRequest } from "next/server";*/
+import type { NextRequestWithAuth } from "next-auth/middleware";
 
-// 1. Exportamos el middleware conAuth
-export default withAuth({
-  pages: {
-    // Ruta donde se redirige si no hay sesión:
-    signIn: "/login", 
-    // O "/(public)/login" si tu URL final es esa
+export default withAuth(
+  async function middleware(req: NextRequestWithAuth) {
+    const { pathname } = req.nextUrl;
+    const isLoginPage =
+      pathname === "/login" || pathname === "/(public)/login";
+
+    // ✅ Si está autenticado y está en /login, redirigir a /dashboard
+    if (req.nextauth?.token && isLoginPage) {
+      return NextResponse.redirect(new URL("/dashboard", req.url));
+    }
+
+    return NextResponse.next();
   },
-});
+  {
+    pages: {
+      signIn: "/login", // o "/(public)/login" según tu ruta real
+    },
+  }
+);
 
-// 2. Definir config para especificar a qué rutas aplica
+// ✅ Define a qué rutas aplicar el middleware
 export const config = {
-  // Aplica sólo a las rutas de (protected) 
-  //   => /dashboard, /profile, etc.
-  matcher: ["/(protected)/:path*"],
+  matcher: ["/(protected)/:path*", "/login", "/(public)/login"],
 };

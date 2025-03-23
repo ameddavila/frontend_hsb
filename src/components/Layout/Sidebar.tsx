@@ -5,6 +5,7 @@ import { Menu } from "primereact/menu";
 import { useRouter } from "next/navigation";
 import { useMenus, MenuNode } from "@/hooks/useMenus";
 import { MenuItem } from "primereact/menuitem";
+import { MenuItemCommandEvent } from "primereact/menuitem"; // ✅ importar tipo
 
 interface SidebarProps {
   open: boolean;
@@ -41,7 +42,7 @@ export default function Sidebar({ open }: SidebarProps) {
             <div
               key={i}
               className="collapsed-icon p-2 cursor-pointer"
-              onClick={() => item.command?.({} as any)} // 👈 fuerza el tipo
+              onClick={() => item.command?.({} as MenuItemCommandEvent)} // ✅ tipo correcto
             >
               <i className={item.icon}></i>
             </div>
