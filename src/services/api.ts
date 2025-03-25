@@ -28,7 +28,7 @@ api.interceptors.request.use(async (config: InternalAxiosRequestConfig) => {
   let csrfToken = getCookieValue("csrfToken");
 
   if (!csrfToken) {
-    console.warn("⚠️ CSRF token no encontrado. Esperando...");
+     console.warn("⚠️ CSRF token no encontrado. Esperando...");
     csrfToken = await waitForCsrfToken();
   }
 
@@ -88,7 +88,7 @@ export const refreshAccessToken = async () => {
 
   if (!refreshToken || !csrfToken) {
     console.warn("⛔ refreshToken o csrfToken faltan");
-    throw new Error("Tokens faltantes");
+    return null; // No lanzar error
   }
 
   try {
