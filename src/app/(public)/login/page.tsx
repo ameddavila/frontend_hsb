@@ -3,16 +3,18 @@
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { signIn, useSession } from "next-auth/react";
-import { useState, useRef, useEffect } from "react";
+import { useAuth } from "@/hooks/useAuth";
+import { useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { InputText } from "primereact/inputtext";
 import { Password } from "primereact/password";
 import { Button } from "primereact/button";
 import { Toast } from "primereact/toast";
 import Link from "next/link";
+import { useCsrf } from "@/hooks/useCsrf";
 import "@/styles/auth.css";
 
+// 📦 Validación con Zod
 const loginSchema = z.object({
   usernameOrEmail: z.string().min(3, "Campo obligatorio"),
   password: z.string().min(6, "Mínimo 6 caracteres"),
@@ -24,22 +26,17 @@ interface LoginFormInputs {
 }
 
 export default function LoginPage() {
-  const { data: session, status } = useSession();
   const router = useRouter();
   const toast = useRef<Toast>(null);
-  const [loginError, setLoginError] = useState("");
+  const { user, loading, handleLogin } = useAuth();
+  useCsrf(); // ✅ CSRF público al cargar
 
+  // Redirección si ya hay sesión
   useEffect(() => {
-    console.log("🔍 useSession() status:", status);
-    console.log("🔍 useSession() session:", session);
-
-    if (status === "authenticated" && session) {
-      if (window.location.pathname !== "/dashboard") {
-        console.log("✅ Usuario ya autenticado. Redirigiendo al dashboard...");
-        router.push("/dashboard");
-      }
+    if (!loading && user) {
+      router.replace("/dashboard");
     }
-  }, [status, session]);
+  }, [user, loading, router]);
 
   const {
     control,
@@ -54,47 +51,25 @@ export default function LoginPage() {
   });
 
   const onSubmit = async (data: LoginFormInputs) => {
-    setLoginError("");
-
-    console.log("🚀 Enviando credenciales:", data);
-
-    const result = await signIn("credentials", {
-      ...data,
-      redirect: false,
-    });
-
-    console.log("🧠 Resultado del signIn:", result);
-
-    if (result?.error === "usuario_inactivo") {
-      console.log("⚠️ Usuario inactivo. Redirigiendo a /activar-cuenta");
-      router.push("/activar-cuenta");
-      return;
-    }
-
-    if (result?.error) {
-      setLoginError("Credenciales incorrectas o error en la autenticación.");
-      console.log("❌ Error en login:", result.error);
+    try {
+      await handleLogin(data.usernameOrEmail, data.password);
+    } catch (err) {
+      console.error("❌ Error en login:", err);
       toast.current?.show({
         severity: "error",
         summary: "Error",
-        detail: loginError,
+        detail: "Credenciales incorrectas o error en la autenticación.",
         life: 3000,
       });
-      return;
     }
-
-    console.log("✅ Login exitoso. Redirigiendo a dashboard...");
-    router.push("/dashboard");
   };
-
-  if (status === "loading") return <p>Cargando sesión...</p>;
 
   return (
     <div className="auth-container">
       <Toast ref={toast} />
       <div className="auth-card">
         <h2 className="auth-title">Iniciar Sesión</h2>
-        {loginError && <div className="auth-error">{loginError}</div>}
+
         <form onSubmit={handleSubmit(onSubmit)} className="p-fluid">
           <div className="form-grid login">
             <div className="full-width">
@@ -120,7 +95,7 @@ export default function LoginPage() {
                 render={({ field }) => (
                   <div className="p-field">
                     <label htmlFor="password">Contraseña</label>
-                    <Password {...field} toggleMask feedback={false} />
+                    <Password {...field} toggleMask feedback={false} id="password" />
                   </div>
                 )}
               />

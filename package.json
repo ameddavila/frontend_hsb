@@ -15,8 +15,8 @@
     "axios": "^1.8.1",
     "cookie": "^1.0.2",
     "i18next": "^24.2.2",
+    "jsonwebtoken": "^9.0.2",
     "next": "15.2.1",
-    "next-auth": "^4.24.11",
     "next-i18next": "^15.4.2",
     "primeflex": "^4.0.0",
     "primeicons": "^7.0.0",
@@ -30,6 +30,7 @@
   "devDependencies": {
     "@eslint/eslintrc": "^3",
     "@types/cookie": "^1.0.0",
+    "@types/jsonwebtoken": "^9.0.9",
     "@types/node": "^20",
     "@types/react": "^19.0.12",
     "@types/react-dom": "^19",

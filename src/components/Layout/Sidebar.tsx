@@ -5,7 +5,7 @@ import { Menu } from "primereact/menu";
 import { useRouter } from "next/navigation";
 import { useMenus, MenuNode } from "@/hooks/useMenus";
 import { MenuItem } from "primereact/menuitem";
-import { MenuItemCommandEvent } from "primereact/menuitem"; // ✅ importar tipo
+import { MenuItemCommandEvent } from "primereact/menuitem";
 
 interface SidebarProps {
   open: boolean;
@@ -15,7 +15,6 @@ export default function Sidebar({ open }: SidebarProps) {
   const router = useRouter();
   const { menus, loading } = useMenus();
 
-  // Construir estructura compatible con Menu de PrimeReact
   const buildMenuModel = (items: MenuNode[]): MenuItem[] => {
     return items.map((menu) => ({
       label: menu.name,
@@ -28,10 +27,27 @@ export default function Sidebar({ open }: SidebarProps) {
     }));
   };
 
-  
   const dynamicItems = buildMenuModel(menus);
 
-  if (loading) return <div className="p-4">Cargando menú...</div>;
+  if (loading) {
+    return (
+      <aside className={`sidebar ${open ? "expanded" : "collapsed"}`}>
+        <div className="p-4 text-center text-sm text-gray-500">
+          🔄 Cargando menú...
+        </div>
+      </aside>
+    );
+  }
+
+  if (!menus || menus.length === 0) {
+    return (
+      <aside className={`sidebar ${open ? "expanded" : "collapsed"}`}>
+        <div className="p-4 text-center text-sm text-red-500">
+          ⚠️ No se pudo cargar el menú.
+        </div>
+      </aside>
+    );
+  }
 
   return (
     <aside className={`sidebar ${open ? "expanded" : "collapsed"}`}>
@@ -43,7 +59,7 @@ export default function Sidebar({ open }: SidebarProps) {
             <div
               key={i}
               className="collapsed-icon p-2 cursor-pointer"
-              onClick={() => item.command?.({} as MenuItemCommandEvent)} // ✅ tipo correcto
+              onClick={() => item.command?.({} as MenuItemCommandEvent)}
             >
               <i className={item.icon}></i>
             </div>

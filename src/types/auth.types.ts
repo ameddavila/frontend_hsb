@@ -1,11 +1,6 @@
-import { FieldValues } from "react-hook-form";
-
-export interface RegisterFormInputs extends FieldValues {
+export interface RegisterFormInputs {
   username: string;
   email: string;
   password: string;
   confirmPassword: string;
-  firstName: string;
-  lastName: string;
-  phone?: string;
 }

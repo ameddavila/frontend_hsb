@@ -13,10 +13,11 @@ export default function Home() {
   const router = useRouter();
 
   useEffect(() => {
-    console.log("🔄 Redirigiendo a /login...");
-    router.push("/login");
-  }, []);
+    console.log("➡️ Redireccionando a /login desde /");
+    router.replace("/login");
+  }, [router]);
 
   return null;
 }
+
 
