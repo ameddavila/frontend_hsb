@@ -1,3 +1,5 @@
+"use client";
+
 import { useEffect, useState } from "react";
 import api from "@/services/api";
 import { useAuth } from "./useAuth";
@@ -12,22 +14,16 @@ export interface MenuNode {
   children: MenuNode[];
 }
 
-const getCookieValue = (name: string): string | null => {
-  if (typeof document === "undefined") return null;
-  const match = document.cookie.match(new RegExp(`(^| )${name}=([^;]+)`));
-  return match ? match[2] : null;
-};
-
-const waitForNewCsrfToken = async (maxWaitMs = 1000): Promise<string | null> => {
+const waitForCookie = async (name: string, maxWait = 1000): Promise<string | null> => {
   const interval = 50;
   let waited = 0;
-  while (waited < maxWaitMs) {
-    const token = getCookieValue("csrfToken");
-    if (token) return token;
+  while (waited < maxWait) {
+    const match = document.cookie.match(new RegExp(`(^| )${name}=([^;]+)`));
+    if (match) return match[2];
     await new Promise((r) => setTimeout(r, interval));
     waited += interval;
   }
-  console.warn("⏰ Tiempo agotado esperando CSRF token");
+  console.warn(`⏰ Tiempo agotado esperando cookie: ${name}`);
   return null;
 };
 
@@ -36,37 +32,49 @@ export const useMenus = () => {
   const [loading, setLoading] = useState(true);
   const { user, loading: authLoading } = useAuth();
 
+  const fetchMenus = async (context = "default") => {
+    try {
+      setLoading(true);
+      console.log(`📡 Cargando menús... (${context})`);
+
+      const csrf = await waitForCookie("csrfToken");
+      const access = await waitForCookie("accessToken");
+      if (!csrf || !access) {
+        console.error("❌ No hay CSRF o accessToken. Cancelando carga de menús.");
+        return;
+      }
+
+      const res = await api.get("/menus/my-menus");
+      console.log("📥 Menús recibidos:", res.data);
+      setMenus(res.data);
+    } catch (err) {
+      console.error("❌ Error al obtener menús:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const fetchMenus = async () => {
-      try {
-        console.log("📡 Cargando menús...");
-
-        const token = await waitForNewCsrfToken();
-        console.log("🔍 CSRF token encontrado en useMenus:", token);
-        if (!token) {
-          console.error("❌ CSRF token no disponible. Cancelando carga.");
-          return;
-        }
-
-        const res = await api.get("/menus/my-menus");
-        console.log("✅ Menús recibidos:", res.data);
-        setMenus(res.data);
-      } catch (err) {
-        console.error("❌ Error al obtener menús:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    if (!authLoading) {
-      if (user) {
-        fetchMenus();
-      } else {
-        console.log("🚫 No hay usuario autenticado. No se cargan menús.");
-        setLoading(false); // Evita que se quede en estado de carga
-      }
+    if (!authLoading && user) {
+      console.log("✅ Usuario autenticado. Cargando menús...");
+      fetchMenus("primera carga");
+    } else if (!authLoading && !user) {
+      console.log("🚫 No hay usuario autenticado. No se cargan menús.");
+      setMenus([]);
+      setLoading(false);
     }
   }, [authLoading, user]);
+
+  useEffect(() => {
+    const onRestore = () => {
+      if (user) {
+        console.log("🔁 Sesión restaurada. Reintentando carga de menús...");
+        fetchMenus("session-restored");
+      }
+    };
+    window.addEventListener("session-restored", onRestore);
+    return () => window.removeEventListener("session-restored", onRestore);
+  }, [user]);
 
   return { menus, loading };
 };

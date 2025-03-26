@@ -36,7 +36,7 @@ export default function LoginPage() {
     if (!loading && user) {
       router.replace("/dashboard");
     }
-  }, [user, loading, router]);
+  }, [user, loading]);
 
   const {
     control,

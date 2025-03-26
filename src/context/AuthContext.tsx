@@ -16,7 +16,6 @@ import {
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
-
 export interface User {
   userId: string;
   username: string;
@@ -33,13 +32,44 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+const waitForCookies = async (cookieNames: string[], maxWait = 2000) => {
+  const interval = 100;
+  let waited = 0;
+  while (waited < maxWait) {
+    const cookies = document.cookie;
+    const found = cookieNames.every((name) =>
+      new RegExp(`(^| )${name}=`).test(cookies)
+    );
+    if (found) return true;
+    await new Promise((r) => setTimeout(r, interval));
+    waited += interval;
+  }
+  return false;
+};
+
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 
   const initialize = async (context: string = "default") => {
-    console.log(`🧠 Ejecutando initialize() desde: ${context}`);
+    console.log(`🔄 Ejecutando initialize() desde: ${context}`);
+
+    // Evita refrescar en /login
+    if (window.location.pathname === "/login") {
+      console.log("📌 En /login, se omite refreshAccessToken");
+      setLoading(false);
+      return;
+    }
+
+    console.log("⏳ Esperando cookies para refresh...");
+    const cookiesReady = await waitForCookies(["refreshToken", "csrfToken"]);
+    if (!cookiesReady) {
+      console.warn("⚠️ Cookies refreshToken o csrfToken no disponibles. Cancelando refresh.");
+      setLoading(false);
+      return;
+    }
+
     try {
       const data = await refreshAccessToken();
       if (data?.id) {
@@ -49,58 +79,51 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           email: data.email,
           role: data.role,
         });
-  
         console.log("✅ Usuario restaurado:", data.username);
-  
         if (context === "pageshow (bfcache)") {
-          toast.success("✅ Sesión restaurada correctamente");
+          toast.success("♻️ Sesión restaurada correctamente");
         }
       } else {
-        console.log("⚠️ No se recibió usuario válido");
+        console.warn("⚠️ No se recibió usuario válido.");
         setUser(null);
       }
     } catch (e) {
-      console.warn("❌ Error al refrescar sesión:", e);
+      console.error("❌ Error al refrescar token:", e);
       setUser(null);
     } finally {
       setLoading(false);
     }
   };
-  
-  
+
   useEffect(() => {
     initialize("mount");
   }, []);
 
-  // ✅ Manejo robusto para back/forward cache
   useEffect(() => {
-    const handlePageShow = (event: PageTransitionEvent) => {
+    const handlePageShow = async (event: PageTransitionEvent) => {
       const navEntry = performance.getEntriesByType("navigation")[0] as PerformanceNavigationTiming;
-  
       const isBfCache = event.persisted || navEntry?.type === "back_forward";
-  
+
       if (isBfCache) {
-        console.log("🔁 Detectado back/forward navigation → revalidando sesión...");
-        initialize("pageshow (bfcache)");
+        console.log("♻️ Navegación desde historial detectada");
+        await initialize("pageshow (bfcache)");
+        window.dispatchEvent(new Event("session-restored"));
       }
     };
-  
     window.addEventListener("pageshow", handlePageShow);
     return () => window.removeEventListener("pageshow", handlePageShow);
   }, []);
-  
 
   const handleLogin = async (usernameOrEmail: string, password: string) => {
-    const oldToken = document.cookie.match(/(^| )csrfToken=([^;]+)/)?.[2];
-    console.log("🕵️ CSRF antes de login (modo público):", oldToken);
+    const before = document.cookie;
+    console.log("🕵️ CSRF antes del login:", before);
 
     await getCsrfToken();
-
     const data = await loginRequest(usernameOrEmail, password);
-    await new Promise((r) => setTimeout(r, 200));
+    await new Promise((r) => setTimeout(r, 200)); // espera ligera para set de cookies
 
-    const newToken = document.cookie.match(/(^| )csrfToken=([^;]+)/)?.[2];
-    console.log("🔐 CSRF después de login (modo user):", newToken);
+    const after = document.cookie;
+    console.log("🔐 CSRF después del login:", after);
 
     setUser({
       userId: data.id,
