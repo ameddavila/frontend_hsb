@@ -177,29 +177,34 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const handleLogin = async (usernameOrEmail: string, password: string) => {
     const before = document.cookie;
     console.log("🕵️ CSRF antes del login:", before);
-
+  
     await getCsrfToken();
     const data = await loginRequest(usernameOrEmail, password);
     await new Promise((r) => setTimeout(r, 200)); // espera ligera para set de cookies
-
+  
     const after = document.cookie;
     console.log("🔐 CSRF después del login:", after);
-
+  
     setUser({
       userId: data.id,
       username: data.username,
       email: data.email,
       role: data.role,
     });
-
+  
+    // 🔄 Forzar carga de menús
+    localStorage.removeItem("menu-storage"); // ✅ Limpia Zustand persistido (solo clave de los menús)
+    window.dispatchEvent(new Event("zustand-persist-reset")); // (opcional si usas eventos)
+  
+    // ✅ Redirigir y esperar que el layout cargue
     router.push("/dashboard");
-
-    // ✅ Esperar para garantizar que useMenus se monte
+  
     setTimeout(() => {
       console.log("🟢 Disparando evento session-ready tras login");
       window.dispatchEvent(new Event("session-ready"));
-    }, 300);
+    }, 400); // ligeramente más largo
   };
+  
 
   const handleLogout = async () => {
     await logoutRequest();
