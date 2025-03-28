@@ -1,4 +1,3 @@
-// src/hooks/useMenus.ts
 import { useEffect, useState } from "react";
 import api from "@/services/api";
 import { useAuth } from "./useAuth";
@@ -18,14 +17,14 @@ export const useMenus = () => {
   const [hydrated, setHydrated] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  // 🧠 Escuchar hidratación de Zustand
+  // ✅ Esperar hidratación de Zustand
   useEffect(() => {
     const unsub = useMenuStore.persist.onFinishHydration(() => {
-      console.log("💾 Zustand (menuStore) hidratado");
+      console.log("💾 Zustand hidratado (menuStore)");
       setHydrated(true);
-
+      // Si ya hay menús, no necesitamos cargar
       if (useMenuStore.getState().menus.length > 0) {
-        console.log("✅ Menús ya disponibles desde persistencia");
+        console.log("✅ Menús existentes en localStorage");
         setLoading(false);
       }
     });
@@ -36,38 +35,34 @@ export const useMenus = () => {
   const fetchMenus = async (context = "default") => {
     try {
       setLoading(true);
-      console.log(`📡 Cargando menús... (${context})`);
+      console.log(`📡 Obteniendo menús desde el backend (${context})`);
       const res = await api.get("/menus/my-menus");
-      console.log("📥 Menús recibidos:", res.data);
       setMenus(res.data);
       setMenuLoaded(true);
+      console.log("📥 Menús recibidos y almacenados");
     } catch (err) {
       console.error("❌ Error al obtener menús:", err);
       clearMenus();
-      setMenuLoaded(false);
     } finally {
       setLoading(false);
     }
   };
 
-  // ✅ Solo cargar si:
-  // - Zustand está hidratado
-  // - Hay usuario y sesión
-  // - No hay menús aún
+  // ✅ Cargar menús una vez cuando hay sesión lista y no están cargados
   useEffect(() => {
-    if (!hydrated) return;
+    if (!hydrated || !sessionReady || !user) return;
 
-    if (menus.length > 0) {
-      console.log("✅ useMenus: ya hay menús, sin fetch");
+    const persistedMenus = useMenuStore.getState().menus;
+    const loadedFlag = useMenuStore.getState().menuLoaded;
+
+    if (persistedMenus.length === 0 || !loadedFlag) {
+      console.log("🔄 Menús no presentes o no marcados como cargados, obteniendo...");
+      fetchMenus("session-ready");
+    } else {
+      console.log("✅ Menús ya estaban persistidos, sin fetch");
       setLoading(false);
-      return;
     }
-
-    if (user && sessionReady && !menuLoaded) {
-      console.log("📦 useMenus: menús no cargados, haciendo fetch");
-      fetchMenus("sessionReady");
-    }
-  }, [hydrated, user, sessionReady, menuLoaded]);
+  }, [hydrated, sessionReady, user]);
 
   return { menus, loading };
 };

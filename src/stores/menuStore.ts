@@ -1,4 +1,3 @@
-// src/stores/menuStore.ts
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
@@ -17,7 +16,7 @@ interface MenuStore {
   menuLoaded: boolean;
   setMenus: (menus: MenuNode[]) => void;
   clearMenus: () => void;
-  setMenuLoaded: (loaded: boolean) => void;
+  setMenuLoaded: (value: boolean) => void;
 }
 
 export const useMenuStore = create<MenuStore>()(
@@ -27,10 +26,10 @@ export const useMenuStore = create<MenuStore>()(
       menuLoaded: false,
       setMenus: (menus) => set({ menus }),
       clearMenus: () => set({ menus: [], menuLoaded: false }),
-      setMenuLoaded: (loaded) => set({ menuLoaded: loaded }),
+      setMenuLoaded: (value) => set({ menuLoaded: value }),
     }),
     {
-      name: "menu-storage", // localStorage key
+      name: "menu-storage",
     }
   )
 );
