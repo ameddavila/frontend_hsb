@@ -4,6 +4,7 @@ import React from "react";
 import { Menubar } from "primereact/menubar";
 import { Button } from "primereact/button";
 import { useRouter } from "next/navigation";
+import UserAvatarMenu from "@/components/Layout/UserAvatarMenu"; 
 
 interface NavbarProps {
   onToggleSidebar: () => void;
@@ -13,7 +14,6 @@ interface NavbarProps {
 export default function Navbar({ onToggleSidebar, onTogglePanel }: NavbarProps) {
   const router = useRouter();
 
-  // Menú principal con solo el botón de inicio
   const menubarModel = [
     {
       label: "Hospital Santa Bárbara",
@@ -21,31 +21,21 @@ export default function Navbar({ onToggleSidebar, onTogglePanel }: NavbarProps) 
       command: () => {
         void router.push("/dashboard");
       },
-      className: "home-button", // Aplicamos una clase específica para estilos personalizados
+      className: "home-button",
     },
   ];
 
-  // Sección de botones al final
   const endComponent = (
-    <div className="flex align-items-center gap-2">
+    <div className="flex align-items-center gap-3">
       <Button
-        label="Notificaciones"
         icon="pi pi-bell"
         className="p-button navbar-btn"
-        onClick={() => alert("Notificaciones...")}
+        onClick={() => alert("🔔 Notificaciones...")}
       />
-      <Button
-        label="Salir"
-        icon="pi pi-sign-out"
-        className="p-button navbar-btn"
-        onClick={() => {
-          void router.push("/logout");
-        }}
-      />
+      <UserAvatarMenu /> {/* ✅ Usamos el nuevo componente */}
     </div>
   );
 
-  // Botones de la izquierda (Sidebar y Panel Derecho)
   const start = (
     <div className="flex align-items-center">
       <Button
@@ -66,10 +56,13 @@ export default function Navbar({ onToggleSidebar, onTogglePanel }: NavbarProps) 
   return (
     <Menubar
       start={start}
-      model={menubarModel} // Volvemos a incluir el botón dentro del menú
+      model={menubarModel}
       end={endComponent}
       className="navbar border-none shadow-1"
-      style={{ backgroundColor: "var(--color-bg-sidebar)", color: "var(--color-text-white)" }}
+      style={{
+        backgroundColor: "var(--color-bg-sidebar)",
+        color: "var(--color-text-white)",
+      }}
     />
   );
 }

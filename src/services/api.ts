@@ -1,4 +1,5 @@
 import axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from "axios";
+import { waitForCookie, waitForAllCookies } from "@/utils/waitForCookie";
 
 // 📦 Obtener cookie del navegador
 function getCookie(name: string): string | null {
@@ -7,21 +8,7 @@ function getCookie(name: string): string | null {
   return match ? match[2] : null;
 }
 
-// ⏳ Espera a que una cookie esté disponible (máximo 1s)
-export async function waitForCookie(name: string, maxWait = 1000): Promise<string | null> {
-  const interval = 50;
-  let waited = 0;
-  while (waited < maxWait) {
-    const value = getCookie(name);
-    if (value) return value;
-    await new Promise((r) => setTimeout(r, interval));
-    waited += interval;
-  }
-  console.warn(`⚠️ Tiempo agotado esperando cookie: ${name}`);
-  return null;
-}
-
-// 🚀 Axios con credenciales
+// 🚀 Axios configurado
 const api = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL,
   withCredentials: true,
@@ -29,15 +16,12 @@ const api = axios.create({
 
 // ✅ Interceptor de solicitud: Agrega CSRF token a headers
 api.interceptors.request.use((config) => {
-  if (typeof document !== "undefined") {
-    const match = document.cookie.match(/(^| )csrfToken=([^;]+)/);
-    const csrf = match?.[2];
-    if (csrf) {
-      config.headers["X-CSRF-TOKEN"] = csrf;
-      console.log("🛡️ CSRF token agregado al request:", csrf);
-    } else {
-      console.warn("⚠️ No se encontró CSRF token para el request");
-    }
+  const csrf = getCookie("csrfToken");
+  if (csrf) {
+    config.headers["X-CSRF-TOKEN"] = csrf;
+    console.log("🛡️ CSRF token agregado al request:", csrf);
+  } else {
+    console.warn("⚠️ No se encontró CSRF token para el request");
   }
   return config;
 });
@@ -48,26 +32,24 @@ api.interceptors.response.use(
   async (error: AxiosError) => {
     const originalRequest = error.config as AxiosRequestConfig & { _retry?: boolean };
 
-    const isRefreshRequest = originalRequest.url?.includes("/auth/refresh");
+    const isRefresh = originalRequest.url?.includes("/auth/refresh");
     const isLogin = typeof window !== "undefined" && window.location.pathname === "/login";
 
-    if (error.response?.status === 401 && !originalRequest._retry && !isRefreshRequest && !isLogin) {
+    if (error.response?.status === 401 && !originalRequest._retry && !isRefresh && !isLogin) {
       originalRequest._retry = true;
 
-      const refreshToken = getCookie("refreshToken");
-      const csrf = getCookie("csrfToken");
-
-      if (!refreshToken || !csrf) {
-        console.warn("⛔ No hay cookies suficientes para intentar refresh.");
+      const ready = await waitForAllCookies(["refreshToken", "csrfToken"], 2000);
+      if (!ready) {
+        console.warn("⛔ Cookies insuficientes para intentar refresh.");
         return Promise.reject(error);
       }
 
       try {
-        console.log("🔁 Intentando refrescar access token...");
+        console.log("🔁 Intentando refrescar access token desde interceptor...");
         await api.post("/auth/refresh");
-        return api(originalRequest); // Reintentar request original
+        return api(originalRequest); // Reintentar el request original
       } catch (err) {
-        console.error("❌ Falló refresh, redirigiendo a login.");
+        console.error("❌ Falló el refresh, redirigiendo a login.");
         window.location.href = "/login";
       }
     }
@@ -91,11 +73,9 @@ export const login = async (usernameOrEmail: string, password: string) => {
 };
 
 export const refreshAccessToken = async () => {
-  const refreshToken = getCookie("refreshToken") || await waitForCookie("refreshToken");
-  const csrf = getCookie("csrfToken") || await waitForCookie("csrfToken");
-
-  if (!refreshToken || !csrf) {
-    console.warn("⛔ Cookies refreshToken o csrfToken no disponibles. Cancelando refresh.");
+  const ready = await waitForAllCookies(["refreshToken", "csrfToken"], 3000);
+  if (!ready) {
+    console.warn("⛔ Cookies necesarias no disponibles. Cancelando refresh.");
     return null;
   }
 

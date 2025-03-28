@@ -14,7 +14,7 @@ interface SidebarProps {
 export default function Sidebar({ open }: SidebarProps) {
   const router = useRouter();
   const { menus, loading } = useMenus();
-
+  console.log("🧱 Sidebar montado");
   const buildMenuModel = (items: MenuNode[]): MenuItem[] => {
     return items.map((menu) => ({
       label: menu.name,

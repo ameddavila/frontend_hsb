@@ -9,13 +9,13 @@ import { Toaster } from 'sonner';
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <AuthProvider>
-      <html lang="es">
-        <body>
+    <html lang="es">
+      <body>
+        <AuthProvider>
           <Toaster richColors position="top-center" />
           {children}
-        </body>
-      </html>
-    </AuthProvider>
+        </AuthProvider>
+      </body>
+    </html>
   );
 }

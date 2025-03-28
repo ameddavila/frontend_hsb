@@ -1,8 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import api from "@/services/api";
 import { useAuth } from "./useAuth";
+import { useSessionReady } from "./useSessionReady";
+import { useMenuStore } from "@/stores/menuStore";
 
 export interface MenuNode {
   id: number;
@@ -14,67 +16,42 @@ export interface MenuNode {
   children: MenuNode[];
 }
 
-const waitForCookie = async (name: string, maxWait = 1000): Promise<string | null> => {
-  const interval = 50;
-  let waited = 0;
-  while (waited < maxWait) {
-    const match = document.cookie.match(new RegExp(`(^| )${name}=([^;]+)`));
-    if (match) return match[2];
-    await new Promise((r) => setTimeout(r, interval));
-    waited += interval;
-  }
-  console.warn(`⏰ Tiempo agotado esperando cookie: ${name}`);
-  return null;
-};
-
 export const useMenus = () => {
-  const [menus, setMenus] = useState<MenuNode[]>([]);
-  const [loading, setLoading] = useState(true);
-  const { user, loading: authLoading } = useAuth();
+  const { user } = useAuth();
+  const sessionReady = useSessionReady(() => {
+    console.log("🧩 useMenus detectó que session-ready fue emitido");
+    if (user && menus.length === 0) {
+      fetchMenus("session-ready");
+    }
+  });
 
-  const fetchMenus = async (context = "default") => {
+  const menus = useMenuStore((state) => state.menus);
+  const setMenus = useMenuStore((state) => state.setMenus);
+  const clearMenus = useMenuStore((state) => state.clearMenus);
+  const [loading, setLoading] = useState(menus.length === 0); // mejora: no mostrar loading si ya hay menús
+
+  const fetchMenus = useCallback(async (context = "default") => {
     try {
       setLoading(true);
       console.log(`📡 Cargando menús... (${context})`);
-
-      const csrf = await waitForCookie("csrfToken");
-      const access = await waitForCookie("accessToken");
-      if (!csrf || !access) {
-        console.error("❌ No hay CSRF o accessToken. Cancelando carga de menús.");
-        return;
-      }
-
       const res = await api.get("/menus/my-menus");
       console.log("📥 Menús recibidos:", res.data);
       setMenus(res.data);
     } catch (err) {
       console.error("❌ Error al obtener menús:", err);
+      clearMenus();
     } finally {
       setLoading(false);
     }
-  };
+  }, [setMenus, clearMenus]);
 
+  // 🧠 Carga directa si ya hay sesión activa y aún no hay menús
   useEffect(() => {
-    if (!authLoading && user) {
-      console.log("✅ Usuario autenticado. Cargando menús...");
-      fetchMenus("primera carga");
-    } else if (!authLoading && !user) {
-      console.log("🚫 No hay usuario autenticado. No se cargan menús.");
-      setMenus([]);
-      setLoading(false);
+    if (user && sessionReady && menus.length === 0) {
+      console.log("📦 Carga directa desde useMenus (estado limpio)");
+      fetchMenus("carga directa");
     }
-  }, [authLoading, user]);
-
-  useEffect(() => {
-    const onRestore = () => {
-      if (user) {
-        console.log("🔁 Sesión restaurada. Reintentando carga de menús...");
-        fetchMenus("session-restored");
-      }
-    };
-    window.addEventListener("session-restored", onRestore);
-    return () => window.removeEventListener("session-restored", onRestore);
-  }, [user]);
+  }, [user, sessionReady, menus.length, fetchMenus]);
 
   return { menus, loading };
 };

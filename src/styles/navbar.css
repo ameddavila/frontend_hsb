@@ -40,3 +40,8 @@
     display: none;
   }
 }
+
+/* auth.css o navbar.css */
+.p-overlaypanel {
+  border-radius: 0.75rem;
+}

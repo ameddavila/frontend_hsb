@@ -6,6 +6,7 @@ import {
   useEffect,
   useState,
   ReactNode,
+  useRef,
 } from "react";
 import {
   getCsrfToken,
@@ -15,6 +16,8 @@ import {
 } from "@/services/api";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { waitForCookie, waitForAllCookies  } from "@/utils/waitForCookie";
+
 
 export interface User {
   userId: string;
@@ -32,46 +35,70 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-const waitForCookies = async (cookieNames: string[], maxWait = 2000) => {
-  const interval = 100;
-  let waited = 0;
-  while (waited < maxWait) {
-    const cookies = document.cookie;
-    const found = cookieNames.every((name) =>
-      new RegExp(`(^| )${name}=`).test(cookies)
-    );
-    if (found) return true;
-    await new Promise((r) => setTimeout(r, interval));
-    waited += interval;
-  }
-  return false;
+const waitForCookies = async (
+  names: string[],
+  maxWait = 2000
+): Promise<boolean> => {
+  const results = await Promise.all(
+    names.map((name) => waitForCookie(name, maxWait))
+  );
+  return results.every((cookie) => Boolean(cookie));
 };
+
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 
+  const refreshAttempts = useRef(0);
+  const MAX_ATTEMPTS = 5;
+  const RETRY_DELAY = 400;
+
   const initialize = async (context: string = "default") => {
     console.log(`🔄 Ejecutando initialize() desde: ${context}`);
-
-    // Evita refrescar en /login
-    if (window.location.pathname === "/login") {
-      console.log("📌 En /login, se omite refreshAccessToken");
+  
+    const pathname = window.location.pathname;
+    const isPublic =
+      pathname.startsWith("/login") ||
+      pathname.startsWith("/register") ||
+      pathname.startsWith("/recover");
+  
+    if (isPublic) {
+      console.log("📌 En ruta pública, se omite initialize()");
       setLoading(false);
       return;
     }
-
+  
     console.log("⏳ Esperando cookies para refresh...");
-    const cookiesReady = await waitForCookies(["refreshToken", "csrfToken"]);
+    const cookiesReady = await waitForAllCookies(["refreshToken", "csrfToken"], 3000);
+  
     if (!cookiesReady) {
-      console.warn("⚠️ Cookies refreshToken o csrfToken no disponibles. Cancelando refresh.");
-      setLoading(false);
+      if (refreshAttempts.current >= MAX_ATTEMPTS) {
+        console.error("❌ Demasiados intentos fallidos. Cancelando refresh.");
+        setLoading(false);
+        return;
+      }
+  
+      console.warn(`⚠️ Cookies no disponibles aún. Reintentando en ${RETRY_DELAY}ms...`);
+      refreshAttempts.current++;
+      setTimeout(() => initialize(`retry-${refreshAttempts.current}`), RETRY_DELAY);
       return;
     }
-
+  
     try {
       const data = await refreshAccessToken();
+  
+      // 🕵️ Seguimiento detallado de tokens después del refresh
+      const accessToken = document.cookie.match(/(^| )accessToken=([^;]+)/)?.[2];
+      const refreshToken = document.cookie.match(/(^| )refreshToken=([^;]+)/)?.[2];
+      const csrfToken = document.cookie.match(/(^| )csrfToken=([^;]+)/)?.[2];
+  
+      console.log("🍪 Tokens tras refresh:");
+      console.log("   🔐 accessToken:", accessToken ? "✅ presente" : "❌ ausente");
+      console.log("   ♻️ refreshToken:", refreshToken ? "✅ presente" : "❌ ausente");
+      console.log("   🛡️ csrfToken:", csrfToken ? `✅ ${csrfToken}` : "❌ ausente");
+  
       if (data?.id) {
         setUser({
           userId: data.id,
@@ -80,7 +107,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           role: data.role,
         });
         console.log("✅ Usuario restaurado:", data.username);
-        if (context === "pageshow (bfcache)") {
+  
+        // 🔔 Notificar a los hooks
+        window.dispatchEvent(new Event("session-ready"));
+  
+        if (context.includes("bfcache")) {
           toast.success("♻️ Sesión restaurada correctamente");
         }
       } else {
@@ -94,14 +125,43 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setLoading(false);
     }
   };
+  
 
   useEffect(() => {
-    initialize("mount");
+    const pathname = window.location.pathname;
+    const isPublic =
+      pathname.startsWith("/login") ||
+      pathname.startsWith("/register") ||
+      pathname.startsWith("/recover");
+  
+    if (isPublic) {
+      console.log("📌 En ruta pública, se omite initialize()");
+      setLoading(false);
+      return;
+    }
+  
+    const runInitialize = () => {
+      if (document.visibilityState === "visible") {
+        initialize("mount");
+      } else {
+        const onVisible = () => {
+          initialize("visibility");
+          document.removeEventListener("visibilitychange", onVisible);
+        };
+        document.addEventListener("visibilitychange", onVisible);
+      }
+    };
+  
+    // 💡 Ejecutar después de pequeña pausa para permitir cookies
+    setTimeout(runInitialize, 100);
   }, []);
+  
 
   useEffect(() => {
     const handlePageShow = async (event: PageTransitionEvent) => {
-      const navEntry = performance.getEntriesByType("navigation")[0] as PerformanceNavigationTiming;
+      const navEntry = performance.getEntriesByType(
+        "navigation"
+      )[0] as PerformanceNavigationTiming;
       const isBfCache = event.persisted || navEntry?.type === "back_forward";
 
       if (isBfCache) {
@@ -133,6 +193,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     });
 
     router.push("/dashboard");
+
+    // ✅ Esperar para garantizar que useMenus se monte
+    setTimeout(() => {
+      console.log("🟢 Disparando evento session-ready tras login");
+      window.dispatchEvent(new Event("session-ready"));
+    }, 300);
   };
 
   const handleLogout = async () => {
@@ -142,7 +208,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, handleLogin, handleLogout }}>
+    <AuthContext.Provider
+      value={{ user, loading, handleLogin, handleLogout }}
+    >
       {children}
     </AuthContext.Provider>
   );
