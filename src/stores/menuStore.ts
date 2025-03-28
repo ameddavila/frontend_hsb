@@ -1,7 +1,15 @@
-// src/stores/menuStore.ts
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { MenuNode } from "@/hooks/useMenus"; // o cambia el path según dónde definas la interfaz
+
+export interface MenuNode {
+  id: number;
+  name: string;
+  path: string;
+  parentId: number | null;
+  icon?: string;
+  isActive?: boolean;
+  children: MenuNode[];
+}
 
 interface MenuStore {
   menus: MenuNode[];
@@ -9,7 +17,6 @@ interface MenuStore {
   clearMenus: () => void;
 }
 
-// 🧠 Store persistente para mantener los menús tras F5
 export const useMenuStore = create<MenuStore>()(
   persist(
     (set) => ({
@@ -18,7 +25,7 @@ export const useMenuStore = create<MenuStore>()(
       clearMenus: () => set({ menus: [] }),
     }),
     {
-      name: "menu-storage", // nombre en localStorage
+      name: "menu-storage", // 🧠 clave en localStorage
     }
   )
 );
