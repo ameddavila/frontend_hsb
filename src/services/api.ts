@@ -1,5 +1,5 @@
 import axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from "axios";
-import { waitForCookie, waitForAllCookies } from "@/utils/waitForCookie";
+import { waitForAllCookies } from "@/utils/waitForCookie";
 
 // 📦 Obtener cookie del navegador
 function getCookie(name: string): string | null {

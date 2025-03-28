@@ -3,24 +3,27 @@
 /**
  * Espera hasta que una cookie específica esté disponible en el navegador.
  * @param name Nombre de la cookie a esperar.
- * @param maxWaitMs Tiempo máximo de espera (ms).
+ * @param maxWaitMs Tiempo máximo de espera en milisegundos.
+ * @param interval Intervalo entre reintentos.
  * @returns El valor de la cookie o null si no aparece a tiempo.
  */
 export const waitForCookie = async (
   name: string,
-  maxWaitMs = 1000
+  maxWaitMs = 5000,
+  interval = 100
 ): Promise<string | null> => {
-  const interval = 50;
-  let waited = 0;
+  const start = Date.now();
 
-  while (waited < maxWaitMs) {
-    const cookie = document.cookie.match(
+  while (Date.now() - start < maxWaitMs) {
+    const match = document.cookie.match(
       new RegExp(`(^| )${name}=([^;]+)`)
-    )?.[2];
-    if (cookie) return cookie;
+    );
+    if (match) {
+      console.log(`✅ Cookie encontrada: ${name}`);
+      return match[2];
+    }
 
     await new Promise((resolve) => setTimeout(resolve, interval));
-    waited += interval;
   }
 
   console.warn(`⏳ Tiempo agotado esperando cookie: ${name}`);
@@ -30,15 +33,31 @@ export const waitForCookie = async (
 /**
  * Espera hasta que todas las cookies especificadas estén disponibles.
  * @param names Lista de nombres de cookies a esperar.
- * @param maxWaitMs Tiempo máximo para esperar cada cookie (ms).
- * @returns true si todas las cookies están disponibles, false si alguna falla.
+ * @param maxWaitMs Tiempo máximo total de espera (compartido entre todas).
+ * @returns true si todas están disponibles, false si alguna falla.
  */
 export const waitForAllCookies = async (
   names: string[],
-  maxWaitMs = 2000
+  maxWaitMs = 7000
 ): Promise<boolean> => {
-  const results = await Promise.all(
-    names.map((name) => waitForCookie(name, maxWaitMs))
-  );
-  return results.every((cookie) => Boolean(cookie));
+  const start = Date.now();
+  const missing: string[] = [];
+
+  for (const name of names) {
+    const remainingTime = maxWaitMs - (Date.now() - start);
+    if (remainingTime <= 0) {
+      console.warn("⛔ Tiempo total agotado antes de terminar todas las cookies.");
+      break;
+    }
+
+    const found = await waitForCookie(name, remainingTime);
+    if (!found) missing.push(name);
+  }
+
+  if (missing.length > 0) {
+    console.warn("⚠️ Faltan cookies necesarias:", missing);
+    return false;
+  }
+
+  return true;
 };

@@ -45,3 +45,15 @@
 .p-overlaypanel {
   border-radius: 0.75rem;
 }
+
+.navbar .p-menubar-root {
+  background-color: var(--surface-ground);
+  border: none;
+}
+
+.navbar-btn {
+  background: none;
+  border: none;
+  color: var(--text-color);
+  font-size: 1.2rem;
+}

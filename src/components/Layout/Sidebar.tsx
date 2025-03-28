@@ -3,7 +3,8 @@
 import React from "react";
 import { Menu } from "primereact/menu";
 import { useRouter } from "next/navigation";
-import { useMenus, MenuNode } from "@/hooks/useMenus";
+import { useMenus } from "@/hooks/useMenus";
+import { MenuNode } from "@/stores/menuStore"; // ✅ Correcto
 import { MenuItem } from "primereact/menuitem";
 import { MenuItemCommandEvent } from "primereact/menuitem";
 
@@ -14,6 +15,9 @@ interface SidebarProps {
 export default function Sidebar({ open }: SidebarProps) {
   const router = useRouter();
   const { menus, loading } = useMenus();
+  console.log("🧩 Menús del backend:", menus);
+console.log("📦 Sidebar: loading =", loading, "| total menús =", menus.length);
+
   console.log("🧱 Sidebar montado");
   const buildMenuModel = (items: MenuNode[]): MenuItem[] => {
     return items.map((menu) => ({

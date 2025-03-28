@@ -1,3 +1,4 @@
+// ✅ NUEVA VERSIÓN DE AuthContext.tsx
 "use client";
 
 import {
@@ -6,7 +7,6 @@ import {
   useEffect,
   useState,
   ReactNode,
-  useRef,
 } from "react";
 import {
   getCsrfToken,
@@ -16,8 +16,9 @@ import {
 } from "@/services/api";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { waitForAllCookies } from "@/utils/waitForCookie";
 import { useMenuStore } from "@/stores/menuStore";
+import { useWaitForCookiesReady } from "@/hooks/useWaitForCookiesReady";
+import { useUserStore } from "@/stores/userStore"; // 🆕 Store para persistencia del usuario
 
 // ======================
 // Tipos y contexto base
@@ -44,22 +45,17 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 // ======================
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
-  const refreshAttempts = useRef(0);
-
-  const MAX_ATTEMPTS = 5;
-  const RETRY_DELAY = 400;
-
   const { clearMenus, setMenuLoaded } = useMenuStore.getState();
+  const cookiesReady = useWaitForCookiesReady(["refreshToken", "csrfToken"], 7000);
+
+  const { user, setUser, clearUser } = useUserStore(); // 🆕 persistencia de usuario
 
   // ======================
   // 🔄 Refrescar sesión desde cookies
   // ======================
   const initialize = async (context: string = "default") => {
-    console.log(`🔄 initialize(): ${context}`);
-
     const pathname = window.location.pathname;
     const isPublic =
       pathname.startsWith("/login") ||
@@ -67,24 +63,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       pathname.startsWith("/recover");
 
     if (isPublic) {
-      console.log("📌 Ruta pública, skip initialize()");
+      console.log(`📌 Ruta pública (${pathname}), saltando refresh...`);
       setLoading(false);
       return;
     }
 
-    const cookiesReady = await waitForAllCookies(["refreshToken", "csrfToken"], 3000);
-    if (!cookiesReady) {
-      if (refreshAttempts.current >= MAX_ATTEMPTS) {
-        console.error("❌ Max reintentos alcanzados. Abortando refresh.");
-        setLoading(false);
-        return;
-      }
-
-      console.warn(`⏳ Cookies no listas. Reintentando en ${RETRY_DELAY}ms...`);
-      refreshAttempts.current++;
-      setTimeout(() => initialize(`retry-${refreshAttempts.current}`), RETRY_DELAY);
-      return;
-    }
+    console.log(`🔄 initialize(): ${context}`);
 
     try {
       const data = await refreshAccessToken();
@@ -99,14 +83,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       console.log("   🛡️ csrfToken:", csrfToken ? `✅ ${csrfToken}` : "❌");
 
       if (data?.id) {
-        setUser({
+        const userData = {
           userId: data.id,
           username: data.username,
           email: data.email,
           role: data.role,
-        });
+        };
+        setUser(userData);
         console.log("✅ Usuario restaurado:", data.username);
-
         window.dispatchEvent(new Event("session-ready"));
 
         if (context.includes("bfcache")) {
@@ -114,11 +98,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         }
       } else {
         console.warn("⚠️ No se recibió usuario válido");
-        setUser(null);
+        clearUser();
       }
     } catch (e) {
       console.error("❌ Error al refrescar sesión:", e);
-      setUser(null);
+      clearUser();
     } finally {
       setLoading(false);
     }
@@ -133,16 +117,18 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     await getCsrfToken();
     const data = await loginRequest(usernameOrEmail, password);
 
-    await new Promise((r) => setTimeout(r, 200)); // esperar cookies
+    console.log("✅ Login exitoso, esperando cookies...");
+    await new Promise((r) => setTimeout(r, 200));
 
-    setUser({
+    const userData = {
       userId: data.id,
       username: data.username,
       email: data.email,
       role: data.role,
-    });
+    };
+    setUser(userData);
 
-    // 💾 Limpiar menús antiguos y estado
+    console.log("🧹 Limpiando menús previos y estado de carga...");
     localStorage.removeItem("menu-storage");
     clearMenus();
     setMenuLoaded(false);
@@ -150,7 +136,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     router.push("/dashboard");
 
     setTimeout(() => {
-      console.log("🟢 Evento session-ready post-login");
+      console.log("🟢 Emitiendo evento session-ready (post-login)");
       window.dispatchEvent(new Event("session-ready"));
     }, 400);
   };
@@ -158,16 +144,23 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   // ======================
   // 🚪 Logout
   // ======================
-  const handleLogout = async () => {
-    await logoutRequest();
-    setUser(null);
-    clearMenus();
-    setMenuLoaded(false);
-    router.push("/login");
-  };
+  // 🚪 Logout
+const handleLogout = async () => {
+  await logoutRequest();
+  setUser(null);
+  clearMenus();
+  setMenuLoaded(false);
+
+  // 🧹 Limpiar localStorage persistido (Zustand)
+  localStorage.removeItem("menu-storage");
+  localStorage.removeItem("user-storage");
+
+  router.push("/login");
+};
+
 
   // ======================
-  // useEffect: inicializar sesión
+  // useEffect: inicializar sesión si las cookies están listas
   // ======================
   useEffect(() => {
     const pathname = window.location.pathname;
@@ -181,29 +174,20 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       return;
     }
 
-    const runInitialize = () => {
-      if (document.visibilityState === "visible") {
-        initialize("mount");
-      } else {
-        const onVisible = () => {
-          initialize("visibility");
-          document.removeEventListener("visibilitychange", onVisible);
-        };
-        document.addEventListener("visibilitychange", onVisible);
-      }
-    };
-
-    setTimeout(runInitialize, 100);
-  }, []);
+    if (cookiesReady === true) {
+      initialize("hook-ready");
+    } else if (cookiesReady === false) {
+      console.warn("⚠️ Cookies no disponibles. No se puede refrescar sesión.");
+      setLoading(false);
+    }
+  }, [cookiesReady]);
 
   // ======================
   // useEffect: manejar navegación desde bfcache
   // ======================
   useEffect(() => {
     const handlePageShow = async (event: PageTransitionEvent) => {
-      const navEntry = performance.getEntriesByType(
-        "navigation"
-      )[0] as PerformanceNavigationTiming;
+      const navEntry = performance.getEntriesByType("navigation")[0] as PerformanceNavigationTiming;
       const isBfCache = event.persisted || navEntry?.type === "back_forward";
 
       if (isBfCache) {
