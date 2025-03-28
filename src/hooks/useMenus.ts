@@ -1,3 +1,4 @@
+// src/hooks/useMenus.ts
 import { useEffect, useState } from "react";
 import api from "@/services/api";
 import { useAuth } from "./useAuth";
@@ -11,7 +12,23 @@ export const useMenus = () => {
   const menus = useMenuStore((state) => state.menus);
   const setMenus = useMenuStore((state) => state.setMenus);
   const clearMenus = useMenuStore((state) => state.clearMenus);
-  const [loading, setLoading] = useState(menus.length === 0);
+  const [hydrated, setHydrated] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  // 🧠 Escuchar la hidratación de Zustand
+  useEffect(() => {
+    const unsub = useMenuStore.persist.onFinishHydration(() => {
+      console.log("💾 Zustand (menuStore) hidratado");
+      setHydrated(true);
+      // ⚡ Si ya hay menús en memoria, evitar loading innecesario
+      if (useMenuStore.getState().menus.length > 0) {
+        console.log("✅ Menús ya disponibles desde persistencia");
+        setLoading(false);
+      }
+    });
+
+    return () => unsub?.();
+  }, []);
 
   const fetchMenus = async (context = "default") => {
     try {
@@ -29,16 +46,13 @@ export const useMenus = () => {
   };
 
   useEffect(() => {
-    if (user && sessionReady && menus.length === 0) {
+    if (!hydrated || !user || !sessionReady) return;
+
+    if (menus.length === 0) {
       console.log("📦 useMenus: menús vacíos, realizando fetch");
-      fetchMenus("primera carga");
-    } else {
-      if (menus.length > 0) {
-        console.log("✅ useMenus: usando menús persistidos en Zustand");
-        setLoading(false);
-      }
+      fetchMenus("post-hydration");
     }
-  }, [user, sessionReady]);
+  }, [hydrated, user, sessionReady]);
 
   return { menus, loading };
 };
