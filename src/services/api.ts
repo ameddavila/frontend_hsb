@@ -48,7 +48,7 @@ api.interceptors.response.use(
         console.log("🔁 Intentando refrescar access token desde interceptor...");
         await api.post("/auth/refresh");
         return api(originalRequest); // Reintentar el request original
-      } catch (err) {
+      } catch {
         console.error("❌ Falló el refresh, redirigiendo a login.");
         window.location.href = "/login";
       }

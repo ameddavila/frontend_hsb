@@ -22,4 +22,12 @@
     height: auto !important;
   }
   
+  /* admin.css */
+  .p-confirm-dialog .p-dialog-content {
+    font-size: 0.95rem;
+  }
+  
+  .p-confirm-dialog .p-dialog-footer .p-button {
+    min-width: 6rem;
+  }
   

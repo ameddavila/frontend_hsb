@@ -1,54 +1,53 @@
-// ✏️ src/app/(protected)/admin/menus/[id]/edit/page.tsx
 "use client";
+
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { getMenuById, updateMenu } from "@/services/menuService";
+import { getMenuById, updateMenu, MenuInput } from "@/services/menuService";
 import { useRouter, useParams } from "next/navigation";
-import { InputText } from "primereact/inputtext";
-import { Button } from "primereact/button";
+import MenuForm from "@/components/menus/MenuForm";
 import { toast } from "sonner";
 
-const EditMenuPage = () => {
+export default function EditMenuPage() {
   const router = useRouter();
   const params = useParams();
-  const { register, handleSubmit, reset } = useForm();
+  const form = useForm<MenuInput>();
 
   useEffect(() => {
-    const fetchMenu = async () => {
+    const fetchData = async () => {
+      const menuId = Number(params.id);
+      if (!menuId || isNaN(menuId)) {
+        toast.error("ID inválido");
+        return;
+      }
+
       try {
-        const res = await getMenuById(Number(params.id));
-        reset(res.data);
-      } catch (error) {
-        toast.error("Error al cargar menú");
+        const res = await getMenuById(menuId);
+        form.reset(res); // res ya es tipo MenuInput o compatible
+      } catch {
+        toast.error("Error al cargar el menú");
       }
     };
 
-    fetchMenu();
-  }, [params.id, reset]);
+    fetchData();
+  }, [params.id, form]);
 
-  const onSubmit = async (data: any) => {
+  const onSubmit = async (data: MenuInput) => {
     try {
-      await updateMenu(Number(params.id), data);
+      await updateMenu(Number(params.id), {
+        ...data,
+        parentId: data.parentId ? Number(data.parentId) : null,
+      });
       toast.success("Menú actualizado");
       router.push("/admin/menus");
-    } catch (error) {
-      toast.error("Error al actualizar menú");
+    } catch {
+      toast.error("Error al actualizar el menú");
     }
   };
 
   return (
-    <div className="p-4 max-w-lg mx-auto">
-      <h2 className="text-xl font-bold mb-4">Editar Menú</h2>
-      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
-        <InputText placeholder="Nombre" {...register("name", { required: true })} />
-        <InputText placeholder="Ruta" {...register("path")} />
-        <InputText placeholder="Ícono" {...register("icon")} />
-        <InputText placeholder="ID del Padre" type="number" {...register("parentId")} />
-
-        <Button label="Actualizar" icon="pi pi-save" type="submit" />
-      </form>
+    <div className="admin-page p-4 max-w-xl mx-auto">
+      <h1 className="text-xl font-bold mb-4">✏️ Editar Menú</h1>
+      <MenuForm onSubmit={onSubmit} form={form} />
     </div>
   );
-};
-
-export default EditMenuPage;
+}

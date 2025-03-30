@@ -1,29 +1,29 @@
-// 📁 src/app/(protected)/admin/menus/create/page.tsx
 "use client";
+
 import { useRouter } from "next/navigation";
+import { createMenu, MenuInput  } from "@/services/menuService";
 import MenuForm from "@/components/menus/MenuForm";
-import { createMenu } from "@/services/menuService";
 import { toast } from "sonner";
 
 export default function CreateMenuPage() {
   const router = useRouter();
 
-  const handleCreate = async (data: any) => {
+  const handleCreate = async (data: MenuInput) =>{
     try {
       await createMenu({
         ...data,
-        padreId: data.padreId ? Number(data.padreId) : null,
+        parentId: data.parentId ? Number(data.parentId) : null,
       });
       toast.success("Menú creado correctamente");
       router.push("/admin/menus");
-    } catch (err) {
+    } catch {
       toast.error("Error al crear el menú");
     }
   };
 
   return (
-    <div className="card">
-      <h2>Crear Menú</h2>
+    <div className="admin-page p-4 max-w-xl mx-auto">
+      <div className="text-xl font-bold mb-4">🆕 Crear Nuevo Menú</div>
       <MenuForm onSubmit={handleCreate} />
     </div>
   );

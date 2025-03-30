@@ -1,26 +1,16 @@
 // src/stores/menuStore.ts
-import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
-
-export interface MenuNode {
-  id: number;
-  name: string;
-  path: string;
-  parentId: number | null;
-  icon?: string;
-  isActive?: boolean;
-  children: MenuNode[];
-}
-
+import { create } from "zustand";
+import { persist } from "zustand/middleware";
+import { MenuNode  } from "@/types/Menu"; // ✅ Tipado base importado
 
 interface MenuState {
-  menus: any[];
-  menuLoaded: boolean;
-  collapsed: boolean; // 🆕
-  setMenus: (menus: any[]) => void;
+  menus: MenuNode []; // Menús planos (lo que devuelve /menus)
+  menuLoaded: boolean; // Ya se cargaron los menús
+  collapsed: boolean; // Sidebar colapsado
+  setMenus: (menus: MenuNode []) => void;
   setMenuLoaded: (loaded: boolean) => void;
   clearMenus: () => void;
-  toggleCollapsed: () => void; // 🆕
+  toggleCollapsed: () => void;
 }
 
 export const useMenuStore = create<MenuState>()(
@@ -36,8 +26,7 @@ export const useMenuStore = create<MenuState>()(
         set((state) => ({ collapsed: !state.collapsed })),
     }),
     {
-      name: 'menu-storage',
+      name: "menu-storage", // localStorage key
     }
   )
 );
-

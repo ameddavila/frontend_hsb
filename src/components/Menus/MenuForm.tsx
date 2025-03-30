@@ -1,86 +1,77 @@
-// 📁 src/components/menus/MenuForm.tsx
+// src/components/menus/MenuForm.tsx
+import { useForm, UseFormReturn } from "react-hook-form";
 import { InputText } from "primereact/inputtext";
 import { Button } from "primereact/button";
-import { Controller, useForm } from "react-hook-form";
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { classNames } from "primereact/utils";
-
-const schema = z.object({
-  nombre: z.string().min(1, "Nombre requerido"),
-  ruta: z.string().min(1, "Ruta requerida"),
-  icono: z.string().min(1, "Ícono requerido"),
-  padreId: z.union([z.string(), z.number(), z.null()]).optional(),
-});
-
-type FormValues = z.infer<typeof schema>;
+import { Dropdown } from "primereact/dropdown";
+import { MenuInput, getMenus } from "@/services/menuService";
+import { useEffect, useState } from "react";
 
 interface Props {
-  defaultValues?: FormValues;
-  onSubmit: (data: FormValues) => void;
-  isEditing?: boolean;
-  loading?: boolean;
+  onSubmit: (data: MenuInput) => void;
+  form?: UseFormReturn<MenuInput>;
 }
 
-export default function MenuForm({ defaultValues, onSubmit, isEditing = false, loading }: Props) {
+function MenuForm({ onSubmit, form }: Props) {
+  const fallbackForm = useForm<MenuInput>();
   const {
-    control,
+    register,
     handleSubmit,
+    setValue,
+    watch,
     formState: { errors },
-  } = useForm<FormValues>({
-    defaultValues,
-    resolver: zodResolver(schema),
-  });
+  } = form ?? fallbackForm;
+
+  const [menuOptions, setMenuOptions] = useState<{ label: string; value: number | null }[]>([]);
+
+  useEffect(() => {
+    const fetchMenus = async () => {
+      try {
+        const res = await getMenus();
+        const options = res.map((menu) => ({
+          label: menu.name,
+          value: menu.id,
+        }));
+        setMenuOptions([{ label: "Sin padre", value: null }, ...options]);
+      } catch (err) {
+        console.error("Error al cargar menús padre", err);
+      }
+    };
+    fetchMenus();
+  }, []);
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="p-fluid grid gap-3">
-      <div className="col-12 md:col-6">
-        <label htmlFor="nombre">Nombre</label>
-        <Controller
-          name="nombre"
-          control={control}
-          render={({ field }) => (
-            <InputText id="nombre" {...field} className={classNames({ "p-invalid": errors.nombre })} size="small" />
-          )}
+    <form onSubmit={handleSubmit(onSubmit)} className="p-fluid flex flex-col gap-4">
+      <div>
+        <label htmlFor="name">Nombre</label>
+        <InputText id="name" {...register("name", { required: "El nombre es obligatorio" })} />
+        {errors.name && <small className="p-error">{String(errors.name.message)}</small>}
+      </div>
+
+      <div>
+        <label htmlFor="path">Ruta</label>
+        <InputText id="path" {...register("path")} />
+      </div>
+
+      <div>
+        <label htmlFor="icon">Ícono</label>
+        <InputText id="icon" {...register("icon")} />
+      </div>
+
+      <div>
+        <label htmlFor="parentId">Menú Padre</label>
+        <Dropdown
+          id="parentId"
+          value={watch("parentId") ?? null}
+          options={menuOptions}
+          onChange={(e) => setValue("parentId", e.value)}
+          placeholder="Selecciona un menú padre"
+          className="w-full"
         />
       </div>
 
-      <div className="col-12 md:col-6">
-        <label htmlFor="ruta">Ruta</label>
-        <Controller
-          name="ruta"
-          control={control}
-          render={({ field }) => (
-            <InputText id="ruta" {...field} className={classNames({ "p-invalid": errors.ruta })} size="small" />
-          )}
-        />
-      </div>
-
-      <div className="col-12 md:col-6">
-        <label htmlFor="icono">Ícono</label>
-        <Controller
-          name="icono"
-          control={control}
-          render={({ field }) => (
-            <InputText id="icono" {...field} className={classNames({ "p-invalid": errors.icono })} size="small" />
-          )}
-        />
-      </div>
-
-      <div className="col-12 md:col-6">
-        <label htmlFor="padreId">ID del Padre (opcional)</label>
-        <Controller
-          name="padreId"
-          control={control}
-          render={({ field }) => (
-            <InputText id="padreId" {...field} size="small" keyfilter="pint" />
-          )}
-        />
-      </div>
-
-      <div className="col-12">
-        <Button label={isEditing ? "Actualizar" : "Crear"} icon="pi pi-save" type="submit" loading={loading} />
-      </div>
+      <Button type="submit" label="Guardar" icon="pi pi-save" />
     </form>
   );
 }
+
+export default MenuForm; // ✅ NECESARIO para evitar el error

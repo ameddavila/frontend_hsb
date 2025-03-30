@@ -1,29 +1,19 @@
-// 📁 src/services/menuService.ts
+// src/services/menuService.ts
 import api from "./api";
+import { Menu } from "@/types/Menu";
 
-// Tipos
+// Para crear o actualizar, usamos un tipo reducido:
 export interface MenuInput {
-  nombre: string;
-  ruta: string;
-  icono: string;
-  padreId?: number | null;
-}
-
-export interface Menu extends MenuInput {
-  id: number;
-  padre?: Menu;
+  name: string;
+  path: string;
+  icon?: string;
+  parentId?: number | null;
 }
 
 // Menús del usuario autenticado (Sidebar)
 export const fetchUserMenus = async (): Promise<Menu[]> => {
-  try {
-    const res = await api.get("/menus/my-menus");
-    console.log("📦 Menús desde menuService:", res.data);
-    return res.data;
-  } catch (error) {
-    console.error("❌ Error al obtener menús (my-menus):", error);
-    throw error;
-  }
+  const res = await api.get("/menus/my-menus");
+  return res.data;
 };
 
 // CRUD general

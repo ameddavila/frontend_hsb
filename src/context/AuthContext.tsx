@@ -1,4 +1,3 @@
-// ✅ NUEVA VERSIÓN DE AuthContext.tsx
 "use client";
 
 import {
@@ -7,6 +6,7 @@ import {
   useEffect,
   useState,
   ReactNode,
+  useCallback,
 } from "react";
 import {
   getCsrfToken,
@@ -18,11 +18,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { useMenuStore } from "@/stores/menuStore";
 import { useWaitForCookiesReady } from "@/hooks/useWaitForCookiesReady";
-import { useUserStore } from "@/stores/userStore"; // 🆕 Store para persistencia del usuario
-
-// ======================
-// Tipos y contexto base
-// ======================
+import { useUserStore } from "@/stores/userStore";
 
 export interface User {
   userId: string;
@@ -40,22 +36,15 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-// ======================
-// Proveedor principal
-// ======================
-
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [loading, setLoading] = useState(true);
   const router = useRouter();
   const { clearMenus, setMenuLoaded } = useMenuStore.getState();
   const cookiesReady = useWaitForCookiesReady(["refreshToken", "csrfToken"], 7000);
+  const { user, setUser, clearUser } = useUserStore();
 
-  const { user, setUser, clearUser } = useUserStore(); // 🆕 persistencia de usuario
-
-  // ======================
-  // 🔄 Refrescar sesión desde cookies
-  // ======================
-  const initialize = async (context: string = "default") => {
+  // ✅ initialize con useCallback para evitar advertencias
+  const initialize = useCallback(async (context: string = "default") => {
     const pathname = window.location.pathname;
     const isPublic =
       pathname.startsWith("/login") ||
@@ -106,11 +95,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [setUser, clearUser]);
 
-  // ======================
-  // ✅ Login
-  // ======================
   const handleLogin = async (usernameOrEmail: string, password: string) => {
     console.log("🕵️ Iniciando login...");
 
@@ -128,7 +114,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     };
     setUser(userData);
 
-    console.log("🧹 Limpiando menús previos y estado de carga...");
     localStorage.removeItem("menu-storage");
     clearMenus();
     setMenuLoaded(false);
@@ -141,29 +126,20 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }, 400);
   };
 
-  // ======================
-  // 🚪 Logout
-  // ======================
-  // 🚪 Logout
-const handleLogout = async () => {
-  await logoutRequest();
-  setUser(null);
-  clearMenus();
-  setMenuLoaded(false);
+  const handleLogout = async () => {
+    await logoutRequest();
+    setUser(null);
+    clearMenus();
+    setMenuLoaded(false);
 
-  // 🧹 Limpiar localStorage persistido (Zustand)
-  localStorage.removeItem("menu-storage");
-  localStorage.removeItem("user-storage");
-  localStorage.removeItem("panel-storage");
-  localStorage.removeItem("sidebar-storage");
+    localStorage.removeItem("menu-storage");
+    localStorage.removeItem("user-storage");
+    localStorage.removeItem("panel-storage");
+    localStorage.removeItem("sidebar-storage");
 
-  router.push("/login");
-};
+    router.push("/login");
+  };
 
-
-  // ======================
-  // useEffect: inicializar sesión si las cookies están listas
-  // ======================
   useEffect(() => {
     const pathname = window.location.pathname;
     const isPublic =
@@ -182,11 +158,8 @@ const handleLogout = async () => {
       console.warn("⚠️ Cookies no disponibles. No se puede refrescar sesión.");
       setLoading(false);
     }
-  }, [cookiesReady]);
+  }, [cookiesReady, initialize]);
 
-  // ======================
-  // useEffect: manejar navegación desde bfcache
-  // ======================
   useEffect(() => {
     const handlePageShow = async (event: PageTransitionEvent) => {
       const navEntry = performance.getEntriesByType("navigation")[0] as PerformanceNavigationTiming;
@@ -198,25 +171,20 @@ const handleLogout = async () => {
         window.dispatchEvent(new Event("session-restored"));
       }
     };
+
     window.addEventListener("pageshow", handlePageShow);
     return () => window.removeEventListener("pageshow", handlePageShow);
-  }, []);
+  }, [initialize]);
 
   return (
-    <AuthContext.Provider
-      value={{ user, loading, handleLogin, handleLogout }}
-    >
+    <AuthContext.Provider value={{ user, loading, handleLogin, handleLogout }}>
       {children}
     </AuthContext.Provider>
   );
 };
 
-// ======================
-// Hook personalizado
-// ======================
 export const useAuth = (): AuthContextType => {
   const context = useContext(AuthContext);
-  if (!context)
-    throw new Error("useAuth debe usarse dentro de un <AuthProvider>");
+  if (!context) throw new Error("useAuth debe usarse dentro de un <AuthProvider>");
   return context;
 };

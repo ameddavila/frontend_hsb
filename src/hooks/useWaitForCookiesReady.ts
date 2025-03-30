@@ -1,13 +1,5 @@
 import { useEffect, useState } from "react";
 
-/**
- * Hook personalizado para esperar que ciertas cookies estén disponibles.
- *
- * @param names Lista de nombres de cookies que se deben esperar.
- * @param maxWaitMs Tiempo máximo de espera (por defecto: 3000ms).
- * @param checkInterval Intervalo de verificación en milisegundos (por defecto: 100ms).
- * @returns `true` si las cookies están disponibles, `false` si no aparecen a tiempo, `undefined` si aún está esperando.
- */
 export const useWaitForCookiesReady = (
   names: string[],
   maxWaitMs = 3000,
@@ -15,11 +7,11 @@ export const useWaitForCookiesReady = (
 ): boolean | undefined => {
   const [ready, setReady] = useState<boolean | undefined>(undefined);
 
+  const joinedNames = names.join("|"); // ✅ expresión separada
+
   useEffect(() => {
     let waited = 0;
-    let intervalId: NodeJS.Timeout;
-
-    const checkCookies = () => {
+    const intervalId = setInterval(() => {
       const allPresent = names.every((name) =>
         document.cookie.includes(`${name}=`)
       );
@@ -36,12 +28,10 @@ export const useWaitForCookiesReady = (
       } else {
         waited += checkInterval;
       }
-    };
+    }, checkInterval);
 
-    intervalId = setInterval(checkCookies, checkInterval);
-
-    return () => clearInterval(intervalId); // Limpiar al desmontar
-  }, [names.join(","), maxWaitMs]);
+    return () => clearInterval(intervalId);
+  }, [joinedNames, names, maxWaitMs, checkInterval]); // ✅ sin warning
 
   return ready;
 };
