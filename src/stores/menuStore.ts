@@ -1,5 +1,6 @@
-import { create } from "zustand";
-import { persist } from "zustand/middleware";
+// src/stores/menuStore.ts
+import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
 
 export interface MenuNode {
   id: number;
@@ -11,25 +12,32 @@ export interface MenuNode {
   children: MenuNode[];
 }
 
-interface MenuStore {
-  menus: MenuNode[];
+
+interface MenuState {
+  menus: any[];
   menuLoaded: boolean;
-  setMenus: (menus: MenuNode[]) => void;
+  collapsed: boolean; // 🆕
+  setMenus: (menus: any[]) => void;
+  setMenuLoaded: (loaded: boolean) => void;
   clearMenus: () => void;
-  setMenuLoaded: (value: boolean) => void;
+  toggleCollapsed: () => void; // 🆕
 }
 
-export const useMenuStore = create<MenuStore>()(
+export const useMenuStore = create<MenuState>()(
   persist(
     (set) => ({
       menus: [],
       menuLoaded: false,
+      collapsed: false,
       setMenus: (menus) => set({ menus }),
+      setMenuLoaded: (menuLoaded) => set({ menuLoaded }),
       clearMenus: () => set({ menus: [], menuLoaded: false }),
-      setMenuLoaded: (value) => set({ menuLoaded: value }),
+      toggleCollapsed: () =>
+        set((state) => ({ collapsed: !state.collapsed })),
     }),
     {
-      name: "menu-storage",
+      name: 'menu-storage',
     }
   )
 );
+

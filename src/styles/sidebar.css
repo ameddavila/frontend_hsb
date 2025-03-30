@@ -70,3 +70,50 @@
     left: 0;
   }
 }
+.sidebar {
+  width: 250px;
+  background-color: var(--color-bg-sidebar);
+  color: var(--color-text-white);
+  height: 100vh;
+  padding: 1rem;
+  transition: width 0.3s ease;
+}
+
+.sidebar.collapsed {
+  width: 60px;
+  overflow: hidden;
+}
+
+.p-panelmenu .p-panelmenu-header {
+  background: transparent;
+  color: var(--color-text-white);
+}
+
+.p-panelmenu .p-panelmenu-content {
+  background: transparent;
+}
+
+/* Estilos para PanelMenu */
+.custom-sidebar .p-panelmenu {
+  background-color: transparent !important;
+  border: none !important;
+  color: var(--color-text-white);
+}
+
+.custom-sidebar .p-panelmenu .p-menuitem-link {
+  padding: 0.75rem 1rem;
+  border-radius: 6px;
+  transition: background-color 0.2s ease;
+}
+
+.custom-sidebar .p-panelmenu .p-menuitem-link:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.custom-sidebar .p-panelmenu .p-menuitem-text {
+  font-weight: 500;
+}
+
+.custom-sidebar .p-panelmenu .p-menuitem-icon {
+  margin-right: 0.75rem;
+}

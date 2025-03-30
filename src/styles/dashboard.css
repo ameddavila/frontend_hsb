@@ -1,0 +1,18 @@
+.dashboard-container {
+    padding: 2rem;
+    background-color: var(--color-bg-light);
+  }
+  
+  .dashboard-card {
+    min-height: 200px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+    border: 1px solid var(--color-card-border);
+    border-radius: var(--border-radius);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  
+  .dashboard-card:hover {
+    transform: scale(1.02);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+  }
+  
