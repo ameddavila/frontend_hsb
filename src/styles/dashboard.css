@@ -3,11 +3,17 @@
     background-color: var(--color-bg-light);
   }
   
+  .dashboard-grid {
+    row-gap: 1.5rem;
+    column-gap: 1rem;
+  }
+  
   .dashboard-card {
-    min-height: 200px;
-    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
-    border: 1px solid var(--color-card-border);
+    min-height: 180px;
+    padding: 1.5rem;
     border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    border: 1px solid var(--color-card-border);
     transition: transform 0.2s ease, box-shadow 0.2s ease;
   }
   

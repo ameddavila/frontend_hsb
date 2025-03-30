@@ -154,6 +154,8 @@ const handleLogout = async () => {
   // 🧹 Limpiar localStorage persistido (Zustand)
   localStorage.removeItem("menu-storage");
   localStorage.removeItem("user-storage");
+  localStorage.removeItem("panel-storage");
+  localStorage.removeItem("sidebar-storage");
 
   router.push("/login");
 };

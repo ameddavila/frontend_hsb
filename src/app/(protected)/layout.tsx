@@ -1,10 +1,12 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import Navbar from "@/components/Layout/Navbar";
 import Sidebar from "@/components/Layout/Sidebar";
 import PanelDerecho from "@/components/Layout/PanelDerecho";
 import Footer from "@/components/Layout/Footer";
+import { useSidebarStore } from "@/stores/sidebarStore";
+import { usePanelStore } from "@/stores/panelStore"; // ✅ Nuevo store
 import "@/styles/layout.css";
 
 interface ProtectedLayoutProps {
@@ -12,30 +14,18 @@ interface ProtectedLayoutProps {
 }
 
 export default function ProtectedLayout({ children }: ProtectedLayoutProps) {
-  const [sidebarOpen, setSidebarOpen] = useState<boolean>(true);
-  const [panelOpen, setPanelOpen] = useState<boolean>(true);
-
-  const handleToggleSidebar = () => {
-    setSidebarOpen((prev) => !prev);
-  };
-
-  const handleTogglePanel = () => {
-    setPanelOpen((prev) => !prev);
-  };
+  const { isOpen: sidebarOpen, toggle: toggleSidebar } = useSidebarStore();
+  const { isOpen: panelOpen, toggle: togglePanel } = usePanelStore(); // ✅ Nuevo
 
   return (
     <div className="layout-container">
-      <Navbar onToggleSidebar={handleToggleSidebar} onTogglePanel={handleTogglePanel} />
+      <Navbar onToggleSidebar={toggleSidebar} onTogglePanel={togglePanel} />
 
-      <div className="layout-content">
+      <div className={`layout-content ${sidebarOpen ? "sidebar-open" : "sidebar-collapsed"}`}>
         <Sidebar open={sidebarOpen} />
-
-        <main className={`layout-main ${sidebarOpen ? "expanded" : "collapsed"}`}>
-          {children}
-        </main>
-
+        <main className="layout-main">{children}</main>
         {panelOpen && (
-          <aside className="panel-derecho">
+          <aside className="panel-derecho animated-panel">
             <PanelDerecho />
           </aside>
         )}

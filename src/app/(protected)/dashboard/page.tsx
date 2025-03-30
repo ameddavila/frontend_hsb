@@ -5,7 +5,7 @@ import { Card } from "primereact/card";
 import { Divider } from "primereact/divider";
 
 export default function Dashboard() {
-  // Datos simulados, puedes reemplazar por datos reales luego
+  // 🧪 Datos simulados (reemplazar luego por datos reales vía API)
   const stats = {
     usuarios: 124,
     roles: 6,
@@ -22,8 +22,8 @@ export default function Dashboard() {
 
       <Divider className="my-3" />
 
-      <div className="grid">
-        <div className="col-12 md:col-6 lg:col-3">
+      <div className="grid dashboard-grid">
+        <div className="col-12 sm:col-6 lg:col-3">
           <Card className="dashboard-card">
             <div className="text-xl font-semibold text-blue-600 mb-2">Usuarios</div>
             <div className="text-3xl font-bold">{stats.usuarios}</div>
@@ -31,7 +31,7 @@ export default function Dashboard() {
           </Card>
         </div>
 
-        <div className="col-12 md:col-6 lg:col-3">
+        <div className="col-12 sm:col-6 lg:col-3">
           <Card className="dashboard-card">
             <div className="text-xl font-semibold text-purple-600 mb-2">Roles</div>
             <div className="text-3xl font-bold">{stats.roles}</div>
@@ -39,7 +39,7 @@ export default function Dashboard() {
           </Card>
         </div>
 
-        <div className="col-12 md:col-6 lg:col-3">
+        <div className="col-12 sm:col-6 lg:col-3">
           <Card className="dashboard-card">
             <div className="text-xl font-semibold text-green-600 mb-2">Permisos</div>
             <div className="text-3xl font-bold">{stats.permisos}</div>
@@ -47,7 +47,7 @@ export default function Dashboard() {
           </Card>
         </div>
 
-        <div className="col-12 md:col-6 lg:col-3">
+        <div className="col-12 sm:col-6 lg:col-3">
           <Card className="dashboard-card">
             <div className="text-xl font-semibold text-orange-600 mb-2">Menús</div>
             <div className="text-3xl font-bold">{stats.menus}</div>

@@ -1,4 +1,3 @@
-/* === 📌 Navbar Principal === */
 .navbar {
   background-color: var(--color-bg-navbar);
   color: var(--color-text-white);
@@ -8,10 +7,8 @@
   justify-content: space-between;
   padding: 0 1.5rem;
   box-shadow: var(--box-shadow);
-  border-radius: 0 !important;
 }
 
-/* === Botones de iconos en Navbar === */
 .navbar-btn {
   background: none !important;
   border: none !important;
@@ -23,89 +20,6 @@
 
 .navbar-btn:hover {
   color: var(--color-btn-primary) !important;
-}
-
-/* === Avatar de Usuario === */
-.user-avatar {
-  background-color: var(--color-bg-white) !important;
-  color: var(--color-bg-sidebar) !important;
-  border: 2px solid var(--color-bg-sidebar) !important;
-  box-shadow: 0 0 6px rgba(0, 0, 0, 0.15);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-  cursor: pointer !important;
-}
-
-.user-avatar:hover {
-  transform: scale(1.05);
-  box-shadow: 0 0 12px rgba(0, 0, 0, 0.25);
-}
-
-/* === Panel flotante del usuario === */
-.p-overlaypanel {
-  border-radius: 12px !important;
-  padding: 1rem !important;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2) !important;
-  background-color: var(--color-bg-white) !important;
-  min-width: 240px;
-  max-width: 270px;
-  z-index: 1001 !important;
-  position: absolute !important;
-}
-
-/* === Info del Usuario === */
-.user-panel-info {
-  text-align: center;
-}
-
-.user-panel-info h4 {
-  margin: 0;
-  font-size: var(--font-size-lg);
-  color: var(--color-text-dark);
-}
-
-.user-panel-info small {
-  font-size: var(--font-size-sm);
-  color: var(--color-text-light-gray);
-}
-
-/* === Link a Perfil === */
-.user-panel-link {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  color: var(--color-btn-secondary);
-  cursor: pointer;
-  font-weight: 500;
-  padding-top: 0.5rem;
-  justify-content: center;
-}
-
-.user-panel-link:hover {
-  color: var(--color-btn-secondary-hover);
-  text-decoration: underline;
-}
-
-/* === Botón de Cerrar sesión === */
-.logout-btn {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  justify-content: center;
-  color: var(--color-accent-danger);
-  font-weight: bold;
-  margin-top: 0.75rem;
-  cursor: pointer;
-  font-size: var(--font-size-md);
-}
-
-.logout-btn:hover {
-  text-decoration: underline;
-}
-
-/* === Asegura visibilidad del overlaypanel === */
-.layout-main {
-  overflow: visible !important;
-  position: relative !important;
 }
 
 

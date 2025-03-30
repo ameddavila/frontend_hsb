@@ -33,3 +33,14 @@
 .panel-derecho ul li:hover {
   background-color: var(--color-bg-info);
 }
+
+.animated-panel {
+  transition: transform 0.3s ease, opacity 0.3s ease;
+  transform: translateX(0);
+  opacity: 1;
+}
+
+.panel-derecho.hidden {
+  transform: translateX(100%);
+  opacity: 0;
+}
