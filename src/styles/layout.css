@@ -1,78 +1,30 @@
-/* === 📌 Contenedor principal === */
 .layout-container {
   display: flex;
   flex-direction: column;
-  height: 100vh;
-  overflow-x: hidden;
+  min-height: 100vh;
+  overflow: hidden; /* ✅ No scroll aquí */
 }
 
-/* === 📌 Grid de contenido === */
 .layout-content {
   display: grid;
-  height: calc(100vh - 60px); /* Altura sin navbar */
+  flex-grow: 1;
+  min-height: 100%;
   transition: grid-template-columns 0.3s ease-in-out;
+  overflow: visible; /* ✅ Importante */
 }
 
-/* Cuando Sidebar está abierto */
-.layout-content.sidebar-open {
-  grid-template-columns: 250px 1fr 350px;
-}
-
-/* Cuando Sidebar está colapsado */
-.layout-content.sidebar-collapsed {
-  grid-template-columns: 70px 1fr 350px;
-}
-
-/* === 📌 Contenido principal === */
 .layout-main {
   padding: 2rem;
-  overflow-y: auto;
   background-color: var(--color-bg-light);
   min-width: 0;
+  overflow: visible; /* ❌ Quitar overflow-y: auto */
 }
 
-/* === 📌 Panel derecho === */
 .panel-derecho {
   background-color: var(--color-bg-white);
   padding: 1.5rem;
   box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
-  overflow-y: auto;
   max-width: 350px;
   width: 100%;
-}
-
-/* === 📱 RESPONSIVE === */
-@media (max-width: 1200px) {
-  .layout-content.sidebar-open,
-  .layout-content.sidebar-collapsed {
-    grid-template-columns: 70px 1fr;
-  }
-
-  .panel-derecho {
-    display: none;
-  }
-}
-
-@media (max-width: 768px) {
-  .layout-content {
-    grid-template-columns: 1fr;
-  }
-
-  .sidebar {
-    position: absolute;
-    top: 60px;
-    left: -250px;
-    height: calc(100vh - 60px);
-    width: 250px;
-    z-index: 1000;
-    transition: left 0.3s ease;
-  }
-
-  .sidebar.open {
-    left: 0;
-  }
-
-  .panel-derecho {
-    display: none;
-  }
+  overflow: visible; /* ❌ Quitar scroll interno */
 }

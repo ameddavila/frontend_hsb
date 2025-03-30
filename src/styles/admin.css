@@ -1,0 +1,26 @@
+.admin-cards {
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+  
+  .admin-card {
+    height: 220px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  
+  /* Ajuste para evitar scroll general innecesario */
+  .layout-main {
+    /*overflow-y: auto;*/
+    overflow: visible;
+    height: 100%;
+    max-height: calc(100vh - 60px); /* menos navbar */
+    min-height: 100%;
+  }
+  
+  .panel-derecho {
+    overflow-y: auto;
+    max-height: calc(100vh - 60px);
+  }
+  

@@ -13,9 +13,10 @@ interface ProtectedLayoutProps {
   children: React.ReactNode;
 }
 
+// ✅ Este sí se queda como está
 export default function ProtectedLayout({ children }: ProtectedLayoutProps) {
   const { isOpen: sidebarOpen, toggle: toggleSidebar } = useSidebarStore();
-  const { isOpen: panelOpen, toggle: togglePanel } = usePanelStore(); // ✅ Nuevo
+  const { isOpen: panelOpen, toggle: togglePanel } = usePanelStore();
 
   return (
     <div className="layout-container">

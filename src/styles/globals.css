@@ -58,6 +58,8 @@ html, body {
   font-size: var(--font-size-base);
   color: var(--color-text-dark);
   background-color: var(--color-bg-light);
+  overflow-x: hidden;
+  overflow-y: auto;
   height: 100%;
 }
 
@@ -265,7 +267,8 @@ html, body {
 .layout-content {
   display: flex;
   flex-grow: 1;
-  height: calc(100vh - 60px);
+  /*height: calc(100vh - 60px);*/
+  min-height: 100%;
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 

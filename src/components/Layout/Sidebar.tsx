@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Menu } from "primereact/menu";
+import { PanelMenu } from "primereact/panelmenu";
 import { useRouter } from "next/navigation";
 import { useMenus } from "@/hooks/useMenus";
 import { MenuNode } from "@/stores/menuStore";
@@ -9,7 +9,7 @@ import { MenuItem, MenuItemCommandEvent } from "primereact/menuitem";
 
 interface SidebarProps {
   open: boolean;
-  className?: string; // ✅ Soporte para className opcional
+  className?: string;
 }
 
 export default function Sidebar({ open, className = "" }: SidebarProps) {
@@ -18,7 +18,6 @@ export default function Sidebar({ open, className = "" }: SidebarProps) {
 
   console.log("🧩 Menús del backend:", menus);
   console.log("📦 Sidebar: loading =", loading, "| total menús =", menus.length);
-  console.log("🧱 Sidebar montado");
 
   const buildMenuModel = (items: MenuNode[]): MenuItem[] =>
     items.map((menu) => ({
@@ -29,7 +28,6 @@ export default function Sidebar({ open, className = "" }: SidebarProps) {
     }));
 
   const dynamicItems = buildMenuModel(menus);
-
   const sidebarClass = `sidebar ${open ? "expanded" : "collapsed"} ${className}`;
 
   if (loading) {
@@ -55,7 +53,10 @@ export default function Sidebar({ open, className = "" }: SidebarProps) {
   return (
     <aside className={sidebarClass}>
       {open ? (
-        <Menu model={dynamicItems} className="sidebar-menu border-none" />
+        <PanelMenu
+          model={dynamicItems}
+          className="custom-sidebar border-none w-full"
+        />
       ) : (
         <div className="collapsed-menu p-2">
           {dynamicItems.map((item, i) => (
@@ -63,6 +64,7 @@ export default function Sidebar({ open, className = "" }: SidebarProps) {
               key={i}
               className="collapsed-icon p-2 cursor-pointer"
               onClick={() => item.command?.({} as MenuItemCommandEvent)}
+              title={item.label}
             >
               <i className={item.icon}></i>
             </div>
