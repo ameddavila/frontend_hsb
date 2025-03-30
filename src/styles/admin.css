@@ -12,15 +12,14 @@
   
   /* Ajuste para evitar scroll general innecesario */
   .layout-main {
-    /*overflow-y: auto;*/
-    overflow: visible;
-    height: 100%;
-    max-height: calc(100vh - 60px); /* menos navbar */
-    min-height: 100%;
+    overflow: visible !important;
+    max-height: none !important;
+    height: auto !important;
+  }
+  .panel-derecho {
+    overflow: visible !important;
+    max-height: none !important;
+    height: auto !important;
   }
   
-  .panel-derecho {
-    overflow-y: auto;
-    max-height: calc(100vh - 60px);
-  }
   

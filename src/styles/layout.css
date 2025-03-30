@@ -18,6 +18,8 @@
   background-color: var(--color-bg-light);
   min-width: 0;
   overflow: visible; /* ❌ Quitar overflow-y: auto */
+  overflow: visible !important;   /* ✅ No scroll interno */
+  height: auto !important;
 }
 
 .panel-derecho {
@@ -26,5 +28,6 @@
   box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
   max-width: 350px;
   width: 100%;
-  overflow: visible; /* ❌ Quitar scroll interno */
+  overflow: visible !important;   /* ✅ No scroll interno */
+  height: auto !important;
 }
