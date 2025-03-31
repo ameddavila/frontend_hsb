@@ -2,7 +2,7 @@ import axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from "axios";
 import { waitForAllCookies } from "@/utils/waitForCookie";
 
 // 📦 Obtener cookie del navegador
-function getCookie(name: string): string | null {
+export function getCookie(name: string): string | null {
   if (typeof document === "undefined") return null;
   const match = document.cookie.match(new RegExp(`(^| )${name}=([^;]+)`));
   return match ? match[2] : null;
@@ -38,6 +38,8 @@ api.interceptors.response.use(
     if (error.response?.status === 401 && !originalRequest._retry && !isRefresh && !isLogin) {
       originalRequest._retry = true;
 
+      console.warn("⚠️ Token expirado. Intentando refresh...");
+
       const ready = await waitForAllCookies(["refreshToken", "csrfToken"], 2000);
       if (!ready) {
         console.warn("⛔ Cookies insuficientes para intentar refresh.");
@@ -45,12 +47,15 @@ api.interceptors.response.use(
       }
 
       try {
-        console.log("🔁 Intentando refrescar access token desde interceptor...");
         await api.post("/auth/refresh");
-        return api(originalRequest); // Reintentar el request original
-      } catch {
-        console.error("❌ Falló el refresh, redirigiendo a login.");
-        window.location.href = "/login";
+        console.log("✅ Token refrescado. Reintentando solicitud original...");
+        return api(originalRequest);
+      } catch (refreshError) {
+        console.error("❌ Falló el refresh de sesión. Redirigiendo a login...");
+        if (typeof window !== "undefined") {
+          window.location.replace("/login");
+        }
+        return Promise.reject(refreshError);
       }
     }
 
