@@ -2,7 +2,7 @@
 import api from "./api";
 import { Menu } from "@/types/Menu";
 
-// Para crear o actualizar, usamos un tipo reducido:
+// 🎯 Tipo base para crear/editar
 export interface MenuInput {
   name: string;
   path: string;
@@ -10,34 +10,38 @@ export interface MenuInput {
   parentId?: number | null;
 }
 
-// Menús del usuario autenticado (Sidebar)
+// 🔒 Menús del usuario autenticado (Sidebar)
 export const fetchUserMenus = async (): Promise<Menu[]> => {
-  const res = await api.get("/menus/my-menus");
+  const res = await api.get<Menu[]>("/menus/my-menus");
   return res.data;
 };
 
-// CRUD general
+// 📋 Listado general
 export const getMenus = async (): Promise<Menu[]> => {
-  const res = await api.get("/menus");
+  const res = await api.get<Menu[]>("/menus");
   return res.data;
 };
 
+// 🔍 Obtener menú por ID
 export const getMenuById = async (id: number): Promise<Menu> => {
-  const res = await api.get(`/menus/${id}`);
+  const res = await api.get<Menu>(`/menus/${id}`);
   return res.data;
 };
 
+// ➕ Crear nuevo menú
 export const createMenu = async (menu: MenuInput): Promise<Menu> => {
-  const res = await api.post("/menus", menu);
+  const res = await api.post<Menu>("/menus", menu);
   return res.data;
 };
 
+// ✏️ Actualizar menú
 export const updateMenu = async (id: number, menu: MenuInput): Promise<Menu> => {
-  const res = await api.put(`/menus/${id}`, menu);
+  const res = await api.put<Menu>(`/menus/${id}`, menu);
   return res.data;
 };
 
+// 🗑️ Eliminar menú
 export const deleteMenu = async (id: number): Promise<{ message: string }> => {
-  const res = await api.delete(`/menus/${id}`);
+  const res = await api.delete<{ message: string }>(`/menus/${id}`);
   return res.data;
 };

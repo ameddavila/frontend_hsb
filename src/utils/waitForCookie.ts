@@ -61,3 +61,28 @@ export const waitForAllCookies = async (
 
   return true;
 };
+
+/**
+ * Espera hasta que el csrfToken deje de contener "publico"
+ * @param maxWaitMs Tiempo máximo de espera en milisegundos
+ * @param interval Intervalo entre reintentos
+ * @returns true si el CSRF fue rotado correctamente
+ */
+export const waitForRotatedCsrf = async (
+  maxWaitMs = 3000,
+  interval = 100
+): Promise<boolean> => {
+  const start = Date.now();
+
+  while (Date.now() - start < maxWaitMs) {
+    const match = document.cookie.match(/(^| )csrfToken=([^;]+)/);
+    if (match && !match[2].includes("publico")) {
+      console.log("🛡️ CSRF token rotado detectado:", match[2]);
+      return true;
+    }
+    await new Promise((resolve) => setTimeout(resolve, interval));
+  }
+
+  console.warn("⏳ CSRF token aún no rotado (sigue siendo 'publico')");
+  return false;
+};

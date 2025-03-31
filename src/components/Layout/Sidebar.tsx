@@ -2,10 +2,11 @@
 
 import React, { useMemo, useCallback } from "react";
 import { PanelMenu } from "primereact/panelmenu";
+import { MenuItem, MenuItemCommandEvent } from "primereact/menuitem";
 import { useRouter } from "next/navigation";
 import { useMenus } from "@/hooks/useMenus";
-import { MenuItem, MenuItemCommandEvent } from "primereact/menuitem";
 import { MenuNode } from "@/types/Menu";
+import { ProgressSpinner } from "primereact/progressspinner";
 
 interface SidebarProps {
   open: boolean;
@@ -14,22 +15,13 @@ interface SidebarProps {
 
 export default function Sidebar({ open, className = "" }: SidebarProps) {
   const router = useRouter();
+  const { menus, loading } = useMenus(); // ✅ Menús jerárquicos desde Zustand
 
-  // ✅ Hook que maneja carga de menús, estado y sincronización con sesión
-  const { menus, loading } = useMenus(); // ya transformados a MenuNode[]
-
-  // 🪵 Debug para verificar si llegan los menús y estado de carga
-  console.log("📦 Sidebar: Menús recibidos (MenuNode[]):", menus);
-  console.log("📦 Sidebar: loading =", loading);
-
-  /**
-   * 🔄 Transforma MenuNode[] en estructura <MenuItem[]> para PanelMenu
-   */
+  // 🧠 Transforma MenuNode[] en estructura compatible con PanelMenu
   const buildMenuModel = useCallback(
     (items: MenuNode[]): MenuItem[] =>
       items.map((menu) => {
-        const hasChildren = menu.children && menu.children.length > 0;
-
+        const hasChildren = !!menu.children?.length;
         return {
           label: menu.name,
           icon: menu.icon,
@@ -42,43 +34,35 @@ export default function Sidebar({ open, className = "" }: SidebarProps) {
     [router]
   );
 
-  /**
-   * 🧠 Memoiza la estructura de menús para evitar renders innecesarios
-   */
+  // ✅ Memoizamos los items para evitar renders innecesarios
   const dynamicItems = useMemo(() => buildMenuModel(menus), [menus, buildMenuModel]);
 
-  // Estilos condicionales según si el sidebar está abierto o colapsado
+  // 🎨 Clases condicionales según estado de apertura
   const sidebarClass = `sidebar ${open ? "expanded" : "collapsed"} ${className}`;
 
-  /**
-   * ⏳ Cargando menús: render temporal
-   */
+  // ⏳ Mientras se cargan los menús
   if (loading) {
     return (
       <aside className={sidebarClass}>
-        <div className="p-4 text-center text-sm text-gray-500">
-          🔄 Cargando menú...
+        <div className="p-4 flex justify-center items-center h-full">
+          <ProgressSpinner style={{ width: "40px", height: "40px" }} />
         </div>
       </aside>
     );
   }
 
-  /**
-   * ⚠️ Error o sesión perdida: no hay menús disponibles
-   */
+  // ⚠️ Si no hay menús (posible error)
   if (!menus.length) {
     return (
       <aside className={sidebarClass}>
         <div className="p-4 text-center text-sm text-red-500">
-          ⚠️ No se pudo cargar el menú.
+          ⚠️ No se pudo cargar el menú del usuario.
         </div>
       </aside>
     );
   }
 
-  /**
-   * ✅ Renderizado final: PanelMenu o versión colapsada con solo íconos
-   */
+  // ✅ Render normal
   return (
     <aside className={sidebarClass}>
       {open ? (
@@ -94,6 +78,7 @@ export default function Sidebar({ open, className = "" }: SidebarProps) {
               className="collapsed-icon p-2 cursor-pointer rounded hover:bg-gray-200"
               onClick={() => item.command?.({} as MenuItemCommandEvent)}
               title={item.label}
+              aria-label={item.label}
             >
               <i className={item.icon}></i>
             </button>

@@ -1,20 +1,23 @@
 import axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from "axios";
 import { waitForAllCookies } from "@/utils/waitForCookie";
+import { waitForValidCsrfToken } from "@/utils/waitForCsrfReady";
 
-// 📦 Obtener cookie del navegador
+/**
+ * 📦 Utilidad para leer cookies accesibles desde JS
+ */
 export function getCookie(name: string): string | null {
   if (typeof document === "undefined") return null;
   const match = document.cookie.match(new RegExp(`(^| )${name}=([^;]+)`));
   return match ? match[2] : null;
 }
 
-// 🚀 Axios configurado
+// 🚀 Instancia Axios preconfigurada
 const api = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL,
-  withCredentials: true,
+  withCredentials: true, // Necesario para enviar cookies HttpOnly
 });
 
-// ✅ Interceptor de solicitud: Agrega CSRF token a headers
+// ✅ Interceptor de solicitud: agrega CSRF token si está disponible
 api.interceptors.request.use((config) => {
   const csrf = getCookie("csrfToken");
   const path = typeof window !== "undefined" ? window.location.pathname : "";
@@ -34,8 +37,7 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-
-// 🔄 Interceptor de respuesta: Intenta refresh si hay 401
+// 🔁 Interceptor de respuesta: intenta refresh si el access token ha expirado (401)
 api.interceptors.response.use(
   (response: AxiosResponse) => response,
   async (error: AxiosError) => {
@@ -46,12 +48,17 @@ api.interceptors.response.use(
 
     if (error.response?.status === 401 && !originalRequest._retry && !isRefresh && !isLogin) {
       originalRequest._retry = true;
-
       console.warn("⚠️ Token expirado. Intentando refresh...");
 
-      const ready = await waitForAllCookies(["refreshToken", "csrfToken"], 2000);
-      if (!ready) {
+      const cookiesOk = await waitForAllCookies(["refreshToken", "csrfToken"], 3000);
+      if (!cookiesOk) {
         console.warn("⛔ Cookies insuficientes para intentar refresh.");
+        return Promise.reject(error);
+      }
+
+      const csrfOk = await waitForValidCsrfToken(3000);
+      if (!csrfOk) {
+        console.error("❌ CSRF aún inválido. Cancelando refresh.");
         return Promise.reject(error);
       }
 
@@ -60,7 +67,7 @@ api.interceptors.response.use(
         console.log("✅ Token refrescado. Reintentando solicitud original...");
         return api(originalRequest);
       } catch (refreshError) {
-        console.error("❌ Falló el refresh de sesión. Redirigiendo a login...");
+        console.error("❌ Falló el refresh. Redirigiendo a login...");
         if (typeof window !== "undefined") {
           window.location.replace("/login");
         }
@@ -72,24 +79,39 @@ api.interceptors.response.use(
   }
 );
 
-// =======================
-// Exportación de funciones
-// =======================
+// =========================
+// 🔓 Funciones públicas
+// =========================
 
+/**
+ * 🎟️ Obtener token CSRF público (antes del login)
+ */
 export const getCsrfToken = async () => {
   const res = await api.get("/auth/csrf-token");
   return res.data.csrfToken;
 };
 
+/**
+ * 🔐 Login del usuario
+ */
 export const login = async (usernameOrEmail: string, password: string) => {
   const res = await api.post("/auth/login", { usernameOrEmail, password });
   return res.data;
 };
 
+/**
+ * 🔄 Refresca el access token usando el refresh token (desde cookie HttpOnly)
+ */
 export const refreshAccessToken = async () => {
-  const ready = await waitForAllCookies(["refreshToken", "csrfToken"], 3000);
-  if (!ready) {
+  const cookiesOk = await waitForAllCookies(["refreshToken", "csrfToken"], 3000);
+  if (!cookiesOk) {
     console.warn("⛔ Cookies necesarias no disponibles. Cancelando refresh.");
+    return null;
+  }
+
+  const csrfOk = await waitForValidCsrfToken(3000);
+  if (!csrfOk) {
+    console.warn("⛔ CSRF aún es público. Cancelando refresh.");
     return null;
   }
 
@@ -104,6 +126,9 @@ export const refreshAccessToken = async () => {
   }
 };
 
+/**
+ * 🚪 Logout y cierre de sesión completo
+ */
 export const logout = async () => {
   await api.post("/auth/logout");
 };

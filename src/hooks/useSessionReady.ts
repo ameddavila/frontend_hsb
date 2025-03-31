@@ -9,11 +9,11 @@ import { useEffect, useState } from "react";
  *
  * @param onReady Optional callback que se dispara una vez cuando la sesión esté lista.
  */
-export const useSessionReady = (onReady?: () => void): boolean => {
+export function useSessionReady(onReady?: () => void) {
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
-    const markReady = () => {
+    const handleReady = () => {
       if (!ready) {
         console.log("✅ Sesión restaurada (useSessionReady)");
         setReady(true);
@@ -21,15 +21,9 @@ export const useSessionReady = (onReady?: () => void): boolean => {
       }
     };
 
-    // Escuchar eventos globales emitidos desde AuthContext
-    window.addEventListener("session-ready", markReady);
-    window.addEventListener("session-restored", markReady);
-
-    return () => {
-      window.removeEventListener("session-ready", markReady);
-      window.removeEventListener("session-restored", markReady);
-    };
-  }, [onReady, ready]);
+    window.addEventListener("session-ready", handleReady);
+    return () => window.removeEventListener("session-ready", handleReady);
+  }, [ready, onReady]);
 
   return ready;
-};
+}

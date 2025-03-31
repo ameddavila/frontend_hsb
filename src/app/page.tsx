@@ -6,18 +6,13 @@ export default function Home() {
 }
 */
 "use client";
-import { useEffect } from "react";
-import { useRouter } from "next/navigation";
+//import { useEffect } from "react";
+//import { useRouter } from "next/navigation";
+
+import { redirect } from "next/navigation";
 
 export default function Home() {
-  const router = useRouter();
-
-  useEffect(() => {
-    console.log("➡️ Redireccionando a /login desde /");
-    router.replace("/login");
-  }, [router]);
-
-  return null;
+  redirect("/login");
 }
 
 
