@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { MenuNode } from "@/types/Menu";
-import { fetchUserMenus } from "@/services/menuService"; // ✅ función correcta
+import { fetchUserMenus } from "@/services/menuService";
 import { transformMenus } from "@/utils/transformMenus";
 
 interface MenuState {
@@ -17,31 +17,53 @@ interface MenuState {
 
 export const useMenuStore = create<MenuState>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       menus: [],
       menuLoaded: false,
       collapsed: false,
 
-      setMenus: (menus) => set({ menus }),
-      setMenuLoaded: (menuLoaded) => set({ menuLoaded }),
-      clearMenus: () => set({ menus: [], menuLoaded: false }),
-      toggleCollapsed: () =>
-        set((state) => ({ collapsed: !state.collapsed })),
-
-      loadMenus: async () => {
-        try {
-          console.log("📡 Cargando menús del usuario...");
-          const rawMenus = await fetchUserMenus(); // ✅ función correcta
-          const tree = transformMenus(rawMenus);
-          set({ menus: tree, menuLoaded: true });
-          console.log("✅ Menús cargados y transformados");
-        } catch (error) {
-          console.error("❌ Error al cargar menús desde el backend:", error);
-        }
+      setMenus: (menus) => {
+        set({ menus });
+        console.log("📁 [menuStore] Menús seteados:", menus.length);
       },
+
+      setMenuLoaded: (menuLoaded) => {
+        set({ menuLoaded });
+        console.log("🧠 [menuStore] Estado menuLoaded actualizado:", menuLoaded);
+      },
+
+      clearMenus: () => {
+        set({ menus: [], menuLoaded: false });
+        console.log("🧼 [menuStore] Menús limpiados");
+      },
+
+      toggleCollapsed: () =>
+        set((state) => {
+          const nuevoEstado = !state.collapsed;
+          console.log("📐 [menuStore] Sidebar colapsado:", nuevoEstado);
+          return { collapsed: nuevoEstado };
+        }),
+
+        loadMenus: async () => {
+          try {
+            console.log("📡 Cargando menús del usuario...");
+            const rawMenus = await fetchUserMenus(); // ✅ esta apunta a /menus/my-menus
+            const tree = transformMenus(rawMenus);
+            set({ menus: tree, menuLoaded: true });
+            console.log("✅ Menús cargados y transformados:", tree);
+          } catch (error) {
+            console.error("❌ Error al cargar menús desde el backend:", error);
+          }
+        }
+        
     }),
     {
-      name: "menu-storage", // clave para localStorage
+      name: "menu-storage",
+      partialize: (state) => ({
+        menus: state.menus,
+        menuLoaded: state.menuLoaded,
+        collapsed: state.collapsed,
+      }),
     }
   )
 );

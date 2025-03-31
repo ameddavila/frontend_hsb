@@ -17,14 +17,23 @@ const api = axios.create({
 // ✅ Interceptor de solicitud: Agrega CSRF token a headers
 api.interceptors.request.use((config) => {
   const csrf = getCookie("csrfToken");
+  const path = typeof window !== "undefined" ? window.location.pathname : "";
+
   if (csrf) {
     config.headers["X-CSRF-TOKEN"] = csrf;
     console.log("🛡️ CSRF token agregado al request:", csrf);
+
+    // Detección de CSRF público
+    if (csrf.startsWith("ac9dade") || csrf.includes("publico")) {
+      console.warn("⚠️ CSRF token aún parece PÚBLICO en ruta:", path);
+    }
   } else {
-    console.warn("⚠️ No se encontró CSRF token para el request");
+    console.warn("⚠️ No se encontró CSRF token para el request:", path);
   }
+
   return config;
 });
+
 
 // 🔄 Interceptor de respuesta: Intenta refresh si hay 401
 api.interceptors.response.use(

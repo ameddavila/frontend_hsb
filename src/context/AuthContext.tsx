@@ -19,7 +19,7 @@ import { toast } from "sonner";
 import { useMenuStore } from "@/stores/menuStore";
 import { useWaitForCookiesReady } from "@/hooks/useWaitForCookiesReady";
 import { useUserStore } from "@/stores/userStore";
-
+import { getCookie } from "@/services/api";
 // Define el tipo de usuario que estará disponible globalmente en el contexto
 export interface User {
   userId: string;
@@ -122,18 +122,21 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
    */
   const handleLogin = async (usernameOrEmail: string, password: string) => {
     console.log("🕵️ Iniciando login...");
-
-    // 1. Obtener CSRF token antes de hacer login
+  
+    // 1. Obtener el CSRF público antes del login
     await getCsrfToken();
-
-    // 2. Enviar credenciales
+    console.log("🛡️ CSRF público inicial obtenido");
+  
+    // 2. Enviar credenciales al backend
     const data = await loginRequest(usernameOrEmail, password);
-    console.log("✅ Login exitoso, esperando cookies...");
-
-    // 3. Esperar brevemente a que las cookies sean visibles
-    await new Promise((r) => setTimeout(r, 200));
-
-    // 4. Guardar usuario en Zustand
+    console.log("✅ Login exitoso, backend envió nuevas cookies");
+  
+    // 3. Esperar brevemente a que cookies HttpOnly estén disponibles
+    await new Promise((resolve) => setTimeout(resolve, 300));
+    const csrfActual = getCookie("csrfToken");
+    console.log("🔄 CSRF después del login (post-rotación):", csrfActual);
+  
+    // 4. Guardar datos del usuario en el contexto
     const userData = {
       userId: data.id,
       username: data.username,
@@ -141,21 +144,23 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       role: data.role,
     };
     setUser(userData);
-
-    // 5. Resetear estado de menús y navegación
+  
+    // 5. Limpiar menús anteriores y estado
     localStorage.removeItem("menu-storage");
     clearMenus();
     setMenuLoaded(false);
-
+    console.log("🧹 Estado de menús limpiado");
+  
     // 6. Redirigir al dashboard
     router.push("/dashboard");
-
-    // 7. Emitir evento para cargar menús u otros efectos
+  
+    // 7. Emitir evento de sesión lista
     setTimeout(() => {
       console.log("🟢 Emitiendo evento session-ready (post-login)");
       window.dispatchEvent(new Event("session-ready"));
     }, 400);
   };
+  
 
   /**
    * 🚪 Maneja el logout y limpieza total de sesión
@@ -186,19 +191,23 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       pathname.startsWith("/login") ||
       pathname.startsWith("/register") ||
       pathname.startsWith("/recover");
-
+  
     if (isPublic) {
       setLoading(false);
       return;
     }
-
+  
     if (cookiesReady === true) {
       initialize("hook-ready");
     } else if (cookiesReady === false) {
-      console.warn("⚠️ Cookies no disponibles. No se puede refrescar sesión.");
+      console.warn("⚠️ Cookies no disponibles. Continuando sin sesión.");
+      clearUser();
       setLoading(false);
+      window.dispatchEvent(new Event("session-ready")); // 👈 esto es vital
     }
-  }, [cookiesReady, initialize]);
+  }, [cookiesReady, initialize, clearUser]);
+  
+  
 
   /**
    * 🔁 Maneja navegación con "back-forward cache" (ej. cuando el usuario vuelve atrás con ←)

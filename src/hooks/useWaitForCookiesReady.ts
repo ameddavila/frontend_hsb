@@ -1,15 +1,30 @@
 import { useEffect, useState } from "react";
 
+/**
+ * Espera a que las cookies indicadas estén disponibles.
+ * Evita usar CSRF público después del login.
+ */
 export const useWaitForCookiesReady = (
   names: string[],
   maxWaitMs = 3000,
   checkInterval = 100
 ): boolean | undefined => {
   const [ready, setReady] = useState<boolean | undefined>(undefined);
-
-  const joinedNames = names.join("|"); // ✅ expresión separada
+  const joinedNames = names.join("|");
 
   useEffect(() => {
+    const pathname = window.location.pathname;
+    const isPublic =
+      pathname.startsWith("/login") ||
+      pathname.startsWith("/register") ||
+      pathname.startsWith("/recover");
+
+    if (isPublic) {
+      console.log("🔓 Ruta pública detectada, no se esperan cookies:", pathname);
+      setReady(true);
+      return;
+    }
+
     let waited = 0;
     const intervalId = setInterval(() => {
       const allPresent = names.every((name) =>
@@ -31,7 +46,7 @@ export const useWaitForCookiesReady = (
     }, checkInterval);
 
     return () => clearInterval(intervalId);
-  }, [joinedNames, names, maxWaitMs, checkInterval]); // ✅ sin warning
+  }, [joinedNames, names, maxWaitMs, checkInterval]);
 
   return ready;
 };
