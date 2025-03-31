@@ -14,39 +14,58 @@ interface SidebarProps {
 
 export default function Sidebar({ open, className = "" }: SidebarProps) {
   const router = useRouter();
-  const { menus, loading } = useMenus(); // ✅ ya transformados en MenuNode[]
 
+  // ✅ Hook que maneja carga de menús, estado y sincronización con sesión
+  const { menus, loading } = useMenus(); // ya transformados a MenuNode[]
+
+  // 🪵 Debug para verificar si llegan los menús y estado de carga
   console.log("📦 Sidebar: Menús recibidos (MenuNode[]):", menus);
   console.log("📦 Sidebar: loading =", loading);
 
-  // 🧠 Transforma MenuNode[] en estructura <MenuItem[]> para PanelMenu
+  /**
+   * 🔄 Transforma MenuNode[] en estructura <MenuItem[]> para PanelMenu
+   */
   const buildMenuModel = useCallback(
     (items: MenuNode[]): MenuItem[] =>
       items.map((menu) => {
         const hasChildren = menu.children && menu.children.length > 0;
+
         return {
           label: menu.name,
           icon: menu.icon,
-          command: () => router.push(menu.path),
+          command: () => {
+            if (menu.path) router.push(menu.path);
+          },
           items: hasChildren ? buildMenuModel(menu.children) : undefined,
         };
       }),
     [router]
   );
 
-  // ✅ Solo se reconstruye cuando `menus` cambia
+  /**
+   * 🧠 Memoiza la estructura de menús para evitar renders innecesarios
+   */
   const dynamicItems = useMemo(() => buildMenuModel(menus), [menus, buildMenuModel]);
 
+  // Estilos condicionales según si el sidebar está abierto o colapsado
   const sidebarClass = `sidebar ${open ? "expanded" : "collapsed"} ${className}`;
 
+  /**
+   * ⏳ Cargando menús: render temporal
+   */
   if (loading) {
     return (
       <aside className={sidebarClass}>
-        <div className="p-4 text-center text-sm text-gray-500">🔄 Cargando menú...</div>
+        <div className="p-4 text-center text-sm text-gray-500">
+          🔄 Cargando menú...
+        </div>
       </aside>
     );
   }
 
+  /**
+   * ⚠️ Error o sesión perdida: no hay menús disponibles
+   */
   if (!menus.length) {
     return (
       <aside className={sidebarClass}>
@@ -57,6 +76,9 @@ export default function Sidebar({ open, className = "" }: SidebarProps) {
     );
   }
 
+  /**
+   * ✅ Renderizado final: PanelMenu o versión colapsada con solo íconos
+   */
   return (
     <aside className={sidebarClass}>
       {open ? (
