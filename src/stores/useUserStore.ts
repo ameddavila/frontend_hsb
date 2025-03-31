@@ -1,4 +1,4 @@
-// src/stores/userStore.ts
+// src/stores/useUserStore.ts
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
@@ -24,13 +24,18 @@ export const useUserStore = create<UserStore>()(
     (set, get) => ({
       user: null,
 
-      setUser: (user) => set({ user }),
-      clearUser: () => set({ user: null }),
+      setUser: (user) => {
+        console.log("[UserStore] setUser =>", user);
+        set({ user });
+      },
 
-      // ✅ Getter: ¿Es administrador?
+      clearUser: () => {
+        console.log("[UserStore] clearUser()");
+        set({ user: null });
+      },
+
       isAdmin: () => get().user?.role === "Administrador",
 
-      // ✅ Getter: ¿Tiene uno de los roles indicados?
       hasRole: (roles) => {
         const currentRole = get().user?.role;
         if (!currentRole) return false;
@@ -42,7 +47,17 @@ export const useUserStore = create<UserStore>()(
     }),
     {
       name: "user-storage",
+      version: 0, // En caso de que quieras manejar migraciones en un futuro
+      // Solo persistimos la propiedad 'user' para no guardar getters
       partialize: (state) => ({ user: state.user }),
+      // Opción útil para debug: logs durante la rehidratación
+      onRehydrateStorage: () => (state, error) => {
+        if (error) {
+          console.error("[UserStore] Error al rehidratar:", error);
+        } else {
+          console.log("[UserStore] Rehidratación completada. State:", state);
+        }
+      },
     }
   )
 );

@@ -5,7 +5,7 @@ import { useSessionReady } from "./useSessionReady";
 import { useMenuStore } from "@/stores/menuStore";
 import { Menu } from "@/types/Menu";
 import { transformMenus } from "@/utils/transformMenus";
-import { waitForRotatedCsrf } from "@/utils/waitForCookie"; // ✅ Espera CSRF seguro
+import { waitForRotatedCsrf } from "@/utils/waitForCookie"; // Espera a que el CSRF se "rotara"
 
 export const useMenus = () => {
   const { user } = useAuth();
@@ -22,39 +22,53 @@ export const useMenus = () => {
   const [hydrated, setHydrated] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  // 💾 Detecta cuándo Zustand ha sido hidratado desde localStorage
+  // 💾 Detecta cuándo la store de menús ha sido hidratada desde localStorage
   useEffect(() => {
+    // 1. Suscribirse al evento onFinishHydration de Zustand
     const unsub = useMenuStore.persist.onFinishHydration(() => {
-      console.log("💾 Zustand hidratado (menuStore)");
+      console.log("💾 [useMenus] onFinishHydration: menuStore hidratado por persistencia");
       setHydrated(true);
     });
 
-    // Fallback por si ya está hidratado
+    // 2. Hacemos un fallback manual que marca hydrated a true 
+    //    aunque no exista "menu-storage" en localStorage
     if (typeof window !== "undefined") {
-      const persisted = useMenuStore.persist.getOptions().storage?.getItem("menu-storage");
-      if (persisted) setHydrated(true);
+      console.log("🔎 [useMenus] Buscando en localStorage la clave 'menu-storage'...");
+      const persisted = useMenuStore.persist
+        .getOptions()
+        .storage?.getItem("menu-storage");
+
+      if (persisted) {
+        console.log("💿 [useMenus] 'menu-storage' SÍ existe => setHydrated(true)");
+      } else {
+        console.log("💿 [useMenus] 'menu-storage' NO encontrado => igual marcamos hydrated=true");
+      }
+      setHydrated(true);
     }
 
-    return () => unsub?.();
+    return () => unsub?.(); // Limpieza de suscripción
   }, []);
 
   /**
-   * 📡 Carga los menús del backend y los transforma a árbol jerárquico
+   * 📡 Carga los menús desde el backend y los transforma a estructura jerárquica
    */
   const fetchMenus = useCallback(async (context = "default") => {
     try {
       setLoading(true);
-      console.log(`📡 [useMenus] Obteniendo menús desde backend (${context})...`);
+      console.log(`📡 [useMenus] Obteniendo menús del backend (${context})...`);
 
+      // Verificamos si el CSRF ya está rotado
       const csrfOk = await waitForRotatedCsrf();
       if (!csrfOk) {
-        console.error("⛔ No se rotó el CSRF. Abortando fetch de menús.");
+        console.error("⛔ [useMenus] No se rotó el CSRF. Abortando fetch de menús.");
         return;
       }
 
+      // Llamada real al endpoint de menús
       const response = await api.get<Menu[]>("/menus/my-menus");
       const menuTree = transformMenus(response.data);
 
+      // Guardamos en Zustand
       setMenus(menuTree);
       setMenuLoaded(true);
       console.log("✅ [useMenus] Menús recibidos y almacenados:", menuTree);
@@ -68,7 +82,11 @@ export const useMenus = () => {
   }, [setMenus, clearMenus, setMenuLoaded]);
 
   /**
-   * 🧠 Decide si se deben cargar los menús después de hidratar Zustand y tener sesión lista
+   * 🧠 Decide si se deben cargar los menús tras:
+   * - Hidratar la store de menús
+   * - Tener sessionReady = true
+   * - Tener user logueado
+   * - Y no haberse cargado menús todavía
    */
   useEffect(() => {
     const shouldLoad =
@@ -77,7 +95,7 @@ export const useMenus = () => {
       user &&
       (!menuLoaded || (menuLoaded && menus.length === 0));
 
-    console.groupCollapsed("🧪 Diagnóstico useMenus");
+    console.groupCollapsed("🧪 [useMenus] Diagnóstico");
     console.log("hydrated:", hydrated);
     console.log("sessionReady:", sessionReady);
     console.log("user:", user);

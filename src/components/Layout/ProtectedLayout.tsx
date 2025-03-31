@@ -16,20 +16,23 @@ interface ProtectedLayoutProps {
 }
 
 export default function ProtectedLayout({ children }: ProtectedLayoutProps) {
+  // Lógica de sidebar y panel
   const { isOpen: sidebarOpen, toggle: toggleSidebar } = useSidebarStore();
   const { isOpen: panelOpen, toggle: togglePanel } = usePanelStore();
 
-  const sessionReady = useSessionReady(); // ✅ Detecta si la sesión está lista (refresh/login)
-  const menus = useMenuStore((state) => state.menus); // ✅ Accede al estado de menús desde Zustand
+  // Verifica si ya está la sesión lista, en caso uses "session-ready" event
+  const sessionReady = useSessionReady();
+  const menus = useMenuStore((state) => state.menus);
 
-  // 📋 Seguimiento por consola para saber el estado
   useEffect(() => {
-    console.log("🔒 [ProtectedLayout] sessionReady:", sessionReady);
-    console.log("📁 [ProtectedLayout] Menús disponibles:", menus.length);
+    console.log("[ProtectedLayout] Se renderiza.");
+    console.log("[ProtectedLayout] sessionReady:", sessionReady);
+    console.log("[ProtectedLayout] menus.length:", menus.length);
   }, [sessionReady, menus]);
 
-  // 🧠 Mientras la sesión aún no está lista, mostramos una pantalla de carga
+  // Si sessionReady es false, mostramos un spinner
   if (!sessionReady) {
+    console.log("[ProtectedLayout] sessionReady es false => mostrando Spinner...");
     return (
       <div className="w-screen h-screen flex justify-center items-center text-white bg-blue-900">
         <i className="pi pi-spin pi-spinner mr-2" /> Cargando sistema...
@@ -37,12 +40,17 @@ export default function ProtectedLayout({ children }: ProtectedLayoutProps) {
     );
   }
 
-  // ✅ Render normal cuando la sesión está lista
+  // Cuando sessionReady es true, renderizamos la UI normal
+  console.log("[ProtectedLayout] sessionReady es true => render normal");
   return (
     <div className="layout-container">
       <Navbar onToggleSidebar={toggleSidebar} onTogglePanel={togglePanel} />
 
-      <div className={`layout-content ${sidebarOpen ? "sidebar-open" : "sidebar-collapsed"}`}>
+      <div
+        className={`layout-content ${
+          sidebarOpen ? "sidebar-open" : "sidebar-collapsed"
+        }`}
+      >
         <Sidebar open={sidebarOpen} />
         <main className="layout-main">{children}</main>
         {panelOpen && (

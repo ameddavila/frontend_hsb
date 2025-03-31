@@ -1,10 +1,10 @@
 "use client";
 
+import React, { useEffect, useRef } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { OverlayPanel } from "primereact/overlaypanel";
 import { Avatar } from "primereact/avatar";
 import { Button } from "primereact/button";
-import { useRef } from "react";
 import { useRouter } from "next/navigation";
 
 export default function UserAvatarMenu() {
@@ -12,9 +12,13 @@ export default function UserAvatarMenu() {
   const opRef = useRef<OverlayPanel>(null);
   const router = useRouter();
 
+  useEffect(() => {
+    console.log("[UserAvatarMenu] Se renderiza => user:", user);
+  }, [user]);
+
   return (
     <>
-      {/* 🧊 Panel flotante de usuario */}
+      {/* Panel flotante de usuario */}
       <OverlayPanel
         ref={opRef}
         dismissable
@@ -24,7 +28,10 @@ export default function UserAvatarMenu() {
         {user ? (
           <div className="flex flex-column align-items-center gap-2">
             <div className="text-2xl font-bold flex align-items-center gap-2">
-              <span role="img" aria-label="saludo">👋</span> {user.username}
+              <span role="img" aria-label="saludo">
+                👋
+              </span>{" "}
+              {user.username}
             </div>
             <span className="text-sm text-color-secondary">{user.email}</span>
             <span className="text-sm text-color-secondary">
@@ -39,6 +46,7 @@ export default function UserAvatarMenu() {
                 className="w-full"
                 text
                 onClick={() => {
+                  console.log("[UserAvatarMenu] Ir a /perfil");
                   router.push("/perfil");
                   opRef.current?.hide();
                 }}
@@ -50,6 +58,7 @@ export default function UserAvatarMenu() {
                 severity="danger"
                 text
                 onClick={async () => {
+                  console.log("[UserAvatarMenu] handleLogout()");
                   await handleLogout();
                   opRef.current?.hide();
                 }}
@@ -63,13 +72,16 @@ export default function UserAvatarMenu() {
         )}
       </OverlayPanel>
 
-      {/* 👤 Avatar clickable */}
+      {/* Avatar clickable */}
       <Avatar
         icon="pi pi-user"
         shape="circle"
         className="user-avatar"
         size="large"
-        onClick={(e) => opRef.current?.toggle(e)}
+        onClick={(e) => {
+          console.log("[UserAvatarMenu] click avatar => opRef.toggle");
+          opRef.current?.toggle(e);
+        }}
       />
     </>
   );
