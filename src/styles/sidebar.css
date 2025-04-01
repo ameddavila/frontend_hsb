@@ -1,95 +1,115 @@
-/* === 📌 Sidebar base === */
+/* === SIDEBAR CONTENEDOR === */
 .sidebar {
-  width: 250px;
   background-color: var(--color-bg-sidebar);
   color: var(--color-text-white);
-  height: 100%;
-  padding: 1rem;
+  height: 100vh;
+  overflow-y: auto;
   transition: width 0.3s ease;
-  overflow: hidden;
-  position: relative;
+  padding: 0.5rem 0.25rem;
+  border-right: 1px solid var(--color-border-light);
 }
 
-/* Sidebar colapsado */
+.sidebar.expanded {
+  min-width: 250px;
+}
+
 .sidebar.collapsed {
-  width: 70px;
+  width: 60px;
+  padding: 0.5rem;
 }
 
-/* === 📌 PanelMenu custom === */
+/* === PANELMENU GENERAL === */
 .custom-sidebar .p-panelmenu {
-  background-color: transparent !important;
-  border: none !important;
+  background: transparent;
+  border: none;
+}
+
+/* === ÍTEMS DEL PANEL === */
+.custom-sidebar .p-panelmenu .p-menuitem {
+  padding-left: 0.75rem;
+}
+
+/* Anidamiento de submenús */
+.custom-sidebar .p-panelmenu .p-submenu-list {
+  padding-left: 1rem;
+}
+
+/* Texto de los ítems */
+.custom-sidebar .p-panelmenu .p-menuitem-text {
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+/* Icono de ítems */
+.custom-sidebar .p-panelmenu .p-menuitem-icon {
+  font-size: 1rem;
+  margin-right: 0.5rem;
+  color: var(--primary-color, #2563eb); /* Azul por defecto */
+}
+
+/* === LINKS DEL PANEL === */
+.custom-sidebar .p-menuitem-link {
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  transition: background-color 0.2s ease;
+}
+
+.custom-sidebar .p-menuitem-link:hover {
+  background-color: rgba(37, 99, 235, 0.1); /* Azul claro en hover */
+}
+
+/* === MODO COLAPSADO === */
+.collapsed-menu button.collapsed-icon {
+  background: transparent;
   color: var(--color-text-white);
+  font-size: 1.2rem;
+  border: none;
+}
+
+.collapsed-menu button.collapsed-icon:hover {
+  background-color: rgba(255, 255, 255, 0.15);
+  border-radius: 50%;
+}
+
+/* Asegura visibilidad clara de subniveles */
+.custom-sidebar .p-panelmenu .p-submenu-list {
+  margin-left: 0.5rem;
+  border-left: 2px solid rgba(255, 255, 255, 0.1);
+  padding-left: 0.5rem;
 }
 
 .custom-sidebar .p-panelmenu .p-menuitem-link {
-  padding: 0.75rem 1rem;
-  border-radius: 6px;
-  transition: background-color 0.2s ease;
-  color: var(--color-text-white);
+  font-size: 0.92rem;
 }
 
-.custom-sidebar .p-panelmenu .p-menuitem-link:hover {
-  background-color: rgba(255, 255, 255, 0.1);
+/* === Mejoras visuales para submenús y jerarquía === */
+.custom-sidebar .p-panelmenu .p-submenu-list {
+  margin-left: 0.5rem;
+  padding-left: 0.5rem;
+  border-left: 2px solid rgba(255, 255, 255, 0.15);
+}
+
+.custom-sidebar .p-panelmenu .p-menuitem {
+  padding-left: 0.25rem;
+}
+
+.custom-sidebar .p-menuitem-link {
+  padding: 0.65rem 1rem;
+  border-radius: 0.5rem;
+  transition: background-color 0.2s ease;
+}
+
+.custom-sidebar .p-menuitem-link:hover {
+  background-color: rgba(99, 102, 241, 0.12); /* Azul clarito */
+}
+
+.custom-sidebar .p-panelmenu .p-menuitem-icon {
+  margin-right: 0.5rem;
+  font-size: 1rem;
+  color: var(--primary-color, #2563eb);
 }
 
 .custom-sidebar .p-panelmenu .p-menuitem-text {
   font-weight: 500;
-}
-
-.custom-sidebar .p-panelmenu .p-menuitem-icon {
-  margin-right: 0.75rem;
-}
-
-/* === 📌 Menú del Sidebar (para modo colapsado clásico) === */
-.sidebar nav {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.sidebar nav a {
-  color: var(--color-text-white);
-  text-decoration: none;
-  padding: 0.8rem;
-  font-size: 1rem;
-  display: flex;
-  align-items: center;
-  border-radius: 5px;
-  transition: background-color 0.3s ease;
-}
-
-.sidebar nav a:hover {
-  background-color: var(--color-btn-primary);
-}
-
-.sidebar nav a i {
-  margin-right: 10px;
-}
-
-/* Oculta los textos en sidebar colapsado */
-.sidebar.collapsed nav a span {
-  display: none;
-}
-
-/* Íconos centrados en modo colapsado */
-.sidebar.collapsed nav a {
-  justify-content: center;
-}
-
-/* === 📱 Responsive: comportamiento móvil === */
-@media (max-width: 768px) {
-  .sidebar {
-    position: absolute;
-    left: -250px;
-    top: 60px;
-    height: calc(100vh - 60px);
-    z-index: 1000;
-    width: 250px;
-    transition: left 0.3s ease;
-  }
-
-  .sidebar.open {
-    left: 0;
-  }
+  font-size: 0.95rem;
 }

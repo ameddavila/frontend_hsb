@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import { useMenus } from "@/hooks/useMenus";
 import { MenuNode } from "@/types/Menu";
 import { ProgressSpinner } from "primereact/progressspinner";
+import "@/styles/sidebar.css";
 
 interface SidebarProps {
   open: boolean;
@@ -15,32 +16,36 @@ interface SidebarProps {
 
 export default function Sidebar({ open, className = "" }: SidebarProps) {
   const router = useRouter();
-  const { menus, loading } = useMenus(); // ✅ Menús jerárquicos desde Zustand
+  const { menus, loading } = useMenus();
 
-  // 🧠 Transforma MenuNode[] en estructura compatible con PanelMenu
+  // 🔁 Transforma el árbol de menús a estructura PanelMenu (soporte para submenús y navegación)
   const buildMenuModel = useCallback(
     (items: MenuNode[]): MenuItem[] =>
       items.map((menu) => {
         const hasChildren = !!menu.children?.length;
-        return {
+        const item: MenuItem = {
           label: menu.name,
           icon: menu.icon,
           command: () => {
             if (menu.path) router.push(menu.path);
           },
-          items: hasChildren ? buildMenuModel(menu.children) : undefined,
         };
+
+        // Si tiene hijos, agregamos los items recursivamente
+        if (hasChildren) {
+          item.items = buildMenuModel(menu.children);
+        }
+
+        return item;
       }),
     [router]
   );
 
-  // ✅ Memoizamos los items para evitar renders innecesarios
+  // 🚀 Memoizamos para evitar renders innecesarios
   const dynamicItems = useMemo(() => buildMenuModel(menus), [menus, buildMenuModel]);
 
-  // 🎨 Clases condicionales según estado de apertura
   const sidebarClass = `sidebar ${open ? "expanded" : "collapsed"} ${className}`;
 
-  // ⏳ Mientras se cargan los menús
   if (loading) {
     return (
       <aside className={sidebarClass}>
@@ -51,7 +56,6 @@ export default function Sidebar({ open, className = "" }: SidebarProps) {
     );
   }
 
-  // ⚠️ Si no hay menús (posible error)
   if (!menus.length) {
     return (
       <aside className={sidebarClass}>
@@ -62,7 +66,6 @@ export default function Sidebar({ open, className = "" }: SidebarProps) {
     );
   }
 
-  // ✅ Render normal
   return (
     <aside className={sidebarClass}>
       {open ? (
