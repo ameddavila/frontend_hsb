@@ -1,6 +1,7 @@
+// ✅ Componente Navbar mejorado
 "use client";
 
-import React, { useEffect } from "react";
+import React from "react";
 import { Menubar } from "primereact/menubar";
 import { Button } from "primereact/button";
 import { useRouter } from "next/navigation";
@@ -14,69 +15,49 @@ interface NavbarProps {
 export default function Navbar({ onToggleSidebar, onTogglePanel }: NavbarProps) {
   const router = useRouter();
 
-  useEffect(() => {
-    console.log("[Navbar] Se renderiza.");
-  }, []);
-
   const menubarModel = [
     {
       label: "Hospital Santa Bárbara",
       icon: "pi pi-home",
-      command: () => {
-        console.log("[Navbar] Menubar command => /dashboard");
-        void router.push("/dashboard");
-      },
+      command: () => router.push("/dashboard"),
       className: "home-button",
     },
   ];
 
-  const endComponent = (
-    <div className="flex align-items-center gap-3">
-      <Button
-        icon="pi pi-bell"
-        className="p-button navbar-btn"
-        onClick={() => {
-          console.log("[Navbar] Notificaciones (placeholder)");
-          alert("🔔 Notificaciones...");
-        }}
-      />
-      <UserAvatarMenu /> {/* Usamos el nuevo componente de avatar */}
-    </div>
-  );
-
   const start = (
-    <div className="flex align-items-center">
+    <div className="flex align-items-center gap-2">
       <Button
         icon="pi pi-bars"
-        className="p-button-text mr-2"
-        onClick={() => {
-          console.log("[Navbar] onToggleSidebar()");
-          onToggleSidebar();
-        }}
-        aria-label="Toggle Sidebar"
+        className="p-button-text"
+        onClick={onToggleSidebar}
+        aria-label="Alternar menú lateral"
       />
       <Button
         icon="pi pi-window-maximize"
-        className="p-button-text mr-2"
-        onClick={() => {
-          console.log("[Navbar] onTogglePanel()");
-          onTogglePanel();
-        }}
-        aria-label="Toggle Panel Derecho"
+        className="p-button-text"
+        onClick={onTogglePanel}
+        aria-label="Alternar panel derecho"
       />
+    </div>
+  );
+
+  const end = (
+    <div className="flex align-items-center gap-3">
+      <Button
+        icon="pi pi-bell"
+        className="navbar-btn"
+        onClick={() => alert("🔔 Notificaciones... (pendiente de implementar)")}
+      />
+      <UserAvatarMenu />
     </div>
   );
 
   return (
     <Menubar
-      start={start}
       model={menubarModel}
-      end={endComponent}
-      className="navbar border-none shadow-1"
-      style={{
-        backgroundColor: "var(--color-bg-sidebar)",
-        color: "var(--color-text-white)",
-      }}
+      start={start}
+      end={end}
+      className="navbar border-none shadow-2"
     />
   );
 }

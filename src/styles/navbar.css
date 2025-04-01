@@ -1,3 +1,43 @@
+.layout-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: var(--color-bg-light);
+}
+
+.layout-content {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+.layout-main {
+  flex-grow: 1;
+  overflow-y: auto;
+  padding: 2rem;
+  background-color: var(--color-bg-light);
+  transition: margin-left 0.3s ease;
+}
+
+/* Sidebar expandido/colapsado */
+.layout-main.expanded {
+  margin-left: 250px;
+}
+
+.layout-main.collapsed {
+  margin-left: 60px;
+}
+
+/* Footer */
+.footer {
+  background-color: var(--color-bg-footer);
+  color: var(--color-text-white);
+  text-align: center;
+  padding: 1rem;
+  font-size: var(--font-size-sm);
+}
+
+/* Navbar */
 .navbar {
   background-color: var(--color-bg-navbar);
   color: var(--color-text-white);
@@ -7,6 +47,7 @@
   justify-content: space-between;
   padding: 0 1.5rem;
   box-shadow: var(--box-shadow);
+  z-index: 100;
 }
 
 .navbar-btn {
@@ -22,8 +63,6 @@
   color: var(--color-btn-primary) !important;
 }
 
-
-/* === Avatar personalizado === */
 .user-avatar {
   background-color: var(--color-bg-white) !important;
   color: var(--color-bg-sidebar) !important;
@@ -38,7 +77,6 @@
   box-shadow: 0 0 12px rgba(0, 0, 0, 0.25);
 }
 
-/* === Panel del usuario === */
 .user-overlay-panel {
   padding: 1.5rem !important;
   border-radius: 12px !important;

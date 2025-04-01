@@ -1,4 +1,4 @@
-// ✅ src/app/layout.tsx
+// src/app/layout.tsx
 import { AuthProvider } from "@/context/AuthContext";
 import "primereact/resources/primereact.css";
 import "primeflex/primeflex.css";
@@ -14,7 +14,7 @@ export const metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="es">
-      <body>
+      <body className="layout-root">
         <AuthProvider>
           <Toaster richColors position="top-center" />
           {children}

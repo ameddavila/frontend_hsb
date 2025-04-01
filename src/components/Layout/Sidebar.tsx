@@ -1,13 +1,13 @@
+// ✅ Sidebar estilizado, jerárquico, colapsable y optimizado
 "use client";
 
 import React, { useMemo, useCallback } from "react";
 import { PanelMenu } from "primereact/panelmenu";
-import { MenuItem, MenuItemCommandEvent } from "primereact/menuitem";
+import { MenuItem } from "primereact/menuitem";
 import { useRouter } from "next/navigation";
 import { useMenus } from "@/hooks/useMenus";
 import { MenuNode } from "@/types/Menu";
 import { ProgressSpinner } from "primereact/progressspinner";
-import "@/styles/sidebar.css";
 
 interface SidebarProps {
   open: boolean;
@@ -18,32 +18,18 @@ export default function Sidebar({ open, className = "" }: SidebarProps) {
   const router = useRouter();
   const { menus, loading } = useMenus();
 
-  // 🔁 Transforma el árbol de menús a estructura PanelMenu (soporte para submenús y navegación)
   const buildMenuModel = useCallback(
     (items: MenuNode[]): MenuItem[] =>
-      items.map((menu) => {
-        const hasChildren = !!menu.children?.length;
-        const item: MenuItem = {
-          label: menu.name,
-          icon: menu.icon,
-          command: () => {
-            if (menu.path) router.push(menu.path);
-          },
-        };
-
-        // Si tiene hijos, agregamos los items recursivamente
-        if (hasChildren) {
-          item.items = buildMenuModel(menu.children);
-        }
-
-        return item;
-      }),
+      items.map((menu) => ({
+        label: menu.name,
+        icon: menu.icon,
+        command: () => menu.path && router.push(menu.path),
+        items: menu.children?.length ? buildMenuModel(menu.children) : undefined,
+      })),
     [router]
   );
 
-  // 🚀 Memoizamos para evitar renders innecesarios
   const dynamicItems = useMemo(() => buildMenuModel(menus), [menus, buildMenuModel]);
-
   const sidebarClass = `sidebar ${open ? "expanded" : "collapsed"} ${className}`;
 
   if (loading) {
@@ -79,7 +65,7 @@ export default function Sidebar({ open, className = "" }: SidebarProps) {
             <button
               key={i}
               className="collapsed-icon p-2 cursor-pointer rounded hover:bg-gray-200"
-              onClick={() => item.command?.({} as MenuItemCommandEvent)}
+              onClick={() => item.command?.({} as any)}
               title={item.label}
               aria-label={item.label}
             >

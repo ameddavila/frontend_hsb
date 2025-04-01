@@ -1,365 +1,57 @@
-/* === 📌 Importación de PrimeReact y PrimeFlex === */
-@import "primeicons/primeicons.css";
-@import "primereact/resources/themes/lara-light-indigo/theme.css"; /* Puedes comentar esta línea si deseas total personalización */
-@import "primereact/resources/primereact.min.css";
-@import "primeflex/primeflex.css";
-
-/* === 📌 Variables Globales === */
 :root {
-  /* 🔹 Tamaños base */
-  --font-size-base: 16px;
-  --font-size-sm: 14px;
-  --font-size-md: 16px;
-  --font-size-lg: 18px;
-  --font-size-xl: 22px;
-  --font-size-xxl: 28px;
-
-  /* 🔹 Tipografía */
   --font-primary: "Inter", sans-serif;
   --font-secondary: "Roboto", sans-serif;
 
-  /* 🎨 === PALETA DE COLORES === */
+  --font-size-sm: 14px;
+  --font-size-base: 16px;
+  --font-size-md: 18px;
+  --font-size-lg: 22px;
+
   --color-bg-white: #ffffff;
   --color-bg-light: #f4f6f8;
   --color-bg-dark: #1e1e2f;
-  --color-bg-accent: #f26e29;
-  --color-bg-sidebar: #001f5a; 
-  --color-bg-navbar: #001f5a; 
-  --color-bg-footer: #222233;
+  --color-bg-navbar: #001f5a;
+  --color-bg-sidebar: #001f5a;
   --color-bg-panel: #f5f5f5;
+  --color-bg-footer: #222233;
+  --color-bg-accent: #f26e29;
 
-  /* 🔹 Texto */
   --color-text-white: #ffffff;
   --color-text-dark: #0a0a0a;
   --color-text-gray: #555555;
-  --color-text-light-gray: #888888;
   --color-text-accent: #f26e29;
 
-  /* 🔹 Bordes y sombras */
-  --border-radius: 8px;
-  --box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-
-  /* 🔹 Botones */
   --color-btn-primary: #f26e29;
   --color-btn-hover: #d9531e;
   --color-btn-secondary: #0066cc;
   --color-btn-secondary-hover: #004b99;
 
-  /* ❗ Añade si usas un color para --color-accent-danger o --color-card-border */
-  --color-accent-danger: #e53935;
-  --color-card-border: #ddd;
+  --color-danger: #e53935;
+  --color-border: #ddd;
+  --border-radius: 8px;
+  --box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
 }
 
-/* === 📌 Reset & Base === */
-html, body {
+/* Reset & base */
+html,
+body {
   margin: 0;
   padding: 0;
   font-family: var(--font-primary);
   font-size: var(--font-size-base);
+  background-color: var(--color-bg-light);
   color: var(--color-text-dark);
-  background-color: var(--color-bg-light);
-  overflow-x: hidden;
-  overflow-y: auto; /* ✅ Scroll global aquí */
   height: 100%;
+  overflow: hidden;
 }
 
-
-/* Opcional: en lugar de transition: all, especificamos propiedades importantes */
-* {
+*, *::before, *::after {
+  box-sizing: border-box;
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-/* === 📌 NAVBAR === */
-.navbar {
-  background-color: var(--color-bg-navbar) !important;
-  color: var(--color-text-white) !important;
-  /*height: 60px;*/
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: .5rem 1.5rem;
-  box-shadow: var(--box-shadow);
-}
-
-.navbar .pi {
-  color: var(--color-text-white) !important;
-}
-
-.navbar-menu button {
-  background: none;
-  border: none;
-  color: var(--color-text-white) !important;
-  cursor: pointer;
-  font-size: 1rem;
-  transition: background-color 0.3s ease, color 0.3s ease;
-}
-
-.navbar-menu button:hover {
-  color: var(--color-text-accent) !important;
-}
-
-/* Botón de Navbar (clase navbar-btn) */
-.navbar-btn {
-  color: var(--color-text-white) !important;
-  background: none !important;
-  border: none !important;
-  transition: background-color 0.3s ease, color 0.3s ease;
-}
-
-.navbar-btn:hover {
-  color: var(--color-text-accent) !important;
-  background-color: rgba(255, 255, 255, 0.1) !important;
-}
-
-/* === 📌 Sidebar === */
-.sidebar {
-  /*width: 250px;*/
-  background-color: var(--color-bg-sidebar);
-  color: var(--color-text-white);
-  padding: 0 0.5rem;
-  height: 100vh;
-  transition: width 0.3s ease; /* Evitamos 'all' */
-}
-
-/* Sidebar colapsado */
-.sidebar.collapsed {
-  width: 60px;
-}
-
-/* === 📌 Layout Principal === */
-.layout-main {
-  flex-grow: 1;
-  padding: 2rem;
-  overflow-y: auto;
-  background-color: var(--color-bg-light);
-  transition: margin-left 0.3s ease;
-}
-
-.layout-main.expanded {
-  margin-left: 250px;
-}
-.layout-main.collapsed {
-  margin-left: 60px;
-}
-
-/* === 📌 Menús colapsados === */
-.collapsed-menu {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-top: 10px;
-}
-
-.collapsed-icon {
-  font-size: 1.5rem;
-  margin: 1rem 0;
-  cursor: pointer;
-  color: var(--color-text-white);
-  transition: color 0.3s ease;
-}
-
-.collapsed-icon:hover {
-  color: var(--color-text-accent);
-}
-
-.sidebar nav a {
-  color: var(--color-text-white) !important;
-  text-decoration: none;
-  padding: 0.8rem;
-  font-size: 1rem;
-  display: flex;
-  align-items: center;
-  border-radius: 5px;
-  transition: background-color 0.3s ease, color 0.3s ease;
-}
-
-.sidebar nav a:hover {
-  background-color: var(--color-btn-primary) !important;
-  color: var(--color-text-white) !important;
-}
-
-/* === 📌 Panel Derecho === */
-.panel-derecho {
-  background-color: var(--color-bg-panel) !important;
-  padding: 1.5rem;
-  box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
-  overflow-y: auto;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  max-width: 350px;
-  width: 100%;
-  transition: transform 0.3s ease;
-}
-
-.panel-derecho.hidden {
-  transform: translateX(100%);
-  opacity: 0;
-}
-
-.panel-derecho h3 {
-  color: var(--color-text-dark) !important;
-}
-
-/* === 📌 Footer === */
-.footer {
-  background-color: var(--color-bg-footer) !important;
-  color: var(--color-text-white) !important;
-  text-align: center;
-  padding: 1rem;
-  width: 100%;
-  position: relative;
-}
-
-/* === 📌 Botones Generales === */
-.button-primary {
-  background-color: var(--color-btn-primary) !important;
-  color: var(--color-text-white) !important;
-  border: none;
-  transition: background-color 0.3s ease;
-}
-.button-primary:hover {
-  background-color: var(--color-btn-hover) !important;
-}
-
-.button-secondary {
-  background-color: var(--color-btn-secondary) !important;
-  color: var(--color-text-white) !important;
-  border: none;
-  transition: background-color 0.3s ease;
-}
-.button-secondary:hover {
-  background-color: var(--color-btn-secondary-hover) !important;
-}
-
-/* === 📌 Menubar (Navbar) === */
-.navbar .p-menubar .p-menuitem-link {
-  color: var(--color-text-white) !important;
-  transition: background-color 0.3s ease, color 0.3s ease;
-}
-.navbar .p-menubar .p-menuitem-link:hover {
-  color: var(--color-text-accent) !important;
-  background-color: rgba(255, 255, 255, 0.1) !important;
-  border-radius: 5px;
-}
-.navbar {
-  border-radius: 0 !important; 
-}
-
-/* Forzar color íconos en la Navbar */
-.navbar .p-button {
-  color: var(--color-text-white) !important;
-  background: transparent !important;
-  border: none !important;
-}
-.navbar .p-button:hover {
-  background-color: rgba(255, 255, 255, 0.1) !important;
-  color: var(--color-text-accent) !important;
-}
-
-/* === 📌 Layout Container === */
-.layout-container {
-  display: flex;
-  flex-direction: column;
-  height: 100vh;
-}
-
-/* === 📌 Estructura de contenido (Opcional si usas flex o grid) === */
-.layout-content {
-  display: flex;
-  flex-grow: 1;
-  /*height: calc(100vh - 60px);*/
-  min-height: 100%;
-  transition: background-color 0.3s ease, color 0.3s ease;
-}
-
-/* === 📌 Personalizar el menú de PrimeReact (Sidebar) === */
-.p-menu {
-  background-color: var(--color-bg-light) !important; 
-  border: none !important;
-}
-.p-menuitem-link {
-  color: var(--color-text-white) !important;
-  transition: background-color 0.3s ease, color 0.3s ease;
-  padding: 0.8rem;
-  border-radius: 5px;
-}
-.p-menuitem-link:hover {
-  background-color: var(--color-btn-primary) !important;
-  color: var(--color-text-white) !important;
-}
-.p-menuitem-link.p-highlight {
-  background-color: var(--color-btn-hover) !important;
-  color: var(--color-text-white) !important;
-}
-.p-menuitem-icon {
-  color: var(--color-bg-sidebar) !important;
-}
-
-/* === Estado normal: texto/ícono en blanco === */
-.p-menubar-root-list .home-button .p-menuitem-link,
-.p-menubar-root-list .home-button .p-menuitem-text,
-.p-menubar-root-list .home-button .p-menuitem-icon {
-  color: var(--color-text-white) !important;
-  background: transparent !important;
-  display: flex !important;
-  align-items: center !important;
-  font-weight: normal !important;
-  border-radius: 8px;
-  transition: background-color 0.3s ease, color 0.3s ease, transform 0.2s ease;
-}
-
-/* === Hover, Focus y Active: fondo blanco, texto/ícono negros === */
-.p-menubar-root-list .home-button:hover .p-menuitem-link,
-.p-menubar-root-list .home-button:focus .p-menuitem-link,
-.p-menubar-root-list .home-button .p-menuitem-link:focus,
-.p-menubar-root-list .home-button .p-menuitem-link:active,
-.p-menubar-root-list .home-button .p-menuitem-link.p-highlight {
-  background-color: var(--color-text-white) !important;
-  color: var(--color-bg-sidebar) !important;
-  transform: scale(1.05);
-}
-
-/* Ícono y texto también se vuelven negros en Hover/Focus/Active/Highlight */
-.p-menubar-root-list .home-button:hover .p-menuitem-icon,
-.p-menubar-root-list .home-button:focus .p-menuitem-icon,
-.p-menubar-root-list .home-button .p-menuitem-link:focus .p-menuitem-icon,
-.p-menubar-root-list .home-button .p-menuitem-link:active .p-menuitem-icon,
-.p-menubar-root-list .home-button .p-menuitem-link.p-highlight .p-menuitem-icon,
-.p-menubar-root-list .home-button:hover .p-menuitem-text,
-.p-menubar-root-list .home-button:focus .p-menuitem-text,
-.p-menubar-root-list .home-button .p-menuitem-link:focus .p-menuitem-text,
-.p-menubar-root-list .home-button .p-menuitem-link:active .p-menuitem-text,
-.p-menubar-root-list .home-button .p-menuitem-link.p-highlight .p-menuitem-text {
-  color: var(--color-bg-sidebar) !important;
-}
-/*amednew*/
-/* === 📌 Integración con tema PrimeReact === */
-:root {
-  /* 🎨 Colores principales */
-  --primary-color: var(--color-btn-primary); /* botón principal */
-  --primary-color-text: var(--color-text-white);
-
-  /* Superficies (fondos) */
-  --surface-0: var(--color-bg-white);         /* fondo base (tarjetas, diálogos) */
-  --surface-100: var(--color-bg-light);       /* fondo suave (secundario) */
-  --surface-200: var(--color-bg-panel);       /* paneles */
-  --surface-300: var(--color-bg-navbar);      /* headers */
-  --surface-card: var(--color-bg-white);      /* tarjetas */
-
-  /* Bordes y líneas */
-  --surface-border: var(--color-card-border);
-  --border-color: var(--color-card-border);
-
-  /* Colores de texto */
-  --text-color: var(--color-text-dark);
-  --text-color-secondary: var(--color-text-gray);
-
-  /* Hover y foco */
-  --highlight-bg: var(--color-btn-hover);
-  --highlight-text-color: var(--color-text-white);
-
-  /* Fondo del sidebar y footer (si quieres que se integren visualmente) */
-  --sidebar-bg-color: var(--color-bg-sidebar);
-  --footer-bg-color: var(--color-bg-footer);
-}
+/* Integración con PrimeReact (opcional si usas tema base) */
+@import "primeicons/primeicons.css";
+@import "primereact/resources/themes/lara-light-indigo/theme.css";
+@import "primereact/resources/primereact.min.css";
+@import "primeflex/primeflex.css";

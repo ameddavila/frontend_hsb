@@ -1,46 +1,36 @@
-/* === 📌 Panel Derecho === */
+/* === 📌 PANEL DERECHO === */
 .panel-derecho {
   background-color: var(--color-bg-white);
   padding: 1.5rem;
   box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
+  max-width: 350px;
+  width: 100%;
   height: 100%;
-  overflow-y: auto;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  width: 100%;
-  max-width: 350px; /* Limitar el ancho máximo */
-}
-
-/* === 📌 Ajuste de tarjetas === */
-.panel-derecho ul {
-  list-style-type: none;
-  padding: 0;
-  margin: 0;
-  width: 100%;
-  max-width: 300px; /* Para que no se expandan demasiado */
-}
-
-.panel-derecho ul li {
-  padding: 0.8rem;
-  background-color: var(--color-bg-light);
-  border-radius: 8px;
-  margin-bottom: 0.5rem;
-  font-size: 0.95rem;
-  text-align: center;
-}
-
-.panel-derecho ul li:hover {
-  background-color: var(--color-bg-info);
-}
-
-.animated-panel {
+  overflow-y: auto;
+  z-index: 998;
   transition: transform 0.3s ease, opacity 0.3s ease;
-  transform: translateX(0);
-  opacity: 1;
 }
 
+/* 📱 Versión oculta para animaciones */
 .panel-derecho.hidden {
   transform: translateX(100%);
   opacity: 0;
+}
+
+/* 💬 Título */
+.panel-derecho h3 {
+  color: var(--text-color);
+}
+
+/* 🌟 Cards (si se requiere extra estilo) */
+.panel-derecho .p-card {
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+  transition: transform 0.2s ease;
+}
+
+.panel-derecho .p-card:hover {
+  transform: scale(1.02);
 }

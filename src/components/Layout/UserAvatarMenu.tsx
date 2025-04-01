@@ -1,3 +1,4 @@
+// ✅ UserAvatarMenu mejorado: limpio, accesible, estilizado
 "use client";
 
 import React, { useEffect, useRef } from "react";
@@ -13,12 +14,21 @@ export default function UserAvatarMenu() {
   const router = useRouter();
 
   useEffect(() => {
-    console.log("[UserAvatarMenu] Se renderiza => user:", user);
+    console.log("[UserAvatarMenu] user:", user);
   }, [user]);
+
+  const handlePerfil = () => {
+    router.push("/perfil");
+    opRef.current?.hide();
+  };
+
+  const handleCerrarSesion = async () => {
+    await handleLogout();
+    opRef.current?.hide();
+  };
 
   return (
     <>
-      {/* Panel flotante de usuario */}
       <OverlayPanel
         ref={opRef}
         dismissable
@@ -26,30 +36,18 @@ export default function UserAvatarMenu() {
         className="user-overlay-panel"
       >
         {user ? (
-          <div className="flex flex-column align-items-center gap-2">
-            <div className="text-2xl font-bold flex align-items-center gap-2">
-              <span role="img" aria-label="saludo">
-                👋
-              </span>{" "}
-              {user.username}
-            </div>
+          <div className="flex flex-column align-items-center gap-2 text-center">
+            <div className="text-2xl font-semibold">👋 {user.username}</div>
             <span className="text-sm text-color-secondary">{user.email}</span>
-            <span className="text-sm text-color-secondary">
-              Rol: {user.role}
-            </span>
+            <span className="text-sm text-color-secondary">Rol: {user.role}</span>
 
-            {/* Acciones */}
             <div className="flex flex-column gap-2 mt-3 w-full">
               <Button
                 icon="pi pi-user"
                 label="Perfil"
                 className="w-full"
                 text
-                onClick={() => {
-                  console.log("[UserAvatarMenu] Ir a /perfil");
-                  router.push("/perfil");
-                  opRef.current?.hide();
-                }}
+                onClick={handlePerfil}
               />
               <Button
                 icon="pi pi-sign-out"
@@ -57,31 +55,22 @@ export default function UserAvatarMenu() {
                 className="w-full"
                 severity="danger"
                 text
-                onClick={async () => {
-                  console.log("[UserAvatarMenu] handleLogout()");
-                  await handleLogout();
-                  opRef.current?.hide();
-                }}
+                onClick={handleCerrarSesion}
               />
             </div>
           </div>
         ) : (
-          <div className="text-sm text-color-secondary text-center">
-            No autenticado
-          </div>
+          <div className="text-sm text-color-secondary text-center">No autenticado</div>
         )}
       </OverlayPanel>
 
-      {/* Avatar clickable */}
       <Avatar
         icon="pi pi-user"
         shape="circle"
         className="user-avatar"
         size="large"
-        onClick={(e) => {
-          console.log("[UserAvatarMenu] click avatar => opRef.toggle");
-          opRef.current?.toggle(e);
-        }}
+        onClick={(e) => opRef.current?.toggle(e)}
+        aria-label="Menú de usuario"
       />
     </>
   );
