@@ -333,3 +333,33 @@ html, body {
 .p-menubar-root-list .home-button .p-menuitem-link.p-highlight .p-menuitem-text {
   color: var(--color-bg-sidebar) !important;
 }
+/*amednew*/
+/* === 📌 Integración con tema PrimeReact === */
+:root {
+  /* 🎨 Colores principales */
+  --primary-color: var(--color-btn-primary); /* botón principal */
+  --primary-color-text: var(--color-text-white);
+
+  /* Superficies (fondos) */
+  --surface-0: var(--color-bg-white);         /* fondo base (tarjetas, diálogos) */
+  --surface-100: var(--color-bg-light);       /* fondo suave (secundario) */
+  --surface-200: var(--color-bg-panel);       /* paneles */
+  --surface-300: var(--color-bg-navbar);      /* headers */
+  --surface-card: var(--color-bg-white);      /* tarjetas */
+
+  /* Bordes y líneas */
+  --surface-border: var(--color-card-border);
+  --border-color: var(--color-card-border);
+
+  /* Colores de texto */
+  --text-color: var(--color-text-dark);
+  --text-color-secondary: var(--color-text-gray);
+
+  /* Hover y foco */
+  --highlight-bg: var(--color-btn-hover);
+  --highlight-text-color: var(--color-text-white);
+
+  /* Fondo del sidebar y footer (si quieres que se integren visualmente) */
+  --sidebar-bg-color: var(--color-bg-sidebar);
+  --footer-bg-color: var(--color-bg-footer);
+}
