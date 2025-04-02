@@ -1,0 +1,27 @@
+.formgrid {
+    gap: 1rem;
+  }
+  
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+  
+  .field label {
+    font-weight: 500;
+    font-size: 0.9rem;
+    color: var(--text-color);
+  }
+  
+  input,
+  select,
+  textarea {
+    font-size: 1rem;
+    border-radius: 0.5rem;
+  }
+  
+  button[type="submit"] {
+    margin-top: 1rem;
+  }
+  

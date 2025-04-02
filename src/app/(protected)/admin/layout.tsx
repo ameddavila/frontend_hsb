@@ -2,8 +2,10 @@
 "use client";
 
 import React from "react";
-import ProtectedLayout from "@/components/Layout/ProtectedLayout";
+import "primereact/resources/primereact.css";
+import "primeflex/primeflex.css";
+import "@/styles/admin.css";
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
-  return <ProtectedLayout>{children}</ProtectedLayout>;
+  return <>{children}</>;
 }

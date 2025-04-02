@@ -4,6 +4,7 @@ import "primereact/resources/primereact.css";
 import "primeflex/primeflex.css";
 import "@/styles/auth.css";
 import "@/styles/globals.css";
+import "@/styles/form.css";
 import { Toaster } from "sonner";
 
 export const metadata = {

@@ -1,6 +1,12 @@
 // src/utils/waitForCookie.ts
 
 /**
+ * Determina si una cookie es HttpOnly y no puede ser leída por JavaScript.
+ */
+const isHttpOnly = (name: string) =>
+  ["refreshToken", "accessToken"].includes(name);
+
+/**
  * Espera hasta que una cookie específica esté disponible en el navegador.
  * @param name Nombre de la cookie a esperar.
  * @param maxWaitMs Tiempo máximo de espera en milisegundos.
@@ -12,6 +18,11 @@ export const waitForCookie = async (
   maxWaitMs = 5000,
   interval = 100
 ): Promise<string | null> => {
+  if (isHttpOnly(name)) {
+    console.warn(`🚫 La cookie "${name}" es HttpOnly y no se puede leer desde JavaScript.`);
+    return null;
+  }
+
   const start = Date.now();
 
   while (Date.now() - start < maxWaitMs) {
@@ -41,9 +52,10 @@ export const waitForAllCookies = async (
   maxWaitMs = 7000
 ): Promise<boolean> => {
   const start = Date.now();
+  const visibleNames = names.filter((n) => !isHttpOnly(n));
   const missing: string[] = [];
 
-  for (const name of names) {
+  for (const name of visibleNames) {
     const remainingTime = maxWaitMs - (Date.now() - start);
     if (remainingTime <= 0) {
       console.warn("⛔ Tiempo total agotado antes de terminar todas las cookies.");

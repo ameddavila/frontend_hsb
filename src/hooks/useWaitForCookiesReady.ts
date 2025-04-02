@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 
+const HTTP_ONLY_COOKIES = ["accessToken", "refreshToken"];
+
 /**
- * Espera a que las cookies indicadas estén disponibles.
- * Evita usar CSRF público después del login.
+ * Espera cookies visibles (no HttpOnly). Ignora accessToken y refreshToken.
  */
 export const useWaitForCookiesReady = (
   names: string[],
@@ -25,19 +26,36 @@ export const useWaitForCookiesReady = (
       return;
     }
 
+    // Solo esperamos cookies que NO sean HttpOnly
+    const visibleCookies = names.filter(
+      (name) => !HTTP_ONLY_COOKIES.includes(name)
+    );
+
+    if (visibleCookies.length === 0) {
+      console.log("👻 Todas las cookies son HttpOnly, no hay nada que esperar.");
+      setReady(true);
+      return;
+    }
+
     let waited = 0;
     const intervalId = setInterval(() => {
-      const allPresent = names.every((name) =>
-        document.cookie.includes(`${name}=`)
-      );
+      const allPresent = names.every((name) => {
+        if (name === "refreshToken") {
+          return true; // Es HttpOnly, no se puede verificar desde el frontend
+        }
+        return document.cookie.includes(`${name}=`);
+      });
+      
 
       if (allPresent) {
-        console.log("🍪 Todas las cookies listas:", names);
+        console.log("🍪 Cookies visibles listas:", visibleCookies);
         clearInterval(intervalId);
         setReady(true);
       } else if (waited >= maxWaitMs) {
-        const faltantes = names.filter((name) => !document.cookie.includes(`${name}=`));
-        console.warn("⚠️ Tiempo agotado. Faltan cookies:", faltantes);
+        const faltantes = visibleCookies.filter(
+          (name) => !document.cookie.includes(`${name}=`)
+        );
+        console.warn("⏳ Tiempo agotado. Faltan cookies visibles:", faltantes);
         clearInterval(intervalId);
         setReady(false);
       } else {

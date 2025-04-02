@@ -21,7 +21,7 @@ interface MenuState {
 
 export const useMenuStore = create<MenuState>()(
   persist(
-    (set, get) => ({
+    (set, _get) => ({
       menus: [],
       menuLoaded: false,
       collapsed: false,

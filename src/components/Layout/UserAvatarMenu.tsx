@@ -1,21 +1,19 @@
-// ✅ UserAvatarMenu mejorado: limpio, accesible, estilizado
 "use client";
 
-import React, { useEffect, useRef } from "react";
-import { useAuth } from "@/context/AuthContext";
+import React, { useRef } from "react";
+import { useRouter } from "next/navigation";
 import { OverlayPanel } from "primereact/overlaypanel";
 import { Avatar } from "primereact/avatar";
 import { Button } from "primereact/button";
-import { useRouter } from "next/navigation";
+import { useAuth } from "@/context/AuthContext";
+import { useUserIsReady } from "@/hooks/useUserIsReady";
+// nuevo hook
 
 export default function UserAvatarMenu() {
-  const { user, handleLogout } = useAuth();
+  const { handleLogout } = useAuth();
+  const { user, ready } = useUserIsReady(); // ✅ espera user + session-ready + zustand hydratado
   const opRef = useRef<OverlayPanel>(null);
   const router = useRouter();
-
-  useEffect(() => {
-    console.log("[UserAvatarMenu] user:", user);
-  }, [user]);
 
   const handlePerfil = () => {
     router.push("/perfil");
@@ -27,6 +25,19 @@ export default function UserAvatarMenu() {
     opRef.current?.hide();
   };
 
+  if (!ready || !user) {
+    return (
+      <Avatar
+        icon="pi pi-spin pi-spinner"
+        shape="circle"
+        size="large"
+        className="user-avatar"
+        style={{ opacity: 0.5 }}
+      />
+    );
+  }
+  
+
   return (
     <>
       <OverlayPanel
@@ -35,33 +46,29 @@ export default function UserAvatarMenu() {
         showCloseIcon
         className="user-overlay-panel"
       >
-        {user ? (
-          <div className="flex flex-column align-items-center gap-2 text-center">
-            <div className="text-2xl font-semibold">👋 {user.username}</div>
-            <span className="text-sm text-color-secondary">{user.email}</span>
-            <span className="text-sm text-color-secondary">Rol: {user.role}</span>
+        <div className="flex flex-column align-items-center gap-2 text-center">
+          <div className="text-2xl font-semibold">👋 {user.username}</div>
+          <span className="text-sm text-color-secondary">{user.email}</span>
+          <span className="text-sm text-color-secondary">Rol: {user.role}</span>
 
-            <div className="flex flex-column gap-2 mt-3 w-full">
-              <Button
-                icon="pi pi-user"
-                label="Perfil"
-                className="w-full"
-                text
-                onClick={handlePerfil}
-              />
-              <Button
-                icon="pi pi-sign-out"
-                label="Cerrar sesión"
-                className="w-full"
-                severity="danger"
-                text
-                onClick={handleCerrarSesion}
-              />
-            </div>
+          <div className="flex flex-column gap-2 mt-3 w-full">
+            <Button
+              icon="pi pi-user"
+              label="Perfil"
+              className="w-full"
+              text
+              onClick={handlePerfil}
+            />
+            <Button
+              icon="pi pi-sign-out"
+              label="Cerrar sesión"
+              className="w-full"
+              severity="danger"
+              text
+              onClick={handleCerrarSesion}
+            />
           </div>
-        ) : (
-          <div className="text-sm text-color-secondary text-center">No autenticado</div>
-        )}
+        </div>
       </OverlayPanel>
 
       <Avatar

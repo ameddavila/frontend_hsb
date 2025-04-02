@@ -9,6 +9,7 @@ import { useMenus } from "@/hooks/useMenus";
 import { MenuNode } from "@/types/Menu";
 import { ProgressSpinner } from "primereact/progressspinner";
 
+
 interface SidebarProps {
   open: boolean;
   className?: string;
@@ -65,7 +66,12 @@ export default function Sidebar({ open, className = "" }: SidebarProps) {
             <button
               key={i}
               className="collapsed-icon p-2 cursor-pointer rounded hover:bg-gray-200"
-              onClick={() => item.command?.({} as any)}
+              onClick={() =>
+                item.command?.({
+                  originalEvent: {} as unknown as React.SyntheticEvent,
+                  item,
+                })
+              }
               title={item.label}
               aria-label={item.label}
             >

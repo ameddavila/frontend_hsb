@@ -96,3 +96,12 @@
   text-align: center;
   margin-bottom: 1rem;
 }
+/* src/styles/auth.css */
+.public-layout {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: var(--surface-ground); /* Usa tu variable global o un color claro */
+  padding: 2rem;
+}

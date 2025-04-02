@@ -2,6 +2,7 @@ import axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from "axios";
 import { waitForAllCookies } from "@/utils/waitForCookie";
 import { waitForValidCsrfToken } from "@/utils/waitForCsrfReady";
 
+
 /**
  * 📦 Utilidad para leer cookies accesibles desde JS
  */
@@ -31,7 +32,7 @@ api.interceptors.request.use((config) => {
       console.warn("⚠️ CSRF token aún parece PÚBLICO en ruta:", path);
     }
   } else {
-    console.warn("⚠️ No se encontró CSRF token para el request:", path);
+    //amed console.warn("⚠️ No se encontró CSRF token para el request:", path);
   }
 
   return config;
@@ -100,15 +101,18 @@ export const login = async (usernameOrEmail: string, password: string) => {
 };
 
 /**
- * 🔄 Refresca el access token usando el refresh token (desde cookie HttpOnly)
+ * Intenta refrescar el accessToken usando el refreshToken y csrfToken.
+ * Asegura que las cookies visibles estén disponibles antes de continuar.
  */
 export const refreshAccessToken = async () => {
-  const cookiesOk = await waitForAllCookies(["refreshToken", "csrfToken"], 3000);
+  // 🔍 Esperamos cookies visibles solamente (csrfToken)
+  const cookiesOk = await waitForAllCookies(["csrfToken"], 3000);
   if (!cookiesOk) {
-    console.warn("⛔ Cookies necesarias no disponibles. Cancelando refresh.");
+    console.warn("⛔ Cookies visibles necesarias no disponibles. Cancelando refresh.");
     return null;
   }
 
+  // 🛡️ Verificamos que el CSRF ya haya sido rotado (≠ 'publico')
   const csrfOk = await waitForValidCsrfToken(3000);
   if (!csrfOk) {
     console.warn("⛔ CSRF aún es público. Cancelando refresh.");
@@ -117,14 +121,30 @@ export const refreshAccessToken = async () => {
 
   try {
     const res = await api.post("/auth/refresh");
-    if (!res.data?.user) throw new Error("Respuesta sin usuario");
+
+    const payload = res.data?.user ?? res.data;
+    if (!payload?.id) {
+      throw new Error("❌ Respuesta inválida: falta user.id");
+    }
+
     console.log("✅ Access token refrescado correctamente.");
-    return res.data;
+
+    return {
+      user: {
+        id: payload.id,
+        username: payload.username,
+        email: payload.email,
+        role: payload.role,
+      },
+      csrfToken: payload.csrfToken, // 👉 disponible si quieres rotarlo manualmente
+    };
   } catch (err) {
     console.error("❌ Error al refrescar access token:", err);
     return null;
   }
 };
+
+
 
 /**
  * 🚪 Logout y cierre de sesión completo

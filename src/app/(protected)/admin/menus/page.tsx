@@ -10,9 +10,6 @@ import { getMenus, deleteMenu } from "@/services/menuService";
 import { Menu } from "@/types/Menu";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import "@/styles/dashboard.css";
-import "@/styles/admin.css";
-import "primereact/resources/themes/lara-light-indigo/theme.css";
 
 export default function MenusPage() {
   const [menus, setMenus] = useState<Menu[]>([]);
@@ -85,17 +82,21 @@ export default function MenusPage() {
   );
 
   return (
-    <div className="admin-page p-4">
+    <div className="p-4">
       <ConfirmDialog />
 
-      <div className="flex flex-column md:flex-row justify-between align-items-center mb-4 gap-3">
-        <div className="text-2xl font-bold text-color">📋 Gestión de Menús</div>
-        <Button
-          label="Crear Menú"
-          icon="pi pi-plus"
-          onClick={() => router.push("/admin/menus/create")}
-          className="p-button-sm"
-        />
+      <div className="p-grid p-align-center p-justify-between mb-4">
+        <div className="p-col-12 md:p-col-6">
+          <h2 className="text-2xl font-bold">📋 Gestión de Menús</h2>
+        </div>
+        <div className="p-col-12 md:p-col-6 text-right">
+          <Button
+            label="Crear Menú"
+            icon="pi pi-plus"
+            className="p-button-sm"
+            onClick={() => router.push("/admin/menus/create")}
+          />
+        </div>
       </div>
 
       <div className="mb-3">

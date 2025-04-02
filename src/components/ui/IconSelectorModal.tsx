@@ -1,19 +1,25 @@
-// src/components/menus/IconSelectorModal.tsx
+// src/components/ui/IconSelectorModal.tsx
+"use client";
+
 import { Dialog } from "primereact/dialog";
 import { InputText } from "primereact/inputtext";
 import { Button } from "primereact/button";
 import { useState } from "react";
 import "primeicons/primeicons.css";
-import "@/styles/icon-selector.css"; // Importa el CSS personalizado
+import "@/styles/icon-selector.css"; // si usas uno personalizado
 
 const allIcons = [
-  "pi pi-home", "pi pi-user", "pi pi-cog", "pi pi-lock", "pi pi-book", "pi pi-chart-bar",
-  "pi pi-envelope", "pi pi-shopping-cart", "pi pi-users", "pi pi-list", "pi pi-calendar",
-  "pi pi-globe", "pi pi-star", "pi pi-file", "pi pi-folder", "pi pi-image",
-  // ... puedes añadir más de https://primefaces.org/primeicons
+  "pi pi-home",
+  "pi pi-user",
+  "pi pi-cog",
+  "pi pi-lock",
+  "pi pi-list",
+  "pi pi-chart-bar",
+  "pi pi-envelope",
+  // agrega los íconos que necesites
 ];
 
-export function IconSelectorModal({
+function IconSelectorModal({
   visible,
   onHide,
   onSelect,
@@ -29,7 +35,12 @@ export function IconSelectorModal({
   );
 
   return (
-    <Dialog header="Seleccionar Ícono" visible={visible} onHide={onHide} style={{ width: "50vw" }}>
+    <Dialog
+      header="Seleccionar ícono"
+      visible={visible}
+      onHide={onHide}
+      style={{ width: "50vw" }}
+    >
       <div className="p-inputgroup mb-3">
         <InputText
           placeholder="Buscar ícono..."
@@ -38,6 +49,7 @@ export function IconSelectorModal({
           className="w-full"
         />
       </div>
+
       <div className="icon-grid">
         {filteredIcons.map((icon) => (
           <Button
@@ -52,3 +64,5 @@ export function IconSelectorModal({
     </Dialog>
   );
 }
+
+export default IconSelectorModal;

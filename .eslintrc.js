@@ -11,14 +11,12 @@ module.exports = {
     },
     plugins: [
       '@typescript-eslint',
-      'react',
-      'react-hooks'
+      'react'
     ],
     extends: [
       'eslint:recommended',                  // Reglas básicas de ESLint
       'plugin:react/recommended',            // Reglas recomendadas para React
       'plugin:@typescript-eslint/recommended', // Reglas recomendadas para TS
-      'plugin:react-hooks/recommended',      // Reglas recomendadas para Hooks
       'next/core-web-vitals'                 // Reglas recomendadas de Next.js
     ],
     rules: {

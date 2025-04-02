@@ -54,8 +54,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   // Store de menús (para limpiar menús tras login/logout)
   const { clearMenus, setMenuLoaded } = useMenuStore.getState();
 
-  // Espera a que existan las cookies "refreshToken" y "csrfToken"
-  const cookiesReady = useWaitForCookiesReady(["refreshToken", "csrfToken"], 7000);
+  // Espera a que existan las cookies "csrfToken"
+  const cookiesReady = useWaitForCookiesReady(["csrfToken"], 7000);
 
   // Store de usuario (fuente única de user)
   const { user, setUser, clearUser } = useUserStore();
@@ -69,73 +69,72 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       pathname.startsWith("/login") ||
       pathname.startsWith("/register") ||
       pathname.startsWith("/recover");
-
+  
     if (isPublic) {
       console.log(`📌 [AuthContext] Ruta pública (${pathname}), saltando refresh...`);
       setLoading(false);
       return;
     }
-
+  
     console.log(`🔄 [AuthContext] initialize(): ${context}`);
-
+  
     try {
-      // Esperamos un CSRF no-público
       const csrfValido = await waitForValidCsrfToken(2500);
       if (!csrfValido) {
-        console.warn("⛔ [AuthContext] CSRF aún no es válido. Cancelando restore.");
+        console.warn("⛔ CSRF aún no es válido. Cancelando restore.");
         setLoading(false);
         return;
       }
-
-      // Llamada para refrescar accessToken con el refreshToken
+  
       const data = await refreshAccessToken();
-
-      // Leemos cookies manualmente para debug
+  
+      // Debug tokens (opcional)
       const accessToken = document.cookie.match(/(^| )accessToken=([^;]+)/)?.[2];
       const refreshToken = document.cookie.match(/(^| )refreshToken=([^;]+)/)?.[2];
       const csrfToken = document.cookie.match(/(^| )csrfToken=([^;]+)/)?.[2];
-
-      console.log("🍪 [AuthContext] Tokens tras refresh:");
+  
+      console.log("🍪 Tokens tras refresh:");
       console.log("   🔐 accessToken:", accessToken ? "✅" : "❌");
       console.log("   ♻️ refreshToken:", refreshToken ? "✅" : "❌");
       console.log("   🛡️ csrfToken:", csrfToken ? `✅ ${csrfToken}` : "❌");
-
-      if (data?.id) {
-        // Se obtuvo un usuario válido del backend
+  
+      const user = data?.user || data; // admite ambos formatos
+      if (data?.user?.id) {
         const userData = {
-          userId: data.id,
-          username: data.username,
-          email: data.email,
-          role: data.role,
+          userId: data.user.id,
+          username: data.user.username,
+          email: data.user.email,
+          role: data.user.role,
         };
-
-        // Guardamos en la store
+  
         setUser(userData);
-
-        // Micro-pausa para que React reaccione
-        await new Promise((r) => setTimeout(r, 200));
-
-        console.log("✅ [AuthContext] Usuario restaurado:", userData.username);
-
-        // Disparamos el evento session-ready para que useSessionReady
-        // o cualquier hook que escuche "session-ready" sepa que la sesión está lista
+  
+        // Micro-pausa para asegurar reactividad
+        await new Promise((r) => setTimeout(r, 150));
+  
+        console.log("✅ Usuario restaurado:", userData.username);
+  
         window.dispatchEvent(new Event("session-ready"));
-
-        // Mensaje de success si estamos volviendo de BFCache
+  
         if (context.includes("bfcache")) {
           toast.success("♻️ Sesión restaurada correctamente");
         }
       } else {
-        console.warn("⚠️ [AuthContext] No se recibió usuario válido del refresh");
+        console.warn("⚠️ No se recibió usuario válido del refresh");
         clearUser();
+        router.push("/login");
+        return;
       }
     } catch (e) {
-      console.error("❌ [AuthContext] Error al refrescar sesión:", e);
+      console.error("❌ Error al refrescar sesión:", e);
       clearUser();
+      router.push("/login");
+      return;
     } finally {
       setLoading(false);
     }
-  }, [setUser, clearUser]);
+  }, [setUser, clearUser, router]);
+  
 
   // ─────────────────────────────────────────────────────────────────────────────
   //                     FUNCIÓN PARA HACER LOGIN
@@ -237,6 +236,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       console.warn("⚠️ [AuthContext] Cookies no disponibles. Continuando sin sesión.");
       clearUser();
       setLoading(false);
+
+      //Redirección si estamos en ruta protegida
+      if (!isPublic) {
+        console.warn("🚨 Redirigiendo a /login por falta de tokens");
+        router.push("/login");
+      }
 
       // Disparamos session-ready aunque no haya sesión,
       // para que el front no quede colgado esperando

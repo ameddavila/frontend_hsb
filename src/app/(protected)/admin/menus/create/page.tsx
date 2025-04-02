@@ -4,11 +4,13 @@ import { useRouter } from "next/navigation";
 import { createMenu, MenuInput } from "@/services/menuService";
 import MenuForm from "@/components/menus/MenuForm";
 import { toast } from "sonner";
-import { useMenuStore } from "@/stores/menuStore"; // 🧠 importante
+import { useMenuStore } from "@/stores/menuStore";
+import { Card } from "primereact/card";
+import FormContainer from "@/components/ui/FormContainer"
 
 export default function CreateMenuPage() {
   const router = useRouter();
-  const loadMenus = useMenuStore((state) => state.loadMenus); // ✅ hook de carga
+  const loadMenus = useMenuStore((state) => state.loadMenus);
 
   const handleCreate = async (data: MenuInput) => {
     try {
@@ -19,9 +21,7 @@ export default function CreateMenuPage() {
 
       toast.success("✅ Menú creado correctamente");
 
-      // 🆕 Recargar menús desde el backend
       await loadMenus();
-
       router.push("/admin/menus");
     } catch {
       toast.error("❌ Error al crear el menú");
@@ -29,9 +29,17 @@ export default function CreateMenuPage() {
   };
 
   return (
-    <div className="admin-page p-4 max-w-xl mx-auto">
-      <div className="text-xl font-bold mb-4">🆕 Crear Nuevo Menú</div>
-      <MenuForm onSubmit={handleCreate} />
+    <div className="p-4">
+      <div className="p-grid p-justify-center">
+        <div className="p-col-12 md:p-col-10 lg:p-col-6">
+          <Card>
+          <FormContainer title="🆕 Crear Nuevo Menú">
+              <MenuForm onSubmit={handleCreate} />
+          </FormContainer>
+
+          </Card>
+        </div>
+      </div>
     </div>
   );
 }

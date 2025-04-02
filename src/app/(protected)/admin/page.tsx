@@ -1,4 +1,3 @@
-// src/app/(protected)/admin/page.tsx
 "use client";
 
 import { Card } from "primereact/card";
@@ -15,7 +14,7 @@ export default function AdminHome() {
       icon: "pi pi-users",
       path: "/admin/users",
       buttonLabel: "Ver usuarios",
-      buttonClass: "button-primary",
+      buttonClass: "p-button-primary",
     },
     {
       title: "Roles",
@@ -23,7 +22,7 @@ export default function AdminHome() {
       icon: "pi pi-id-card",
       path: "/admin/roles",
       buttonLabel: "Ver roles",
-      buttonClass: "button-secondary",
+      buttonClass: "p-button-secondary",
     },
     {
       title: "Permisos",
@@ -31,7 +30,7 @@ export default function AdminHome() {
       icon: "pi pi-key",
       path: "/admin/permissions",
       buttonLabel: "Ver permisos",
-      buttonClass: "button-secondary",
+      buttonClass: "p-button-secondary",
     },
     {
       title: "Menús",
@@ -39,34 +38,38 @@ export default function AdminHome() {
       icon: "pi pi-list",
       path: "/admin/menus",
       buttonLabel: "Ver menús",
-      buttonClass: "button-secondary",
+      buttonClass: "p-button-secondary",
     },
   ];
 
   return (
-    <div className="dashboard-container">
-      <div className="text-2xl font-bold mb-2">👋 Bienvenido, Administrador</div>
-      <div className="text-color-secondary mb-4">
+    <div className="p-4">
+      <h2 className="text-3xl font-bold mb-3 text-primary">
+        👋 Bienvenido, Administrador
+      </h2>
+      <p className="text-gray-600 mb-4">
         Aquí puedes gestionar el sistema y acceder a funciones administrativas.
-      </div>
+      </p>
 
-      <div className="grid grid-nogutter md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid">
         {sections.map((section, index) => (
-          <Card key={index} className="dashboard-card">
-            <div className="text-xl font-semibold mb-2 flex items-center gap-2">
-              <i className={section.icon}></i>
-              {section.title}
-            </div>
-            <p className="mb-4 text-sm text-color-secondary">
-              {section.description}
-            </p>
-            <Button
-              label={section.buttonLabel}
-              className={section.buttonClass}
-              onClick={() => router.push(section.path)}
-              icon={section.icon}
-            />
-          </Card>
+          <div key={index} className="col-12 md:col-6 lg:col-3">
+            <Card className="h-full shadow-2 border-1 surface-border border-round-xl">
+              <div className="text-xl font-semibold mb-2 flex align-items-center gap-2 text-primary">
+                <i className={section.icon}></i>
+                <span>{section.title}</span>
+              </div>
+              <p className="text-sm text-color-secondary mb-3">
+                {section.description}
+              </p>
+              <Button
+                label={section.buttonLabel}
+                icon={section.icon}
+                className={`${section.buttonClass} p-button-sm w-full`}
+                onClick={() => router.push(section.path)}
+              />
+            </Card>
+          </div>
         ))}
       </div>
     </div>

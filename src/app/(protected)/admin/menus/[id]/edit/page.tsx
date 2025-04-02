@@ -6,6 +6,8 @@ import { getMenuById, updateMenu, MenuInput } from "@/services/menuService";
 import { useRouter, useParams } from "next/navigation";
 import MenuForm from "@/components/menus/MenuForm";
 import { toast } from "sonner";
+import { Card } from "primereact/card";
+import { Divider } from "primereact/divider";
 
 export default function EditMenuPage() {
   const router = useRouter();
@@ -22,7 +24,7 @@ export default function EditMenuPage() {
 
       try {
         const res = await getMenuById(menuId);
-        form.reset(res); // res ya es tipo MenuInput o compatible
+        form.reset(res);
       } catch {
         toast.error("Error al cargar el menú");
       }
@@ -45,9 +47,16 @@ export default function EditMenuPage() {
   };
 
   return (
-    <div className="admin-page p-4 max-w-xl mx-auto">
-      <h1 className="text-xl font-bold mb-4">✏️ Editar Menú</h1>
-      <MenuForm onSubmit={onSubmit} form={form} />
+    <div className="p-4">
+      <div className="p-grid p-justify-center">
+        <div className="p-col-12 md:p-col-10 lg:p-col-6">
+          <Card>
+            <h2 className="text-xl font-bold mb-2">✏️ Editar Menú</h2>
+            <Divider className="my-2" />
+            <MenuForm onSubmit={onSubmit} form={form} />
+          </Card>
+        </div>
+      </div>
     </div>
   );
 }
