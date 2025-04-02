@@ -106,7 +106,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           email: data.user.email,
           role: data.user.role,
         };
-  
+        console.log("Datos Usuario:",user);
         setUser(userData);
   
         // Micro-pausa para asegurar reactividad
@@ -247,7 +247,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       // para que el front no quede colgado esperando
       window.dispatchEvent(new Event("session-ready"));
     }
-  }, [cookiesReady, initialize, clearUser]);
+  }, [cookiesReady, initialize, clearUser, router]);
 
   // ─────────────────────────────────────────────────────────────────────────────
   //         USEEFFECT PARA BFCache (VOLVER DESDE BACK/FORWARD CACHE)

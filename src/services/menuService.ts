@@ -8,7 +8,10 @@ export interface MenuInput {
   path: string;
   icon?: string;
   parentId?: number | null;
+  isActive?: boolean;
+  sortOrder?: number;
 }
+
 
 // 🔒 Menús del usuario autenticado (Sidebar)
 export const fetchUserMenus = async (): Promise<Menu[]> => {

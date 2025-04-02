@@ -5,9 +5,10 @@ import { useForm, UseFormReturn } from "react-hook-form";
 import { InputText } from "primereact/inputtext";
 import { Button } from "primereact/button";
 import { Dropdown } from "primereact/dropdown";
+import { Checkbox } from "primereact/checkbox";
 import { MenuInput, getMenus } from "@/services/menuService";
 import { useEffect, useState } from "react";
-import  IconSelectorModal  from "../ui/IconSelectorModal";
+import IconSelectorModal from "../ui/IconSelectorModal";
 import "primeicons/primeicons.css";
 
 interface Props {
@@ -16,13 +17,18 @@ interface Props {
 }
 
 export default function MenuForm({ onSubmit, form }: Props) {
-  const fallbackForm = useForm<MenuInput>();
+  const fallbackForm = useForm<MenuInput>({
+    defaultValues: {
+      isActive: true, // valor por defecto
+    },
+  });
+
   const {
     register,
     handleSubmit,
     setValue,
-    watch
-    } = form ?? fallbackForm;
+    watch,
+  } = form ?? fallbackForm;
 
   const [menuOptions, setMenuOptions] = useState<{ label: string; value: number | null }[]>([]);
   const [showIconModal, setShowIconModal] = useState(false);
@@ -75,11 +81,22 @@ export default function MenuForm({ onSubmit, form }: Props) {
           />
         </div>
 
+        {/* ✅ Checkbox de estado */}
+        <div className="field col-12">
+          <div className="flex align-items-center gap-2">
+            <Checkbox
+              inputId="isActive"
+              checked={!!watch("isActive")}
+              onChange={(e) => setValue("isActive", e.checked)}
+            />
+            <label htmlFor="isActive">¿Activo?</label>
+          </div>
+        </div>
+
         <div className="col-12 flex justify-content-start">
           <Button type="submit" label="Guardar" icon="pi pi-save" />
         </div>
       </form>
-
 
       {/* Modal selector de íconos */}
       <IconSelectorModal

@@ -7,6 +7,7 @@ import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { ConfirmDialog, confirmDialog } from "primereact/confirmdialog";
 import { getMenus, deleteMenu } from "@/services/menuService";
+import { useMenuStore } from "@/stores/menuStore";
 import { Menu } from "@/types/Menu";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
@@ -46,6 +47,7 @@ export default function MenusPage() {
     try {
       await deleteMenu(id);
       toast.success("Menú eliminado correctamente");
+      await useMenuStore.getState().loadMenus();
       cargarMenus();
     } catch {
       toast.error("Error al eliminar menú");

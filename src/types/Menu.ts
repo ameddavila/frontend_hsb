@@ -18,6 +18,8 @@ export interface MenuInput {
   path: string;
   icon?: string;
   parentId?: number | null;
+  isActive?: boolean; // 👈 Asegúrate de que esto exista
+  sortOrder?: number;
   external?: boolean;
   visibleToRoles?: string[];
   requiredPermissions?: string[];
