@@ -6,13 +6,14 @@ import { InputText } from "primereact/inputtext";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { ConfirmDialog, confirmDialog } from "primereact/confirmdialog";
-import { getMenus, deleteMenu } from "@/services/menuService";
-import { useMenuStore } from "@/stores/menuStore";
+import { getMenus } from "@/services/menuService";
 import { Menu } from "@/types/Menu";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { useMenuActions } from "@/hooks/useMenuActions";
 
 export default function MenusPage() {
+  const { handleDeleteMenu } = useMenuActions();
   const [menus, setMenus] = useState<Menu[]>([]);
   const [filtered, setFiltered] = useState<Menu[]>([]);
   const [search, setSearch] = useState("");
@@ -43,17 +44,6 @@ export default function MenusPage() {
     }
   };
 
-  const handleEliminar = async (id: number) => {
-    try {
-      await deleteMenu(id);
-      toast.success("Menú eliminado correctamente");
-      await useMenuStore.getState().loadMenus();
-      cargarMenus();
-    } catch {
-      toast.error("Error al eliminar menú");
-    }
-  };
-
   const confirmarEliminacion = (menu: Menu) => {
     confirmDialog({
       message: `¿Seguro que deseas eliminar el menú "${menu.name}"?`,
@@ -62,7 +52,7 @@ export default function MenusPage() {
       acceptLabel: "Sí",
       rejectLabel: "No",
       acceptClassName: "p-button-danger",
-      accept: () => handleEliminar(menu.id),
+      accept: () => handleDeleteMenu(menu.id), // Modificado aquí
     });
   };
 

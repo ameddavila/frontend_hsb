@@ -3,8 +3,8 @@ import api from "@/services/api";
 import { useAuth } from "./useAuth";
 import { useSessionReady } from "./useSessionReady";
 import { useMenuStore } from "@/stores/menuStore";
-import { Menu } from "@/types/Menu";
-import { transformMenus } from "@/utils/transformMenus";
+import { MenuNode } from "@/types/Menu";
+//import { transformMenus } from "@/utils/transformMenus";
 import { waitForRotatedCsrf } from "@/utils/waitForCookie"; // Espera a que el CSRF se "rotara"
 
 export const useMenus = () => {
@@ -65,8 +65,9 @@ export const useMenus = () => {
       }
 
       // Llamada real al endpoint de menús
-      const response = await api.get<Menu[]>("/menus/my-menus");
-      const menuTree = transformMenus(response.data);
+      const response = await api.get<MenuNode[]>("/menus/my-menus");
+      const menuTree = response.data;
+      //const menuTree = transformMenus(response.data);
 
       // Guardamos en Zustand
       setMenus(menuTree);

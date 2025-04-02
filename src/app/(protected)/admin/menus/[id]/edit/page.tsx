@@ -2,17 +2,18 @@
 
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { getMenuById, updateMenu, MenuInput } from "@/services/menuService";
-import { useRouter, useParams } from "next/navigation";
+import { getMenuById, MenuInput } from "@/services/menuService";
 import MenuForm from "@/components/menus/MenuForm";
-import { toast } from "sonner";
 import { Card } from "primereact/card";
 import { Divider } from "primereact/divider";
+import { toast } from "sonner";
+import { useParams } from "next/navigation";
+import { useMenuActions } from "@/hooks/useMenuActions";
 
 export default function EditMenuPage() {
-  const router = useRouter();
   const params = useParams();
   const form = useForm<MenuInput>();
+  const { handleUpdateMenu } = useMenuActions();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -33,17 +34,8 @@ export default function EditMenuPage() {
     fetchData();
   }, [params.id, form]);
 
-  const onSubmit = async (data: MenuInput) => {
-    try {
-      await updateMenu(Number(params.id), {
-        ...data,
-        parentId: data.parentId ? Number(data.parentId) : null,
-      });
-      toast.success("Menú actualizado");
-      router.push("/admin/menus");
-    } catch {
-      toast.error("Error al actualizar el menú");
-    }
+  const onSubmit = (data: MenuInput) => {
+    handleUpdateMenu(Number(params.id), data);
   };
 
   return (
