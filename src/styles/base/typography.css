@@ -1,0 +1,91 @@
+/* === 📐 Escala Tipográfica === */
+h1, .text-xxl {
+    font-size: 2.5rem;
+    font-weight: 700;
+    line-height: 1.2;
+  }
+  
+  h2, .text-xl {
+    font-size: 2rem;
+    font-weight: 600;
+    line-height: 1.3;
+  }
+  
+  h3, .text-lg {
+    font-size: 1.5rem;
+    font-weight: 600;
+    line-height: 1.4;
+  }
+  
+  h4, .text-md {
+    font-size: 1.25rem;
+    font-weight: 500;
+  }
+  
+  h5, .text-sm {
+    font-size: 1rem;
+    font-weight: 500;
+  }
+  
+  h6, .text-xs {
+    font-size: 0.875rem;
+    font-weight: 500;
+  }
+  
+  p, .text-base {
+    font-size: var(--font-size-base);
+    line-height: 1.6;
+    color: var(--color-text-dark);
+    margin-bottom: 1rem;
+  }
+  
+  /* === 🎨 Colores y estados === */
+  .text-primary {
+    color: var(--color-btn-primary);
+  }
+  
+  .text-secondary {
+    color: var(--color-btn-secondary);
+  }
+  
+  .text-muted {
+    color: var(--color-text-gray);
+  }
+  
+  .text-danger {
+    color: var(--color-danger);
+  }
+  
+  .text-white {
+    color: var(--color-text-white);
+  }
+  
+  .text-accent {
+    color: var(--color-text-accent);
+  }
+  
+  /* === 💬 Estilos adicionales === */
+  .text-center {
+    text-align: center;
+  }
+  
+  .text-right {
+    text-align: right;
+  }
+  
+  .text-bold {
+    font-weight: bold;
+  }
+  
+  .text-uppercase {
+    text-transform: uppercase;
+  }
+  
+  .text-small {
+    font-size: var(--font-size-sm);
+  }
+  
+  .text-large {
+    font-size: var(--font-size-lg);
+  }
+  

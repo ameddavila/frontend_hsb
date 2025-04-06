@@ -9,7 +9,6 @@ import { Checkbox } from "primereact/checkbox";
 import { MenuInput, getMenus } from "@/services/menuService";
 import { useEffect, useState } from "react";
 import IconSelectorModal from "../ui/IconSelectorModal";
-import "primeicons/primeicons.css";
 
 interface Props {
   onSubmit: (data: MenuInput) => void;

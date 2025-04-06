@@ -12,7 +12,6 @@ import { Button } from "primereact/button";
 import { Toast } from "primereact/toast";
 import Link from "next/link";
 import { useCsrf } from "@/hooks/useCsrf";
-import "@/styles/auth.css";
 
 // 📦 Validación con Zod
 const loginSchema = z.object({

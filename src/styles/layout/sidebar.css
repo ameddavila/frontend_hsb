@@ -1,0 +1,146 @@
+/* === CONTENEDOR PRINCIPAL === */
+.sidebar {
+  background-color: var(--color-bg-sidebar);
+  width: 250px;
+  height: 100vh;
+  color: var(--color-text-white);
+  padding: 1rem 0.75rem;
+  transition: width 0.3s ease;
+  overflow-y: auto;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.sidebar.collapsed {
+  width: 60px;
+}
+
+/* === MENÚ EXPANDIDO === */
+.sidebar-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.sidebar-group {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Estilo base para niveles */
+.sidebar-group-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.5rem 1rem;
+  background: transparent;
+  border: none;
+  color: var(--color-text-white);
+  font-size: 0.9rem;
+  font-weight: 500;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.sidebar-group-header:hover {
+  background-color: rgba(255, 255, 255, 0.08);
+}
+
+/* Niveles anidados */
+.level-1 {
+  padding-left: 1.75rem;
+  font-size: 0.85rem;
+}
+
+.level-2 {
+  padding-left: 2.5rem;
+  font-size: 0.82rem;
+}
+
+/* Flechita de acordeón */
+.ml-auto {
+  margin-left: auto;
+}
+
+/* Contenedor hijos */
+.sidebar-children {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+
+.sidebar-link {
+  background: transparent;
+  border: none;
+  color: var(--color-text-white);
+  text-align: left;
+  padding: 0.45rem 1.5rem;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  border-radius: 6px;
+  transition: background-color 0.2s ease;
+  cursor: pointer;
+}
+
+.sidebar-link:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* === MENÚ COLAPSADO === */
+.collapsed-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  align-items: center;
+  justify-content: flex-start;
+  padding-top: 1rem;
+}
+
+.collapsed-icon {
+  background-color: transparent;
+  color: var(--color-text-white);
+  font-size: 1.3rem;
+  border: none;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+  cursor: pointer;
+}
+
+.collapsed-icon:hover {
+  background-color: rgba(255, 255, 255, 0.15);
+  transform: scale(1.1);
+}
+
+/* === ESTADOS Y FEEDBACK === */
+.sidebar-loading,
+.sidebar-error {
+  padding: 1rem;
+  text-align: center;
+  color: var(--color-danger);
+  font-size: 0.9rem;
+}
+
+.sidebar-controls {
+  padding: 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.sidebar-btn {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: var(--color-text-white);
+  border: none;
+  padding: 0.4rem 0.75rem;
+  border-radius: 0.5rem;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.sidebar-btn:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}

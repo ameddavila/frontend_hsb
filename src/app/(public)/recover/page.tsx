@@ -7,8 +7,6 @@ import { InputText } from "primereact/inputtext";
 import { Button } from "primereact/button";
 import Link from "next/link";
 
-import "@/styles/auth.css"; // Importamos los estilos de autenticación
-
 export default function RecuperarPage() {
   const [email, setEmail] = useState("");
   const toast = useRef<Toast>(null);

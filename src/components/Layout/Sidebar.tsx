@@ -1,14 +1,11 @@
-// ✅ Sidebar estilizado, jerárquico, colapsable y optimizado
 "use client";
 
-import React, { useMemo, useCallback } from "react";
-import { PanelMenu } from "primereact/panelmenu";
-import { MenuItem } from "primereact/menuitem";
+import React from "react";
 import { useRouter } from "next/navigation";
 import { useMenus } from "@/hooks/useMenus";
-import { MenuNode } from "@/types/Menu";
+//import { MenuNode } from "@/types/Menu";
 import { ProgressSpinner } from "primereact/progressspinner";
-
+import SidebarMenu from "@/components/Layout/SidebarMenu"; // 👈 Asegúrate de importar correctamente
 
 interface SidebarProps {
   open: boolean;
@@ -18,19 +15,6 @@ interface SidebarProps {
 export default function Sidebar({ open, className = "" }: SidebarProps) {
   const router = useRouter();
   const { menus, loading } = useMenus();
-
-  const buildMenuModel = useCallback(
-    (items: MenuNode[]): MenuItem[] =>
-      items.map((menu) => ({
-        label: menu.name,
-        icon: menu.icon,
-        command: () => menu.path && router.push(menu.path),
-        items: menu.children?.length ? buildMenuModel(menu.children) : undefined,
-      })),
-    [router]
-  );
-
-  const dynamicItems = useMemo(() => buildMenuModel(menus), [menus, buildMenuModel]);
   const sidebarClass = `sidebar ${open ? "expanded" : "collapsed"} ${className}`;
 
   if (loading) {
@@ -55,31 +39,26 @@ export default function Sidebar({ open, className = "" }: SidebarProps) {
 
   return (
     <aside className={sidebarClass}>
-      {open ? (
-        <PanelMenu
-          model={dynamicItems}
-          className="custom-sidebar border-none w-full"
-        />
-      ) : (
-        <div className="collapsed-menu p-2 flex flex-col gap-2 items-center">
-          {dynamicItems.map((item, i) => (
-            <button
-              key={i}
-              className="collapsed-icon p-2 cursor-pointer rounded hover:bg-gray-200"
-              onClick={() =>
-                item.command?.({
-                  originalEvent: {} as unknown as React.SyntheticEvent,
-                  item,
-                })
-              }
-              title={item.label}
-              aria-label={item.label}
-            >
-              <i className={item.icon}></i>
-            </button>
-          ))}
-        </div>
+  {open ? (
+    <SidebarMenu open={open} />
+  ) : (
+    <div className="collapsed-menu p-2 flex flex-col gap-2 items-center">
+      {menus.flatMap((group) =>
+        group.children?.map((child) => (
+          <button
+            key={child.id}
+            className="collapsed-icon p-2 cursor-pointer rounded hover:bg-gray-200"
+            onClick={() => child.path && router.push(child.path)}
+            title={child.name}
+            aria-label={child.name}
+          >
+            <i className={child.icon}></i>
+          </button>
+        )) || []
       )}
-    </aside>
+    </div>
+  )}
+</aside>
+
   );
 }

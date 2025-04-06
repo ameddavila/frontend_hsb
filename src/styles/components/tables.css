@@ -1,0 +1,61 @@
+/* Contenedor general */
+.table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+    border-radius: var(--border-radius);
+    border: 1px solid var(--color-border);
+    background-color: var(--color-bg-white);
+  }
+  
+  /* Tabla de PrimeReact */
+  .p-datatable {
+    border: none;
+    font-size: 0.95rem;
+  }
+  
+  .p-datatable .p-datatable-thead > tr > th {
+    background-color: var(--color-bg-light);
+    font-weight: 600;
+    color: var(--color-text-dark);
+    padding: 1rem;
+    border-bottom: 1px solid var(--color-border);
+  }
+  
+  .p-datatable .p-datatable-tbody > tr > td {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--color-border);
+    color: var(--color-text-gray);
+  }
+  
+  /* Hover de filas */
+  .p-datatable .p-datatable-tbody > tr:hover {
+    background-color: rgba(0, 0, 0, 0.02);
+    cursor: pointer;
+  }
+  
+  /* Celda seleccionada */
+  .p-datatable .p-datatable-tbody > tr.p-highlight {
+    background-color: var(--color-bg-accent);
+    color: var(--color-text-white);
+  }
+  
+  /* Estilo para filtros */
+  .p-datatable .p-column-filter {
+    margin-top: 0.25rem;
+  }
+  
+  /* Footer de la tabla */
+  .p-datatable .p-datatable-footer {
+    padding: 0.75rem 1rem;
+    background-color: var(--color-bg-light);
+    font-weight: 500;
+    border-top: 1px solid var(--color-border);
+  }
+  
+  .table-action-button {
+    padding: 0.4rem 0.6rem;
+    font-size: 0.85rem;
+    border-radius: 6px;
+    margin-right: 0.5rem;
+  }
+  

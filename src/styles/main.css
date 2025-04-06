@@ -1,0 +1,23 @@
+/* === main.css === */
+
+/* 1. Base */
+@import './base/variables.css';
+@import './base/reset.css';
+@import './base/typography.css';
+
+/* 2. Layout */
+@import './layout/layout.css';
+@import './layout/navbar.css';
+@import './layout/sidebar.css';
+@import './layout/panel.css';
+@import './layout/footer.css';
+
+/* 3. Componentes */
+@import './components/cards.css';
+@import './components/forms.css';
+@import './components/icon-selector.css';
+@import './components/tables.css';
+
+/* 4. Páginas */
+@import './pages/auth.css';
+@import './pages/dashboard.css';

@@ -1,10 +1,10 @@
 // src/app/layout.tsx
 import { AuthProvider } from "@/context/AuthContext";
-import "primereact/resources/primereact.css";
-import "primeflex/primeflex.css";
-import "@/styles/auth.css";
-import "@/styles/globals.css";
-import "@/styles/form.css";
+//import "primereact/resources/primereact.css";
+import "primereact/resources/primereact.min.css";
+//import "primereact/resources/themes/lara-light-indigo/theme.css";
+import "primeicons/primeicons.css";
+import '@/styles/main.css';
 import { Toaster } from "sonner";
 
 export const metadata = {

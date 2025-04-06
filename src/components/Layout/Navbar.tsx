@@ -1,10 +1,8 @@
-// ✅ Componente Navbar mejorado
 "use client";
 
 import React from "react";
-import { Menubar } from "primereact/menubar";
-import { Button } from "primereact/button";
 import { useRouter } from "next/navigation";
+//import { Button } from "primereact/button";
 import UserAvatarMenu from "@/components/Layout/UserAvatarMenu";
 
 interface NavbarProps {
@@ -15,49 +13,49 @@ interface NavbarProps {
 export default function Navbar({ onToggleSidebar, onTogglePanel }: NavbarProps) {
   const router = useRouter();
 
-  const menubarModel = [
-    {
-      label: "Hospital Santa Bárbara",
-      icon: "pi pi-home",
-      command: () => router.push("/dashboard"),
-      className: "home-button",
-    },
-  ];
-
-  const start = (
-    <div className="flex align-items-center gap-2">
-      <Button
-        icon="pi pi-bars"
-        className="p-button-text"
-        onClick={onToggleSidebar}
-        aria-label="Alternar menú lateral"
-      />
-      <Button
-        icon="pi pi-window-maximize"
-        className="p-button-text"
-        onClick={onTogglePanel}
-        aria-label="Alternar panel derecho"
-      />
-    </div>
-  );
-
-  const end = (
-    <div className="flex align-items-center gap-3">
-      <Button
-        icon="pi pi-bell"
-        className="navbar-btn"
-        onClick={() => alert("🔔 Notificaciones... (pendiente de implementar)")}
-      />
-      <UserAvatarMenu />
-    </div>
-  );
-
   return (
-    <Menubar
-      model={menubarModel}
-      start={start}
-      end={end}
-      className="navbar border-none shadow-2"
-    />
+    <header className="navbar-container">
+      <div className="navbar-content">
+        {/* Sección Izquierda: Toggles */}
+        <div className="navbar-section">
+          <button
+            className="navbar-btn"
+            onClick={onToggleSidebar}
+            aria-label="Alternar menú lateral"
+          >
+            <i className="pi pi-bars" />
+          </button>
+          <button
+            className="navbar-btn"
+            onClick={onTogglePanel}
+            aria-label="Alternar panel derecho"
+          >
+            <i className="pi pi-window-maximize" />
+          </button>
+        </div>
+
+        {/* Sección Central: Logo */}
+        <div
+          className="navbar-title"
+          onClick={() => router.push("/dashboard")}
+          title="Ir al Dashboard"
+        >
+          <i className="pi pi-home" />
+          <span>Hospital Santa Bárbara</span>
+        </div>
+
+        {/* Sección Derecha: Notificaciones + Avatar */}
+        <div className="navbar-section">
+          <button
+            className="navbar-btn"
+            onClick={() => alert("🔔 Notificaciones...")}
+            aria-label="Notificaciones"
+          >
+            <i className="pi pi-bell" />
+          </button>
+          <UserAvatarMenu />
+        </div>
+      </div>
+    </header>
   );
 }

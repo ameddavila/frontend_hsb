@@ -5,8 +5,6 @@ import { Dialog } from "primereact/dialog";
 import { InputText } from "primereact/inputtext";
 import { Button } from "primereact/button";
 import { useState } from "react";
-import "primeicons/primeicons.css";
-import "@/styles/icon-selector.css"; // si usas uno personalizado
 
 const allIcons = [
   "pi pi-home",
@@ -16,6 +14,7 @@ const allIcons = [
   "pi pi-list",
   "pi pi-chart-bar",
   "pi pi-envelope",
+  "pi pi-plus"
   // agrega los íconos que necesites
 ];
 

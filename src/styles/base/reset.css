@@ -1,0 +1,64 @@
+/* === 🔄 Reset Moderno Base === */
+
+/* 1. Elimina márgenes, paddings y bordes por defecto */
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  box-sizing: border-box;
+}
+
+/* 2. Asegura transición suave y limpieza visual */
+* {
+  transition: background-color 0.3s ease, color 0.3s ease;
+  font-family: inherit;
+}
+
+/* 3. Alineación de elementos base */
+html, body {
+  height: 100%;
+  width: 100%;
+  font-size: 16px;
+  line-height: 1.5;
+  font-family: var(--font-primary);
+  background-color: var(--color-bg-light);
+  color: var(--color-text-dark);
+  overflow-x: hidden;
+}
+
+/* 4. Elimina estilos de listas y enlaces */
+ul, ol {
+  list-style: none;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* 5. Elimina estilos de formularios nativos */
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  background: none;
+  border: none;
+  outline: none;
+  color: inherit;
+}
+
+/* 6. Imágenes y multimedia */
+img, picture, video, canvas, svg {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+/* 7. Tablas */
+table {
+  border-collapse: collapse;
+  width: 100%;
+}

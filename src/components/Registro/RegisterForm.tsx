@@ -10,7 +10,6 @@ import { Button } from "primereact/button";
 import axios from "axios";
 import FormInput from "./FormInput";
 import PasswordStrength from "./PasswordStrength";
-import "@/styles/auth.css";
 
 // 📌 Esquema de validación con Zod
 const registerSchema = z.object({

@@ -1,0 +1,55 @@
+/* === 🧱 Contenedor Principal === */
+.dashboard-container {
+    padding: 2rem;
+    background-color: var(--color-bg-light);
+    min-height: 100vh;
+  }
+  
+  /* === 🗂️ Grid Responsivo === */
+  .dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1.5rem;
+  }
+  
+  /* === 📦 Tarjeta General === */
+  .dashboard-card {
+    background-color: var(--color-bg-white);
+    padding: 1.5rem;
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    border: 1px solid var(--color-border);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  
+  /* === 🪄 Efecto Hover === */
+  .dashboard-card:hover {
+    transform: scale(1.02);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+  }
+  
+  /* === 🏷️ Header de Tarjeta === */
+  .dashboard-card-title {
+    font-size: var(--font-size-md);
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+  }
+  
+  /* === 🔢 Número o métrica destacada === */
+  .dashboard-metric {
+    font-size: 2rem;
+    font-weight: bold;
+    color: var(--color-btn-primary);
+  }
+  
+  /* === 📉 Footer o enlaces === */
+  .dashboard-footer {
+    margin-top: 1rem;
+    text-align: right;
+    font-size: var(--font-size-sm);
+    color: var(--color-text-gray);
+  }
+  

@@ -1,0 +1,76 @@
+/* === navbar.css optimizado y unificado === */
+
+/* Contenedor principal fijo arriba */
+.navbar-container {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background-color: var(--color-bg-navbar);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 1rem;
+}
+
+/* Contenido distribuido en 3 secciones: izquierda, centro, derecha */
+.navbar-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 1400px;
+}
+
+/* Botones laterales (toggle sidebar / panel derecho / avatar) */
+.navbar-section {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+/* Título centrado */
+.navbar-title {
+  font-weight: 600;
+  font-size: 1.05rem;
+  color: var(--color-text-white);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  user-select: none;
+}
+
+.navbar-title .pi {
+  font-size: 1.2rem;
+}
+
+/* Botón de ícono (campana, toggles, etc.) */
+.navbar-btn {
+  background: none;
+  border: none;
+  color: var(--color-text-white);
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.navbar-btn:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: var(--color-btn-primary);
+}
+
+/* El ítem de menú con logo, usado con PrimeReact Menubar (si lo mantienes) */
+.home-button {
+  font-weight: 600;
+  font-size: 1rem;
+  color: var(--color-text-white);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.home-button .pi {
+  font-size: 1.25rem;
+}

@@ -21,6 +21,7 @@ import { useWaitForCookiesReady } from "@/hooks/useWaitForCookiesReady";
 import { useUserStore } from "@/stores/useUserStore";
 import { getCookie } from "@/services/api";
 import { waitForValidCsrfToken } from "@/utils/waitForCsrfReady";
+import { useSidebarStore } from "@/stores/useSidebarStore";
 
 export interface User {
   userId: string;
@@ -191,22 +192,25 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   // ─────────────────────────────────────────────────────────────────────────────
   const handleLogout = async () => {
     console.log("🚪 [AuthContext] Iniciando logout...");
-
+  
     await logoutRequest();
-
+  
     // Borrar user, menús y flags
     setUser(null);
     clearMenus();
     setMenuLoaded(false);
-
-    // Limpiamos localStorage
+  
+    // 🔥 Limpiar estado colapsado del Sidebar
+    useSidebarStore.getState().resetGroups();
+  
+    // Limpiar localStorage manual si es necesario
     localStorage.removeItem("menu-storage");
     localStorage.removeItem("user-storage");
     localStorage.removeItem("panel-storage");
     localStorage.removeItem("sidebar-storage");
-
+  
     console.log("🧹 [AuthContext] Menús y user limpiados tras logout");
-
+  
     // Redirigir a login
     router.push("/login");
   };

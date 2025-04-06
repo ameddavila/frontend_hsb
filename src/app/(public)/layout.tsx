@@ -2,8 +2,6 @@
 "use client";
 
 import React from "react";
-import "@/styles/globals.css"; // Estilos globales para toda la app
-import "@/styles/auth.css";    // Estilos específicos de login/registro/etc.
 
 export default function PublicLayout({ children }: { children: React.ReactNode }) {
   return (

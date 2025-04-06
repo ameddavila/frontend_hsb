@@ -1,0 +1,51 @@
+:root {
+    /* === 🎨 Paleta de Colores === */
+    --color-bg-white: #ffffff;
+    --color-bg-light: #f4f6f8;
+    --color-bg-dark: #1e1e2f;
+    --color-bg-navbar: #001f5a;
+    --color-bg-sidebar: #001f5a;
+    --color-bg-panel: #f5f5f5;
+    --color-bg-footer: #222233;
+    --color-bg-accent: #f26e29;
+  
+    --color-text-white: #ffffff;
+    --color-text-dark: #0a0a0a;
+    --color-text-gray: #555555;
+    --color-text-accent: #f26e29;
+  
+    --color-border: #ddd;
+    --color-card-border: #e0e0e0;
+  
+    /* === 🔘 Botones === */
+    --color-btn-primary: #f26e29;
+    --color-btn-hover: #d9531e;
+    --color-btn-secondary: #0066cc;
+    --color-btn-secondary-hover: #004b99;
+  
+    --color-danger: #e53935;
+    --color-success: #2e7d32;
+    --color-warning: #f9a825;
+  
+    /* === 🔠 Tipografía === */
+    --font-primary: "Inter", sans-serif;
+    --font-secondary: "Roboto", sans-serif;
+  
+    --font-size-xs: 12px;
+    --font-size-sm: 14px;
+    --font-size-base: 16px;
+    --font-size-md: 18px;
+    --font-size-lg: 22px;
+    --font-size-xl: 28px;
+  
+    /* === 📏 Espaciados y Bordes === */
+    --border-radius: 8px;
+    --box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    --box-shadow-soft: 0px 2px 6px rgba(0, 0, 0, 0.05);
+  
+    /* === ⏱️ Transiciones === */
+    --transition-fast: 0.2s ease;
+    --transition-normal: 0.3s ease;
+    --transition-slow: 0.5s ease;
+  }
+  

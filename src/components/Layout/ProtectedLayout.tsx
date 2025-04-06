@@ -13,11 +13,6 @@ import { useSessionReady } from "@/hooks/useSessionReady";
 import { useUserStore } from "@/stores/useUserStore";
 import { useMenuStore } from "@/stores/menuStore";
 
-import "@/styles/layout.css";
-import "@/styles/navbar.css";
-import "@/styles/sidebar.css";
-import "@/styles/panel.css";
-
 interface ProtectedLayoutProps {
   children: React.ReactNode;
 }

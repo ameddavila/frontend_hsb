@@ -1,0 +1,22 @@
+.footer {
+    background-color: var(--color-bg-footer);
+    color: var(--color-text-white);
+    text-align: center;
+    padding: 1rem;
+    font-size: var(--font-size-sm);
+    border-top: 1px solid var(--color-border);
+    margin-top: auto;
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+    z-index: 5;
+  }
+  
+  .footer a {
+    color: var(--color-text-white);
+    text-decoration: underline;
+    transition: color 0.3s ease;
+  }
+  
+  .footer a:hover {
+    color: var(--color-btn-primary);
+  }
+  
